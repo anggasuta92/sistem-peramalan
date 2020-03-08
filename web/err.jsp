@@ -12,7 +12,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title><%= MainConfig.APP_NAME %></title>
             <!-- Custom styles for this template-->
-            <link href="<%= MainConfig.getAssetUrl(request)%>/css/sb-admin-2.min.css" rel="stylesheet">
+            <link href="<%= MainConfig.getAssetUrl(request)%>/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
         <style>
             html{
             }
@@ -87,5 +87,7 @@
                 </p>
             </div>
         </div>
+
+        <script src="<%= MainConfig.getAssetUrl(request)%>/bootstrap-3.3.7/js/bootstrap.min.js"></script>
     </body>
 </html>
