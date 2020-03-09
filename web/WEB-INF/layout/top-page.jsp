@@ -3,7 +3,7 @@
     Created on : Dec 1, 2019, 10:55:04 PM
     Author     : AnggaSutaDharmawan
 --%>
-
+<%@page trimDirectiveWhitespaces="true" %>
 <%@page import="com.peramalan.services.JSPHandler"%>
 <%@page import="com.peramalan.config.MainConfig"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -23,6 +23,7 @@
         <link href="<%= MainConfig.getAssetUrl(request)%>/bootstrap-4.4.1-dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="<%= MainConfig.getAssetUrl(request)%>/css/apps.css" rel="stylesheet">
         <link href="<%= MainConfig.getAssetUrl(request)%>/css/dashboard.css" rel="stylesheet">
+        <link href="<%= MainConfig.getAssetUrl(request)%>/css/sidebar.css" rel="stylesheet">
         <link href="<%= MainConfig.getAssetUrl(request)%>/fontawesome/css/font-awesome.min.css" rel="stylesheet">
         
     <body>
@@ -44,8 +45,5 @@
                     </div>
                   </div>
                 <!-- here content -->
-                asd
-                </main>
-            </div>
-        </div>
+
                 

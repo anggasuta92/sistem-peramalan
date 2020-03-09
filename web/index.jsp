@@ -21,7 +21,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title><%= MainConfig.APP_NAME%></title>
+        <title><%= MainConfig.APP_NAME %></title>
         <link rel="icon" type="image/x-icon" class="js-site-favicon" href="<%= MainConfig.getAssetUrl(request)%>/img/favicon.ico">
         <link href="<%= MainConfig.getAssetUrl(request)%>/bootstrap-4.4.1-dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="<%= MainConfig.getAssetUrl(request)%>/css/apps.css" rel="stylesheet">
@@ -54,7 +54,7 @@
     <body class="bg-dark">
         <div class="login-form">
             <form action="<%= JSPHandler.generateUrl(request, "login", JSPHandler.ACTION_OK, "") %>" method="post">
-                <h2 class="text-center"><%= MainConfig.APP_NAME %></h2>       
+                <h3 class="text-center"><%= MainConfig.APP_NAME %></h3>
                 <div class="form-group">
                     <input type="text" name="username" class="form-control" placeholder="Nama pengguna" required="required">
                 </div>

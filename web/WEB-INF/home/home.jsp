@@ -2,6 +2,6 @@
 <%@page import="com.peramalan.services.JSPHandler"%>
 <%@ include file="../layout/top-page.jsp"%>
     
-ini home
+ini dia
                   
 <%@ include file="../layout/bottom-page.jsp"%>

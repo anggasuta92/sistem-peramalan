@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class MainConfig {
     
-    public static final String APP_NAME = "Sistem Peramalan";
+    public static final String APP_NAME = "Sistem Peramalan Penjualan";
     
     /*
     * Database cofiguration

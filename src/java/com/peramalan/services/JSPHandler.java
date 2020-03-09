@@ -27,8 +27,8 @@ public class JSPHandler {
     public static final int ACTION_OK = 6;
     public static final int ACTION_CANCEL = 7;
     
-    public static final String USER_SESS_OBJ = "_USER_OBJ";
-    public static final String USER_SESS_ROLE = "_USER_ROLE";
+    public static final String USER_SESS_USER = "_USER_OBJ";
+    public static final String USER_SESS_USER_ROLE = "_USER_ROLE";
     
     public static String generateUrl(HttpServletRequest request, String servletName,  int actionCode, String queries){
         String result = MainConfig.getRootApplicationUrl(request) + "/" + servletName; 
