@@ -33,25 +33,15 @@ public class HomeController extends HttpServlet {
             throws ServletException, IOException {
         
         int action = (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)!=null ? Integer.parseInt(request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)) : 0);
+        String pageName = "";
         
         switch(action){
-            case JSPHandler.ACTION_ADD:
-                System.out.println("add");
-                break;
-            case JSPHandler.ACTION_SAVE:
-                System.out.println("save");
-                break;
-            case JSPHandler.ACTION_CONFIRM:
-                System.out.println("confirm");
-                break;
-            case JSPHandler.ACTION_DELETE:
-                System.out.println("delete");
-                break;
             default:
-                System.out.println("default");
+                pageName = "Dashboard;Home;Uhuy";
                 break;
         }
         
+        request.setAttribute("Page", pageName);
         request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
     }
 

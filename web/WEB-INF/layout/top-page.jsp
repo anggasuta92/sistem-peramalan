@@ -20,30 +20,50 @@
         <meta name="author" content="">
         <title><%= MainConfig.APP_NAME%></title>
         <link rel="icon" type="image/x-icon" class="js-site-favicon" href="<%= MainConfig.getAssetUrl(request)%>/img/favicon.ico">
-        <link href="<%= MainConfig.getAssetUrl(request)%>/bootstrap-4.4.1-dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="<%= MainConfig.getAssetUrl(request)%>/sb/css/bootstrap.css" rel="stylesheet">
+        <link href="<%= MainConfig.getAssetUrl(request)%>/sb/css/sb-admin.css" rel="stylesheet">
+        <link rel="stylesheet" href="<%= MainConfig.getAssetUrl(request)%>/sb/font-awesome/css/font-awesome.min.css">
         <link href="<%= MainConfig.getAssetUrl(request)%>/css/apps.css" rel="stylesheet">
-        <link href="<%= MainConfig.getAssetUrl(request)%>/css/dashboard.css" rel="stylesheet">
-        <link href="<%= MainConfig.getAssetUrl(request)%>/css/sidebar.css" rel="stylesheet">
-        <link href="<%= MainConfig.getAssetUrl(request)%>/fontawesome/css/font-awesome.min.css" rel="stylesheet">
-        
+        <style>
+            .breadcrumb {
+                margin-top: 20px !important;
+                background-color:transparent !important;
+                padding-bottom: 0px;
+                margin-bottom: 8px !important;
+            }
+            .border-bottom {
+                border-bottom: 1px solid #eee;
+                padding-bottom: 0px;
+                margin-bottom: 8px !important;
+            }
+        </style>
     <body>
-        <%@include file="navbar.jsp" %>
-        
-        <div class="container-fluid">
-            <div class="row">
-                
-                <%@include file="sidebar.jsp" %>
-                
-                <!-- main & breadcrump -->
-                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-                  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">UD. Parama Store</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                      <div class="btn-group mr-2">
-                        Home >> Dashboard
-                      </div>
+        <div id="wrapper">
+            <%@include file="navbar.jsp" %>
+            
+            <div id="page-wrapper">
+                <div class="row border-bottom">
+                    <div class="col-lg-8">
+                        <h3>UD. Parama Store <small>Jalan Gatsu VI no. 46 Denpasar</small> </h3>
                     </div>
-                  </div>
-                <!-- here content -->
+                    <div class="col-lg-4" align="right">
+                        <% try{ %>
+                        <ol class="breadcrumb">
+                            <li class="text-muted"><span class="fa fa-plane"></span></li>
+                            <%
+                                 String[] breadcrumps = request.getAttribute("Page").toString().split(";");
+                                 for(int b = 0; b < breadcrumps.length; b++){
+                            %>
+                            <li class="text-muted"><i class="icon-dashboard"></i> <%= breadcrumps[b] %></li>
+                            <%
+                                }
+                            %>
+                        </ol>
+                        <% }catch(Exception e){} %>
+                    </div>
+                </div><!-- /.row -->
+            </div><!-- /#page-wrapper -->
+            
+        </div>
 
                 
