@@ -16,7 +16,7 @@ public class JSPHandler {
     /*
     * Servlet info
     */
-    public static final String PAGE_QUERY_REQUEST_PREFFIX = "xdo";
+    public static final String PAGE_QUERY_REQUEST_PREFFIX = "page";
     
     public static final int ACTION_INDEX = 0;
     public static final int ACTION_ADD = 1;
@@ -27,19 +27,29 @@ public class JSPHandler {
     public static final int ACTION_OK = 6;
     public static final int ACTION_CANCEL = 7;
     
+    public static final int ACTION_GET = 8;
+    
     public static final String USER_SESS_USER = "_USER_OBJ";
     public static final String USER_SESS_USER_ROLE = "_USER_ROLE";
     
-    public static String generateUrl(HttpServletRequest request, String servletName,  int actionCode, String queries){
+    public static String generateUrl(HttpServletRequest request, String servletName,  String action, String queries){
         String result = MainConfig.getRootApplicationUrl(request) + "/" + servletName; 
         
-        if(actionCode!=0){
-            result += "?" + JSPHandler.PAGE_QUERY_REQUEST_PREFFIX + "=" + actionCode;
+        if(action.length()!=0 && action!=null){
+            result += "?" + JSPHandler.PAGE_QUERY_REQUEST_PREFFIX + "=" + action;
         }
         
         if(queries.length()>0 && queries!=null){
             result += "&" + queries;
         }
+        return result;
+    }
+    
+    public static int requestInt(HttpServletRequest request, String requestName){
+        int result = 0;
+        try{
+            result = Integer.parseInt(request.getParameter(requestName));
+        }catch(Exception e){}
         return result;
     }
 }

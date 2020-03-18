@@ -39,7 +39,7 @@
                             <h3 class="panel-title"><strong><%= MainConfig.APP_NAME %></strong></h3>
                         </div>
                         <div class="panel-body">
-                            <form method="post" action="<%= JSPHandler.generateUrl(request, "login", JSPHandler.ACTION_PROCESS, "") %>">
+                            <form method="post" action="<%= JSPHandler.generateUrl(request, "login", "login", "") %>">
                                 <div class="form-group text-center text-primary">
                                     Silahkan login untuk menggunakan aplikasi
                                 </div>

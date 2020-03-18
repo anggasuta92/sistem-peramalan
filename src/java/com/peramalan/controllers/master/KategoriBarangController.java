@@ -3,11 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.peramalan.controllers;
+package com.peramalan.controllers.master;
 
+import com.peramalan.model.master.DbKategoriBarang;
+import com.peramalan.services.DataTablesService;
 import com.peramalan.services.JSPHandler;
+import com.peramalan.services.PaginationServices;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Vector;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,8 +22,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author OxysystemPC
  */
-@WebServlet(name = "LoginController", urlPatterns = {"/login"})
-public class LoginController extends HttpServlet {
+@WebServlet(name = "KategoriBarangController", urlPatterns = {"/kategori-barang"})
+public class KategoriBarangController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,11 +38,31 @@ public class LoginController extends HttpServlet {
             throws ServletException, IOException {
         
         String action = (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)!=null ? (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)) : "");
-        
-        if(action.equals("")){
+        String pageLocation = "";
+        String pageName = "";
+        int limitData = 10;
+  
+        if(action.equals("get-data")){
+            /* data preparation */
+            int currentPage = JSPHandler.requestInt(request, "page")==0 ? 1:JSPHandler.requestInt(request, "page");
+            int command = JSPHandler.requestInt(request, "command");
+            int totalData = DbKategoriBarang.count("");
+            PaginationServices pagination = new PaginationServices(totalData, limitData, currentPage, command);            
+            Vector datas = DbKategoriBarang.list("", DbKategoriBarang.COL_CODE, pagination.getStart(), pagination.getRecordToGet());
+            
+            request.setAttribute("current", ""+pagination.getCurrentPage());
+            request.setAttribute("total", "ini total");
+            request.setAttribute("data", datas);
+            
+            pageLocation = "/WEB-INF/master/kategori-barang/kategori-barang-table.jsp";
+            pageName = "Data Master;Kategori Barang";
+        }else{
+            pageLocation = "/WEB-INF/master/kategori-barang/kategori-barang.jsp";
+            pageName = "Data Master;Kategori Barang";
         }
         
-        request.getRequestDispatcher("/").forward(request, response);
+        request.setAttribute("Page", pageName);
+        request.getRequestDispatcher(pageLocation).forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

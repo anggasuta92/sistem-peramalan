@@ -4,3 +4,28 @@
     border-left-width: 0px;
     border-right-width: 0px;
 }
+
+/* table styler */
+#tbl {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#tbl td, #tbl th {
+  border: 1px solid #ddd;
+  padding: 5px;
+}
+
+#tbl tr:nth-child(even){background-color: #f2f2f2;}
+
+#tbl tr:hover {background-color: #ddd;}
+
+#tbl th {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+  text-align: center;
+}

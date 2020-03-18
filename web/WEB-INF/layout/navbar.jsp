@@ -10,17 +10,17 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="<%= JSPHandler.generateUrl(request, "home", 0, "") %>"><%= MainConfig.APP_NAME %></a>
+                    <a class="navbar-brand" href="<%= JSPHandler.generateUrl(request, "home", "", "") %>"><%= MainConfig.APP_NAME %></a>
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse navbar-ex1-collapse">
                     <ul class="nav navbar-nav side-nav">
-                        <li class="active"><a href="<%= JSPHandler.generateUrl(request, "home", 0, "") %>"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                        <li class="active"><a href="<%= JSPHandler.generateUrl(request, "home", "", "") %>"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-gear"></i> Data Master <b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">Kategori Barang</a></li>
+                                <li><a href="<%= JSPHandler.generateUrl(request, "kategori-barang", "", "") %>">Kategori Barang</a></li>
                                 <li><a href="#">Barang</a></li>
                             </ul>
                         </li>

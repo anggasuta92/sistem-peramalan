@@ -24,6 +24,12 @@
         <link href="<%= MainConfig.getAssetUrl(request)%>/sb/css/sb-admin.css" rel="stylesheet">
         <link rel="stylesheet" href="<%= MainConfig.getAssetUrl(request)%>/sb/font-awesome/css/font-awesome.min.css">
         <link href="<%= MainConfig.getAssetUrl(request)%>/css/apps.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="<%= MainConfig.getAssetUrl(request)%>/DataTables/datatables.min.css"/>
+        
+        <script src="<%= MainConfig.getAssetUrl(request)%>/sb/js/jquery-1.10.2.js"></script>
+        <script src="<%= MainConfig.getAssetUrl(request)%>/sb/js/bootstrap.js"></script>
+        <script type="text/javascript" src="<%= MainConfig.getAssetUrl(request)%>/DataTables/datatables.min.js"></script>
+        
         <style>
             .breadcrumb {
                 margin-top: 20px !important;
@@ -62,8 +68,7 @@
                         <% }catch(Exception e){} %>
                     </div>
                 </div><!-- /.row -->
-            </div><!-- /#page-wrapper -->
-            
-        </div>
+                
+
 
                 

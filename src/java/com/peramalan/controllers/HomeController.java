@@ -32,17 +32,26 @@ public class HomeController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        int action = (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)!=null ? Integer.parseInt(request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)) : 0);
+        String action = (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)!=null ? (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)) : "");
         String pageName = "";
+        String pageLocation = "";
         
-        switch(action){
-            default:
-                pageName = "Dashboard;Home;Uhuy";
-                break;
+        if(action.equals("index")){
+            pageName = "Dashboard;Home;Uhuy";
+            pageLocation = "/WEB-INF/home/home.jsp";            
+        }else{
+            pageName = "Dashboard;Home;Uhuy";
+            pageLocation = "/WEB-INF/home/home.jsp";
         }
         
+//        switch(action){
+//            default:
+//                pageName = "Dashboard;Home;Uhuy";
+//                break;
+//        }
+        
         request.setAttribute("Page", pageName);
-        request.getRequestDispatcher("/WEB-INF/home/home.jsp").forward(request, response);
+        request.getRequestDispatcher(pageLocation).forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
