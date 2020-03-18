@@ -5,13 +5,17 @@
  */
 package com.peramalan.controllers.master;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.peramalan.model.master.DbKategoriBarang;
 import com.peramalan.services.DataTablesService;
 import com.peramalan.services.JSPHandler;
 import com.peramalan.services.PaginationServices;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -37,32 +41,57 @@ public class KategoriBarangController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+        PrintWriter out = response.getWriter();
+        
         String action = (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)!=null ? (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)) : "");
         String pageLocation = "";
         String pageName = "";
-        int limitData = 10;
+        int limitData = 5;
   
         if(action.equals("get-data")){
+            response.setContentType("application/json;charset=UTF-8");
+            
             /* data preparation */
-            int currentPage = JSPHandler.requestInt(request, "page")==0 ? 1:JSPHandler.requestInt(request, "page");
+            int currentPage = JSPHandler.requestInt(request, "currentPage")==0 ? 1:JSPHandler.requestInt(request, "currentPage");
             int command = JSPHandler.requestInt(request, "command");
-            int totalData = DbKategoriBarang.count("");
+            String param = JSPHandler.requestString(request, "param");
+            String where = "";
+            if(param!=null && param.length()>0){
+                where = DbKategoriBarang.COL_CODE + " like '%"+ param +"%' or " + DbKategoriBarang.COL_NAME + " like '%"+ param +"%'";
+            }
+            
+            int totalData = DbKategoriBarang.count(where);
             PaginationServices pagination = new PaginationServices(totalData, limitData, currentPage, command);            
-            Vector datas = DbKategoriBarang.list("", DbKategoriBarang.COL_CODE, pagination.getStart(), pagination.getRecordToGet());
+            Vector datas = DbKategoriBarang.list(where, DbKategoriBarang.COL_CODE, pagination.getStart(), pagination.getRecordToGet());
             
-            request.setAttribute("current", ""+pagination.getCurrentPage());
-            request.setAttribute("total", "ini total");
-            request.setAttribute("data", datas);
+            Map res = new HashMap();
+            res.put("pagination", pagination);
+            res.put("data", datas);
             
-            pageLocation = "/WEB-INF/master/kategori-barang/kategori-barang-table.jsp";
+            try{
+                TimeUnit.MILLISECONDS.sleep(500);
+            }catch(Exception e){}
+            
+            try {
+                out.print(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(res));
+            } catch (Exception e) {
+            }
+            
+            //request.setAttribute("current", ""+pagination.getCurrentPage());
+            //request.setAttribute("total", "ini total");
+            //request.setAttribute("data", datas);
+            
+            //pageLocation = "/WEB-INF/master/kategori-barang/kategori-barang-table.jsp";
             pageName = "Data Master;Kategori Barang";
         }else{
             pageLocation = "/WEB-INF/master/kategori-barang/kategori-barang.jsp";
             pageName = "Data Master;Kategori Barang";
         }
         
-        request.setAttribute("Page", pageName);
-        request.getRequestDispatcher(pageLocation).forward(request, response);
+        if(pageLocation.length()>0){
+            request.setAttribute("Page", pageName);
+            request.getRequestDispatcher(pageLocation).forward(request, response);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

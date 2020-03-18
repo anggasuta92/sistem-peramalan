@@ -52,4 +52,12 @@ public class JSPHandler {
         }catch(Exception e){}
         return result;
     }
+    
+    public static String requestString(HttpServletRequest request, String requestName){
+        String result = "";
+        try{
+            result = request.getParameter(requestName);
+        }catch(Exception e){}
+        return result;
+    }
 }

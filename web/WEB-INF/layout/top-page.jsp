@@ -42,11 +42,31 @@
                 padding-bottom: 0px;
                 margin-bottom: 8px !important;
             }
+            
+            #loader {
+                position: fixed; /* or absolute */
+                top: 50%;
+                left: 60%;
+                /*bottom: 0;
+                right: 0;*/
+                z-index: 10;
+                transform: translate(-50%, -50%);
+                background-color: #dff0d8;
+                padding: 10px;
+                border-style: groove;
+                border-style: solid;
+                border-color: #3c763d;
+                border-radius: 5px;
+                border-width: thin;
+            }
         </style>
     <body>
         <div id="wrapper">
+            <div id="loader" style="display:none;text-align: center;">
+                <img id="loader-image" width="30px" height="30px" src="<%= MainConfig.getAssetUrl(request)%>/images/loader-classic.gif"/>
+                <i style="font-weight: bolder;">loading</i>
+            </div>
             <%@include file="navbar.jsp" %>
-            
             <div id="page-wrapper">
                 <div class="row border-bottom">
                     <div class="col-lg-8">

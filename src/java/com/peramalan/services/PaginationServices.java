@@ -36,27 +36,35 @@ public final class PaginationServices {
     }
     
     public void generatePaginationNumber(){
-        this.actionList();
+        if(this.currentPage>1){
+            this.start = (this.currentPage-1) * this.recordToGet;
+        }
         this.totalPage = (int) Math.ceil(((double)this.getTotalData()/(double)this.getRecordToGet()));
+        this.actionList();
     }
     
     public void actionList() {
         switch(this.command){                
             case FIRST :                
                 this.start = 0;
+                this.currentPage = 1;
                 break;
 
             case PREV :                
                 this.start = this.start - this.recordToGet;
+                this.currentPage = this.currentPage - 1;
                 if(this.start < 0){
                     this.start = 0;
+                    this.currentPage = 1;
                 }                
                 break;
 
             case NEXT :
                 this.start = this.start + this.recordToGet;
+                this.currentPage += 1;
                 if(this.start >= this.totalData){
                     this.start = this.start - this.recordToGet;
+                    this.currentPage -= 1;
                 }                
                 break;
 
@@ -67,8 +75,8 @@ public final class PaginationServices {
                 }
                 else{
                     this.start = this.totalData - this.recordToGet;
-                }                
-
+                }
+                this.currentPage = this.totalPage;
                 break;
 
             default:
