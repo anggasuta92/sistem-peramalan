@@ -16,7 +16,7 @@ public class JSPHandler {
     /*
     * Servlet info
     */
-    public static final String PAGE_QUERY_REQUEST_PREFFIX = "page";
+    public static final String PAGE_QUERY_REQUEST_PREFFIX = "_aksi";
     
     public static final int ACTION_INDEX = 0;
     public static final int ACTION_ADD = 1;

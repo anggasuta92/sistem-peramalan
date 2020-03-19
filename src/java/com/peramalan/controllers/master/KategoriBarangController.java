@@ -57,32 +57,36 @@ public class KategoriBarangController extends HttpServlet {
             String param = JSPHandler.requestString(request, "param");
             String where = "";
             if(param!=null && param.length()>0){
-                where = DbKategoriBarang.COL_CODE + " like '%"+ param +"%' or " + DbKategoriBarang.COL_NAME + " like '%"+ param +"%'";
+                where = DbKategoriBarang.COL_KODE + " like '%"+ param +"%' or " + DbKategoriBarang.COL_NAMA + " like '%"+ param +"%'";
             }
             
             int totalData = DbKategoriBarang.count(where);
             PaginationServices pagination = new PaginationServices(totalData, limitData, currentPage, command);            
-            Vector datas = DbKategoriBarang.list(where, DbKategoriBarang.COL_CODE, pagination.getStart(), pagination.getRecordToGet());
+            Vector datas = DbKategoriBarang.list(where, DbKategoriBarang.COL_KODE, pagination.getStart(), pagination.getRecordToGet());
             
             Map res = new HashMap();
             res.put("pagination", pagination);
             res.put("data", datas);
             
             try{
-                TimeUnit.MILLISECONDS.sleep(500);
+                TimeUnit.MILLISECONDS.sleep(100);
             }catch(Exception e){}
             
             try {
                 out.print(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(res));
             } catch (Exception e) {
             }
-            
-            //request.setAttribute("current", ""+pagination.getCurrentPage());
-            //request.setAttribute("total", "ini total");
-            //request.setAttribute("data", datas);
-            
-            //pageLocation = "/WEB-INF/master/kategori-barang/kategori-barang-table.jsp";
             pageName = "Data Master;Kategori Barang";
+            
+        }else if(action.equals("add-data")){
+            pageLocation = "/WEB-INF/master/kategori-barang/kategori-barang-add.jsp";
+            pageName = "Data Master;Kategori Barang;Tambah";
+        }else if(action.equals("save")){
+            
+            out.println("SAVE DATA");
+            
+            /* redirect setelah simpan */
+            response.sendRedirect(JSPHandler.generateUrl(request, "kategori-barang", "", ""));
         }else{
             pageLocation = "/WEB-INF/master/kategori-barang/kategori-barang.jsp";
             pageName = "Data Master;Kategori Barang";

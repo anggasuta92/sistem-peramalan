@@ -5,9 +5,9 @@
     
 <div class="row">
     <div class="col-lg-12">
-        <div class="panel panel-success">
+        <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i> Kategori Barang</h3>
+                <h3 class="panel-title"><i class="fa fa-archive"></i> Kategori Barang</h3>
             </div>
             <div class="panel-body">
                 <div class="row" style="padding-bottom: 10px">
@@ -15,14 +15,14 @@
                         <div class="input-group">
                             <input type="text" name="txtSearch" id="txtSearch" class="form-control" placeholder="Pencarian data...">
                             <span class="input-group-btn">
-                                <button class="btn btn-success" type="button" onclick="loadSearch()">Cari data!</button>
+                                <button class="btn btn-primary" type="button" onclick="loadSearch()">Cari data!</button>
                             </span>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <table id="tbl">
+                        <table id="tblx" class="table table-bordered table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th width="50">#</th>
@@ -38,10 +38,11 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-5 pull-left" style="padding-top: 20px">
-                        <button class="btn btn-success">Tambah Data</button>
+                    <div class="col-md-5 pull-right" style="padding-top: 20px" align="right">
+                        <button class="btn btn-primary" onclick="addNew()" ><span class="fa fa-plus-circle"></span> Tambah Data</button>
+                        <button class="btn btn-warning" onclick="back()" ><span class="fa fa-chevron-circle-left"></span> Kembali</button>
                     </div>
-                    <div class="col-md-5 pull-right" id="nav-button">
+                    <div class="col-md-5 pull-left" id="nav-button">
                         <!-- navigation button here -->
                     </div>
                 </div>
@@ -51,6 +52,15 @@
 </div><!-- /.row -->
 
 <script>
+    
+    function addNew(){
+        location.href = "<%= JSPHandler.generateUrl(request, "kategori-barang", "add-data", "") %>";
+    }
+    
+    function back(){
+        location.href = "<%= JSPHandler.generateUrl(request, "home", "", "") %>";
+    }
+    
     var currentPage = 0;
     
     /* init data */
@@ -106,12 +116,12 @@
                 var paginationInfo = datas.pagination;
                 var navButton = ''+
                         '<nav>'+
-                        '    <ul class="pager">'+
-                        '        <li><button class="btn btn-default" onClick="loadFirst()">First</button></li>'+
-                        '        <li><button class="btn btn-default" onClick="loadPrev()">Prev</button></li>'+
+                        '    <ul class="pager" style="text-align:left;">'+
+                        '        <li><button class="btn btn-default btn-flat" onClick="loadFirst()"><span class="fa fa-fast-backward"></span></button></li>'+
+                        '        <li><button class="btn btn-default" onClick="loadPrev()"><span class="fa fa-backward"></span></button></li>'+
                         '        <li>Halaman '+ paginationInfo.currentPage +' dari '+ paginationInfo.totalPage +'</li>'+
-                        '        <li><button class="btn btn-default" onClick="loadNext()">Next</button></li>'+
-                        '        <li><button class="btn btn-default" onClick="loadLast()">Last</button></li>'+
+                        '        <li><button class="btn btn-default" onClick="loadNext()"><span class="fa fa-forward"></button></li>'+
+                        '        <li><button class="btn btn-default" onClick="loadLast()"><span class="fa fa-fast-forward"></button></li>'+
                         '    </ul>'+
                         '</nav>';
                 if(paginationInfo.totalPage>1){
@@ -131,11 +141,11 @@
                                     '<td align="center">'+(startNumber+i)+'</td>'+
                                     '<td align="center">'+data[i].code+'</td>'+
                                     '<td>'+data[i].nama+'</td>'+
-                                    '<td align="center">'+
-                                        '<div class="btn-group" role="group">'+
-                                            '<button class="btn btn-sm btn-warning">ubah</button>'+
-                                            '<button class="btn btn-sm btn-danger">hapus</button>'+
-                                        '</div>'+
+                                    '<td align="center" class="margin">'+
+                                        //'<div class="btn-group" role="group">'+
+                                            '<button class="btn btn-sm btn-default"><span class="fa fa-pencil text-primary"></span></button>&nbsp;'+
+                                            '<button class="btn btn-sm btn-default"><span class="fa fa-trash-o text-danger"></span></button>'+
+                                        //'</div>'+
                                     '</td>'+
                                 '</tr>';
                     }

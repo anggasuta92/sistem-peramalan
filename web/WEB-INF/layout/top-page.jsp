@@ -59,6 +59,14 @@
                 border-radius: 5px;
                 border-width: thin;
             }
+            
+            .breadcrumb > li + li:before {
+                /*color: #ccc;*/
+                color: #ccc;
+                content: "/";
+                padding: 0 0px;
+            }
+            
         </style>
     <body>
         <div id="wrapper">
@@ -69,13 +77,12 @@
             <%@include file="navbar.jsp" %>
             <div id="page-wrapper">
                 <div class="row border-bottom">
-                    <div class="col-lg-8">
+                    <div class="col-lg-7">
                         <h3>UD. Parama Store <small>Jalan Gatsu VI no. 46 Denpasar</small> </h3>
                     </div>
-                    <div class="col-lg-4" align="right">
+                    <div class="col-lg-5" align="right">
                         <% try{ %>
                         <ol class="breadcrumb">
-                            <li class="text-muted"><span class="fa fa-plane"></span></li>
                             <%
                                  String[] breadcrumps = request.getAttribute("Page").toString().split(";");
                                  for(int b = 0; b < breadcrumps.length; b++){

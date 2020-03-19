@@ -23,14 +23,14 @@ public class DbKategoriBarang {
     
     /* colName */
     public static String COL_KATEGORI_ID = "kategori_barang_id";
-    public static String COL_CODE = "code";
-    public static String COL_NAME = "nama";
+    public static String COL_KODE = "kode";
+    public static String COL_NAMA = "nama";
     
     /* crud */
     public static void fetchObject(ResultSet rs, KategoriBarang object) throws SQLException{
         object.setKategoriBarangId(rs.getLong(COL_KATEGORI_ID));
-        object.setCode(rs.getString(COL_CODE));
-        object.setNama(rs.getString(COL_NAME));
+        object.setCode(rs.getString(COL_KODE));
+        object.setNama(rs.getString(COL_NAMA));
     }
     
     
@@ -38,7 +38,9 @@ public class DbKategoriBarang {
         int result = 0;
         Connection conn = null;
         Statement stmt = null;
+        
         try{
+            if(where.trim().length()>0) where = " where " + where;
             String sql = "select count("+ COL_KATEGORI_ID +") as total from " + tableName + where;
             
             conn = DbConnection.getConnection();
