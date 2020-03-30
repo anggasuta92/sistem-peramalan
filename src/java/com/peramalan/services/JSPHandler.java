@@ -5,7 +5,10 @@
  */
 package com.peramalan.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.peramalan.config.MainConfig;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -26,11 +29,12 @@ public class JSPHandler {
     public static final int ACTION_PROCESS = 5;
     public static final int ACTION_OK = 6;
     public static final int ACTION_CANCEL = 7;
-    
     public static final int ACTION_GET = 8;
     
-    public static final String USER_SESS_USER = "_USER_OBJ";
-    public static final String USER_SESS_USER_ROLE = "_USER_ROLE";
+    /* session section */
+    public static final String SESSION_USER_OBJECT = "_USER_OBJ";
+    public static final String SESSION_USER_ROLE = "_USER_ROLE";
+    public static final String SESSION_MESSAGING = "_MESSAGING_SESSION";
     
     public static String generateUrl(HttpServletRequest request, String servletName,  String action, String queries){
         String result = MainConfig.getRootApplicationUrl(request) + "/" + servletName; 
@@ -53,11 +57,32 @@ public class JSPHandler {
         return result;
     }
     
+    public static long requestLong(HttpServletRequest request, String requestName){
+        long result = 0;
+        try{
+            result = Long.parseLong(request.getParameter(requestName));
+        }catch(Exception e){}
+        return result;
+    }
+    
     public static String requestString(HttpServletRequest request, String requestName){
         String result = "";
         try{
             result = request.getParameter(requestName);
         }catch(Exception e){}
+        return result;
+    }
+    
+    public static String generateJsonMessage(int code, String message){
+        String result = "";
+        Map map = new HashMap();
+        map.put("code", code);
+        map.put("message", message);
+        
+        try{
+            result = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(map);
+        }catch(Exception e){}
+        
         return result;
     }
 }

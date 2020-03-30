@@ -11,7 +11,7 @@ package com.peramalan.model.master;
  */
 public class KategoriBarang {
     private long kategoriBarangId;
-    private String code;
+    private String kode;
     private String nama;
 
     /**
@@ -43,17 +43,17 @@ public class KategoriBarang {
     }
 
     /**
-     * @return the code
+     * @return the kode
      */
-    public String getCode() {
-        return code;
+    public String getKode() {
+        return kode;
     }
 
     /**
-     * @param code the code to set
+     * @param kode the kode to set
      */
-    public void setCode(String code) {
-        this.code = code;
+    public void setKode(String kode) {
+        this.kode = kode;
     }
     
     

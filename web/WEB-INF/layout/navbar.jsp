@@ -1,4 +1,4 @@
-            <%@page import="com.peramalan.config.MainConfig"%>
+<%@page import="com.peramalan.config.MainConfig"%>
 <%@page import="com.peramalan.services.JSPHandler"%>
 <!-- Sidebar -->
             <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -16,6 +16,10 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse navbar-ex1-collapse">
                     <ul class="nav navbar-nav side-nav">
+                        <li class="" style="padding: 40px;padding-bottom: 10px;margin: auto; text-align: center">
+                            <img src="<%= MainConfig.getAssetUrl(request)%>/images/avatar.png" alt="Avatar" style="width:120px;height: 120px;border-radius: 50%;">
+                            <label style="color: #fff;">User Name</label>
+                        </li>
                         <li class=""><a href="<%= JSPHandler.generateUrl(request, "home", "", "") %>"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-gear"></i> Data Master <b class="caret"></b></a>
@@ -24,7 +28,7 @@
                                 <li><a href="#">Barang</a></li>
                             </ul>
                         </li>
-                        <li><a href="charts.html"><i class="fa fa-shopping-cart"></i> Data Penjualan</a></li>
+                        <li><a href="#"><i class="fa fa-shopping-cart"></i> Data Penjualan</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bar-chart-o"></i> Peramalan <b class="caret"></b></a>
                             <ul class="dropdown-menu">

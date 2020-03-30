@@ -27,10 +27,24 @@
         <link href="<%= MainConfig.getAssetUrl(request)%>/sb/css/sb-admin.css" rel="stylesheet">
         <link rel="stylesheet" href="<%= MainConfig.getAssetUrl(request)%>/sb/font-awesome/css/font-awesome.min.css">
         <link href="<%= MainConfig.getAssetUrl(request)%>/css/apps.css" rel="stylesheet">
+        <link href="<%= MainConfig.getAssetUrl(request)%>/css/login.css" rel="stylesheet">
 
     </head>
 
     <body>
+        
+        <div class="login-page">
+            <div class="form">
+                <form class="login-form" action="<%= JSPHandler.generateUrl(request, "home", "", "") %>" method="post">
+                    <h3><strong>SISTEM PERAMALAN</strong></h3>
+                    <input type="text" placeholder="Nama Pengguna"/>
+                    <input type="password" placeholder="Kata Sandi"/>
+                    <button>login</button>
+                </form>
+            </div>
+        </div>
+        
+        <!--
         <div class="container">
             <div class="row">
                 <div class="col-md-4 col-md-offset-4">
@@ -56,7 +70,7 @@
                 </div>
             </div>
         </div>
-        
+        -->
         <script src="<%= MainConfig.getAssetUrl(request)%>/sb/js/jquery-1.10.2.js"></script>
         <script src="<%= MainConfig.getAssetUrl(request)%>/sb/js/bootstrap.js"></script>
 

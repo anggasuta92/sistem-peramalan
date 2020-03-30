@@ -9,4 +9,8 @@
         <exception-type>java.lang.Exception</exception-type>
         <location>/err.jsp</location>
     </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/err.jsp</location>
+    </error-page>
 </web-app>

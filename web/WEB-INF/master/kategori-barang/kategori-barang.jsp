@@ -54,7 +54,7 @@
 <script>
     
     function addNew(){
-        location.href = "<%= JSPHandler.generateUrl(request, "kategori-barang", "add-data", "") %>";
+        location.href = "<%= JSPHandler.generateUrl(request, "kategori-barang", "add", "") %>";
     }
     
     function back(){
@@ -102,6 +102,39 @@
         loadData(<%= PaginationServices.FIRST %>, currentPage, param);
     }
     
+    function view(id){
+        location.href = "<%= JSPHandler.generateUrl(request, "kategori-barang", "edit", "") %>&id="+id;
+    }
+    
+    function confirmDelete(idKategori, note){
+        swal({
+        title: "Konfirmasi",
+        text: "Apakah anda ingin menghapus data kategori: \n" + note + "?",
+        icon: "info",
+        buttons: true,
+        dangerMode: true,
+        })
+        .then((deleteSaja) => {
+            if (deleteSaja) {
+                $.ajax({
+                    type  : 'post',
+                    data  : { id: idKategori},
+                    url   : '<%= JSPHandler.generateUrl(request, "kategori-barang", "delete", "") %>',
+                    async : false,
+                    dataType : 'json',
+                    success : function(datas){
+                        var messages = datas.message;
+                        var code = datas.code;
+                        swal(messages);
+                        if(code==0){
+                            loadData("", 1, "");
+                        }
+                    }
+                });
+            }
+        });
+    }
+    
     function loadData(cmd, curPage, searchParam){
         $.ajax({
             type  : 'get',
@@ -139,13 +172,11 @@
                     for(i=0; i<data.length; i++){
                         html += '<tr>'+
                                     '<td align="center">'+(startNumber+i)+'</td>'+
-                                    '<td align="center">'+data[i].code+'</td>'+
+                                    '<td align="center">'+data[i].kode+'</td>'+
                                     '<td>'+data[i].nama+'</td>'+
                                     '<td align="center" class="margin">'+
-                                        //'<div class="btn-group" role="group">'+
-                                            '<button class="btn btn-sm btn-default"><span class="fa fa-pencil text-primary"></span></button>&nbsp;'+
-                                            '<button class="btn btn-sm btn-default"><span class="fa fa-trash-o text-danger"></span></button>'+
-                                        //'</div>'+
+                                        '<button class="btn btn-sm btn-default" onClick="view(\''+data[i].kategoriBarangId.toString()+'\')"><span class="fa fa-pencil text-primary"></span></button>&nbsp;'+
+                                        '<button class="btn btn-sm btn-default" onClick="confirmDelete(\''+data[i].kategoriBarangId+'\', \'Kode: '+ data[i].kode +' | Nama: '+ data[i].nama +'\')"><span class="fa fa-trash-o text-danger"></span></button>'+
                                     '</td>'+
                                 '</tr>';
                     }
