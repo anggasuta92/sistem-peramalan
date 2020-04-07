@@ -6,6 +6,8 @@
 package com.peramalan.controllers.master;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.peramalan.model.master.Barang;
+import com.peramalan.model.master.DbBarang;
 import com.peramalan.model.master.DbKategoriBarang;
 import com.peramalan.model.master.KategoriBarang;
 import com.peramalan.services.JSPHandler;
@@ -27,8 +29,8 @@ import javax.servlet.http.HttpSession;
  *
  * @author OxysystemPC
  */
-@WebServlet(name = "KategoriBarangController", urlPatterns = {"/kategori-barang"})
-public class KategoriBarangController extends HttpServlet {
+@WebServlet(name = "BarangController", urlPatterns = {"/barang"})
+public class BarangController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,11 +48,11 @@ public class KategoriBarangController extends HttpServlet {
         HttpSession session = request.getSession(true);
         
         String action = (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)!=null ? (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)) : "");
-        String pageLocation = "";
         String pageName = "";
-        int limitData = 5;
+        String pageLocation = "";
+        int limitData = 10;
         boolean isSuccess = false;
-  
+        
         if(action.equals("get-data")){
             response.setContentType("application/json;charset=UTF-8");
             
@@ -60,12 +62,12 @@ public class KategoriBarangController extends HttpServlet {
             String param = JSPHandler.requestString(request, "param");
             String where = "";
             if(param!=null && param.length()>0){
-                where = DbKategoriBarang.COL_KODE + " like '%"+ param +"%' or " + DbKategoriBarang.COL_NAMA + " like '%"+ param +"%'";
+                where = DbBarang.COL_KODE + " like '%"+ param +"%' or "+DbBarang.COL_BARCODE + " like '%"+ param +"%' or " + DbBarang.COL_NAMA + " like '%"+ param +"%'";
             }
             
-            int totalData = DbKategoriBarang.count(where);
+            int totalData = DbBarang.count(where);
             PaginationServices pagination = new PaginationServices(totalData, limitData, currentPage, command);            
-            Vector datas = DbKategoriBarang.list(where, DbKategoriBarang.COL_KODE, pagination.getStart(), pagination.getRecordToGet());
+            Vector datas = DbBarang.list(where, DbBarang.COL_KODE, pagination.getStart(), pagination.getRecordToGet());
             
             Map res = new HashMap();
             res.put("pagination", pagination);
@@ -81,39 +83,71 @@ public class KategoriBarangController extends HttpServlet {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            pageName = "Data Master;Kategori Barang";
+            pageName = "Data Master;Barang";
+            return;
             
-        }else if(action.equals("add")){
-            pageLocation = "/WEB-INF/master/kategori-barang/kategori-barang-add.jsp";
-            pageName = "Data Master;Kategori Barang;Tambah";
+        }else if(action.equals("delete")){
+            response.setContentType("application/json;charset=UTF-8");
+            
+            long id = JSPHandler.requestLong(request, "id");
+            
+            Barang barang = new Barang();
+            try{
+                barang = DbBarang.findById(id);
+            }catch(Exception e){
+                System.out.println("err_delete_controller: findById " + e.toString());
+            }
+            
+            if(barang.getBarangId()!=0){
+                boolean success = DbBarang.delete(barang);
+                if(success){
+                    out.println(JSPHandler.generateJsonMessage(0, "Data telah terhapus"));
+                }else{
+                    out.println(JSPHandler.generateJsonMessage(0, "Data gagal dihapus"));
+                }
+            }else{
+                out.println(JSPHandler.generateJsonMessage(0, "Data gagal dihapus"));
+            }
+            return;
             
         }else if(action.equals("edit")){
             long id = JSPHandler.requestLong(request, "id");
             
-            KategoriBarang data = new KategoriBarang();
+            Barang data = new Barang();
             try{
-                data = DbKategoriBarang.findById(id);
+                data = DbBarang.findById(id);
             }catch(Exception e){
                 System.out.println("err_findById: " + e.toString());
             }
             
-            if(data.getKategoriBarangId()!=0){
+            if(data.getBarangId()!=0){
                 request.setAttribute("data", data);
-                pageLocation = "/WEB-INF/master/kategori-barang/kategori-barang-edit.jsp";
-                pageName = "Data Master;Kategori Barang;Ubah";
+                pageLocation = "/WEB-INF/master/barang/barang-edit.jsp";
+                pageName = "Data Master;Barang;Ubah";
+                
             }else{
-                response.sendRedirect(JSPHandler.generateUrl(request, "kategori-barang", "", ""));
+                response.sendRedirect(JSPHandler.generateUrl(request, "barang", "", ""));
+                return;
             }
         
         }else if(action.equals("update")){
             long oid = 0;
-            KategoriBarang data = new KategoriBarang();
-            data.setKategoriBarangId(JSPHandler.requestLong(request, DbKategoriBarang.COL_KATEGORI_BARANG_ID));
-            data.setKode(JSPHandler.requestString(request, DbKategoriBarang.COL_KODE));
-            data.setNama(JSPHandler.requestString(request, DbKategoriBarang.COL_NAMA));
+            Barang data = new Barang();
+            KategoriBarang kategori = new KategoriBarang();
+            try{
+                kategori = DbKategoriBarang.findById(JSPHandler.requestLong(request, DbBarang.COL_KATEGORI_BARANG_ID));
+            }catch(Exception e){}
+            
+            data.setKategoriBarang(kategori);
+            data.setKode(JSPHandler.requestString(request, DbBarang.COL_KODE));
+            data.setBarcode(JSPHandler.requestString(request, DbBarang.COL_BARCODE));
+            data.setNama(JSPHandler.requestString(request, DbBarang.COL_NAMA));
+            data.setSatuan(JSPHandler.requestString(request, DbBarang.COL_SATUAN));
+            data.setAlpha(JSPHandler.requestDouble(request, DbBarang.COL_ALPHA));
+            data.setBarangId(JSPHandler.requestLong(request, DbBarang.COL_BARANG_ID));
             
             try {
-                oid = DbKategoriBarang.update(data);
+                oid = DbBarang.update(data);
                 isSuccess = true;
             } catch (Exception e) {
                 System.out.println("err_insert_controller:" + e.toString());
@@ -126,17 +160,30 @@ public class KategoriBarangController extends HttpServlet {
                 session.setAttribute(JSPHandler.SESSION_MESSAGING, "Data gagal tersimpan");
             }
             
-            response.sendRedirect(JSPHandler.generateUrl(request, "kategori-barang", "edit", "id="+oid));
+            response.sendRedirect(JSPHandler.generateUrl(request, "barang", "edit", "id="+oid));
             return;
+            
+        }else if(action.equals("add")){
+            pageLocation = "/WEB-INF/master/barang/barang-add.jsp";
+            pageName = "Data Master;Barang;Tambah";
             
         }else if(action.equals("save")){
             long oid = 0;
-            KategoriBarang data = new KategoriBarang();
-            data.setKode(JSPHandler.requestString(request, DbKategoriBarang.COL_KODE));
-            data.setNama(JSPHandler.requestString(request, DbKategoriBarang.COL_NAMA));
+            Barang data = new Barang();
+            KategoriBarang kategori = new KategoriBarang();
+            try{
+                kategori = DbKategoriBarang.findById(JSPHandler.requestLong(request, DbBarang.COL_KATEGORI_BARANG_ID));
+            }catch(Exception e){}
+            
+            data.setKategoriBarang(kategori);
+            data.setKode(JSPHandler.requestString(request, DbBarang.COL_KODE));
+            data.setBarcode(JSPHandler.requestString(request, DbBarang.COL_BARCODE));
+            data.setNama(JSPHandler.requestString(request, DbBarang.COL_NAMA));
+            data.setSatuan(JSPHandler.requestString(request, DbBarang.COL_SATUAN));
+            data.setAlpha(JSPHandler.requestDouble(request, DbBarang.COL_ALPHA));
             
             try {
-                oid = DbKategoriBarang.save(data);
+                oid = DbBarang.save(data);
                 isSuccess = true;
             } catch (Exception e) {
                 System.out.println("err_insert_controller:" + e.toString());
@@ -150,35 +197,12 @@ public class KategoriBarangController extends HttpServlet {
             }
             
             /* redirect setelah simpan */
-            response.sendRedirect(JSPHandler.generateUrl(request, "kategori-barang", "edit", "id="+oid));
+            response.sendRedirect(JSPHandler.generateUrl(request, "barang", "edit", "id="+oid));
             return;
             
-        }else if(action.equals("delete")){
-            response.setContentType("application/json;charset=UTF-8");
-            
-            long id = JSPHandler.requestLong(request, "id");
-            
-            KategoriBarang kategoriBarang = new KategoriBarang();
-            try{
-                kategoriBarang = DbKategoriBarang.findById(id);
-            }catch(Exception e){
-                System.out.println("err_delete_controller: findById " + e.toString());
-            }
-            
-            if(kategoriBarang.getKategoriBarangId()!=0){
-                boolean success = DbKategoriBarang.delete(kategoriBarang);
-                if(success){
-                    out.println(JSPHandler.generateJsonMessage(0, "Data telah terhapus"));
-                }else{
-                    out.println(JSPHandler.generateJsonMessage(0, "Data gagal dihapus"));
-                }
-            }else{
-                out.println(JSPHandler.generateJsonMessage(0, "Data gagal dihapus"));
-            }
-            
         }else{
-            pageLocation = "/WEB-INF/master/kategori-barang/kategori-barang.jsp";
-            pageName = "Data Master;Kategori Barang";
+            pageLocation = "/WEB-INF/master/barang/barang.jsp";
+            pageName = "Data Master;Barang";
         }
         
         if(pageLocation.length()>0){

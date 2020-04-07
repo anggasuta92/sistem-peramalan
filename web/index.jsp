@@ -32,10 +32,10 @@
     </head>
 
     <body>
-        
         <div class="login-page">
             <div class="form">
                 <form class="login-form" action="<%= JSPHandler.generateUrl(request, "home", "", "") %>" method="post">
+                    <img src="<%= MainConfig.getAssetUrl(request)%>/images/avatar.png" alt="Avatar" style="width:120px;height: 120px;border-radius: 50%;">
                     <h3><strong>SISTEM PERAMALAN</strong></h3>
                     <input type="text" placeholder="Nama Pengguna"/>
                     <input type="password" placeholder="Kata Sandi"/>
@@ -43,34 +43,6 @@
                 </form>
             </div>
         </div>
-        
-        <!--
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 col-md-offset-4">
-                    <div class="login-panel panel panel-success">
-                        <div class="panel-heading text-center">
-                            <h3 class="panel-title"><strong><%= MainConfig.APP_NAME %></strong></h3>
-                        </div>
-                        <div class="panel-body">
-                            <form method="post" action="<%= JSPHandler.generateUrl(request, "login", "login", "") %>">
-                                <div class="form-group text-center text-primary">
-                                    Silahkan login untuk menggunakan aplikasi
-                                </div>
-                                <div class="form-group">
-                                    <input class="form-control" placeholder="Nama pengguna" name="username" type="text" required>
-                                </div>
-                                <div class="form-group">
-                                    <input class="form-control" placeholder="Kata sandi" name="password" type="password" value="" required>
-                                </div>
-                                <button type="submit" class="btn btn-md btn-success btn-block">Login</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        -->
         <script src="<%= MainConfig.getAssetUrl(request)%>/sb/js/jquery-1.10.2.js"></script>
         <script src="<%= MainConfig.getAssetUrl(request)%>/sb/js/bootstrap.js"></script>
 

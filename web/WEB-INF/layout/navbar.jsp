@@ -25,10 +25,10 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-gear"></i> Data Master <b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 <li><a href="<%= JSPHandler.generateUrl(request, "kategori-barang", "", "") %>">Kategori Barang</a></li>
-                                <li><a href="#">Barang</a></li>
+                                <li><a href="<%= JSPHandler.generateUrl(request, "barang", "", "") %>">Barang</a></li>
                             </ul>
                         </li>
-                        <li><a href="#"><i class="fa fa-shopping-cart"></i> Data Penjualan</a></li>
+                        <li><a href="<%= JSPHandler.generateUrl(request, "penjualan", "", "") %>"><i class="fa fa-shopping-cart"></i> Data Penjualan</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bar-chart-o"></i> Peramalan <b class="caret"></b></a>
                             <ul class="dropdown-menu">

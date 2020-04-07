@@ -65,6 +65,14 @@ public class JSPHandler {
         return result;
     }
     
+    public static double requestDouble(HttpServletRequest request, String requestName){
+        double result = 0;
+        try{
+            result = Double.valueOf(request.getParameter(requestName));
+        }catch(Exception e){}
+        return result;
+    }
+    
     public static String requestString(HttpServletRequest request, String requestName){
         String result = "";
         try{

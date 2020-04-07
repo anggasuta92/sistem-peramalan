@@ -28,6 +28,7 @@
         <script src="<%= MainConfig.getAssetUrl(request)%>/sb/js/jquery-1.10.2.js"></script>
         <script src="<%= MainConfig.getAssetUrl(request)%>/sb/js/bootstrap.js"></script>
         <script src="<%= MainConfig.getAssetUrl(request)%>/js/sweetalert.js"></script>
+        <script src="<%= MainConfig.getAssetUrl(request)%>/js/numeral.js"></script>
         
         <style>
             .breadcrumb {
@@ -69,6 +70,11 @@
             th {
                 text-align: center !important;
                 background-color: #dff0d8;
+                font-size: small;
+            }
+            
+            td {
+                font-size: small;
             }
             
             .table > tbody > tr > td, .table > tfoot > tr > td {

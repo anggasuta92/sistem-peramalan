@@ -49,7 +49,14 @@
         location.href = "<%= JSPHandler.generateUrl(request, "kategori-barang", "", "") %>";
     }
     
-    console.log('<%= JSPHandler.SESSION_MESSAGING +": "+ ((String) session.getAttribute(JSPHandler.SESSION_MESSAGING)) %>');
+    <%
+        if(session.getAttribute(JSPHandler.SESSION_MESSAGING)!=null){ 
+    %>
+    swal('<%= session.getAttribute(JSPHandler.SESSION_MESSAGING) %>');
+    <%
+            session.removeAttribute(JSPHandler.SESSION_MESSAGING);
+        }
+    %>
 
 </script>
                 

@@ -1,8 +1,8 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
 .login-page {
-  width: 360px;
-  padding: 8% 0 0;
+  width: 330px;
+  padding: 4% 0 0;
   margin: auto;
 }
 .form {
@@ -22,7 +22,7 @@
   width: 100%;
   border: 0;
   margin: 0 0 15px;
-  padding: 15px;
+  padding: 10px;
   box-sizing: border-box;
   font-size: 14px;
 }
@@ -33,7 +33,7 @@
   background: #4CAF50;
   width: 100%;
   border: 0;
-  padding: 15px;
+  padding: 10px;
   color: #FFFFFF;
   font-size: 14px;
   -webkit-transition: all 0.3 ease;
@@ -89,11 +89,15 @@
   color: #EF3B3A;
 }
 body {
-  background: #76b852; /* fallback for old browsers */
-  background: -webkit-linear-gradient(right, #76b852, #8DC26F);
-  background: -moz-linear-gradient(right, #76b852, #8DC26F);
-  background: -o-linear-gradient(right, #76b852, #8DC26F);
-  background: linear-gradient(to left, #76b852, #8DC26F);
+  /*background: #76b852;  fallback for old browsers */
+  /*background: #3c8dbc; /* fallback for old browsers */
+  /*
+  background: -webkit-linear-gradient(right, #3c8dbc, #8DC26F);
+  background: -moz-linear-gradient(right, #3c8dbc, #8DC26F);
+  background: -o-linear-gradient(right, #3c8dbc, #8DC26F);
+  background: linear-gradient(to left, #3c8dbc, #8DC26F);
+  */
+  background: #f2f2f2;
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;      

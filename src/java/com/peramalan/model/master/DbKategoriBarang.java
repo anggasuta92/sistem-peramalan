@@ -31,7 +31,7 @@ public class DbKategoriBarang {
     /* crud */
     public static boolean delete(KategoriBarang data){
         boolean result = false;
-        String sql = "delete from kategori_barang where " + COL_KATEGORI_BARANG_ID + "=?";
+        String sql = "delete from "+ tableName +" where " + COL_KATEGORI_BARANG_ID + "=?";
         
         if(data.getKategoriBarangId()==0){
             return false;
@@ -141,7 +141,6 @@ public class DbKategoriBarang {
         object.setNama(rs.getString(COL_NAMA));
     }
     
-    
     public static int count(String where){
         int result = 0;
         Connection conn = null;
@@ -213,7 +212,6 @@ public class DbKategoriBarang {
             stmt = conn.prepareStatement(sql);
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
-            System.out.println("sql: " + stmt.toString());
             
             while(rs.next()){
                 fetchObject(rs, result);
