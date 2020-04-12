@@ -24,11 +24,13 @@
         <link href="<%= MainConfig.getAssetUrl(request)%>/sb/css/sb-admin.css" rel="stylesheet">
         <link rel="stylesheet" href="<%= MainConfig.getAssetUrl(request)%>/sb/font-awesome/css/font-awesome.min.css">
         <link href="<%= MainConfig.getAssetUrl(request)%>/css/apps.css" rel="stylesheet">
+        <link href="<%= MainConfig.getAssetUrl(request)%>/jquery-ui-themes-1.12.1/themes/ui-lightness/jquery-ui.min.css" rel="stylesheet">
         
         <script src="<%= MainConfig.getAssetUrl(request)%>/sb/js/jquery-1.10.2.js"></script>
         <script src="<%= MainConfig.getAssetUrl(request)%>/sb/js/bootstrap.js"></script>
         <script src="<%= MainConfig.getAssetUrl(request)%>/js/sweetalert.js"></script>
         <script src="<%= MainConfig.getAssetUrl(request)%>/js/numeral.js"></script>
+        <script src="<%= MainConfig.getAssetUrl(request)%>/jquery-ui-1.12.1/jquery-ui.min.js"></script>
         
         <style>
             .breadcrumb {

@@ -29,7 +29,18 @@ public class MainConfig {
     * servlet function
     */
     public static String getRootApplicationUrl(HttpServletRequest request){
-        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "" + request.getContextPath() + "";
+        String scheme = request.getHeader("X-Forwarded-Proto");
+        
+        if(scheme==null || scheme.equalsIgnoreCase("null")){
+            scheme = "http://";
+        }else{
+            scheme += "://";
+        }
+        return scheme + request.getServerName() + ":" + request.getServerPort() + "" + request.getContextPath() + "";
+        
+        
+        //return request.getServerName() + ":" + request.getServerPort() + "" + request.getContextPath() + "";
+        //return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "" + request.getContextPath() + "";
     }
     
     public static String getAssetUrl(HttpServletRequest request){

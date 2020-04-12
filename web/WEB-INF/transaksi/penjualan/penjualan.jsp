@@ -5,6 +5,20 @@
 <%@page import="com.peramalan.services.JSPHandler"%>
 <%@ include file="../../layout/top-page.jsp"%>
 
+<style>
+    /*.modal-header, h4, .close { */
+    .modal-header, h4 {
+        background-color: #5cb85c;
+        color:white !important;
+        text-align: center;
+        font-size: 30px;
+        height: 50px;
+    }
+    .modal-footer {
+        background-color: #f9f9f9;
+    }
+</style>
+
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-primary">
@@ -69,7 +83,9 @@
                 </div>
                 <div class="row">
                     <div class="col-md-5 pull-right" style="padding-top: 20px" align="right">
-                        <button class="btn btn-primary" onclick="addNew()" ><span class="fa fa-plus-circle"></span> Tambah Data</button>
+                        <button class="btn btn-primary"><span class="fa fa-sign-in"></span> Import</button>
+                        <button class="btn btn-primary"><span class="fa fa-sign-out"></span> Export</button>
+                        <button class="btn btn-primary" id="btnOpenEditor"><span class="fa fa-plus-circle"></span> Editor Penjualan</button>
                         <button class="btn btn-warning" onclick="back()" ><span class="fa fa-chevron-circle-left"></span> Kembali</button>
                     </div>
                     <div class="col-md-5 pull-left" id="nav-button">
@@ -81,8 +97,110 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="modalPenjualan" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="padding:5px;">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                Editor Penjualan
+            </div>
+            <div class="modal-body" style="padding:10px">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="bulan">Bulan</label>
+                            <select name="param_bulan_editor" id="param_bulan" class="form-control">
+                                <option value="0"> pilih bulan... </option>
+                                <% for(int bulan = 1; bulan < TransaksiService.periodeBulan.length; bulan++){ %>
+                                <option value="<%= bulan %>"> <%= TransaksiService.periodeBulan[bulan] %> </option>
+                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="bulan">Tahun</label>
+                            <select name="param_tahun_editor" id="param_tahun" class="form-control">
+                                <option value="0"> pilih tahun... </option>
+                                <% for(int tahun = 0; tahun < TransaksiService.periodeTahun().length; tahun++){ %>
+                                <option value="<%= TransaksiService.periodeTahun()[tahun] %>"> <%= TransaksiService.periodeTahun()[tahun] %> </option>
+                                <% } %>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group ui-widget">
+                                <label for="tags"><span class="fa fa-barcode"></span> Pencarian Barang</label>
+                                <input type="text" class="form-control" id="itemSearch" placeholder="Masukkan kode / barcode / nama barang...">
+                            </div>
+                            <div class="form-group">
+                                <label for=""><span class="fa fa-barcode"></span> Code</label>
+                                <input type="text" class="form-control" id="" placeholder="" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for=""><span class=""></span> Nama Barang</label>
+                                <input type="text" class="form-control" id="" placeholder="" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for=""><span class=""></span> QTY</label>
+                                <input type="text" class="form-control" id="" placeholder="" disabled>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="fa fa-chevron-circle-left"></span> Keluar</button>
+            </div>
+        </div>
+    </div>
+</div> 
+                            
 <script>
-    
+  $( function() {
+    $( "#itemSearch" ).autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "<%= JSPHandler.generateUrl(request, "barang", "get-data", "") %>",
+                data: { param: request.term },
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                //success: response,
+                success: function(data) {
+                    var datas = data.data;
+                    if(datas.length<=0){
+                        datas = [{"kode":"Data not found","nama":"Data not found", "id":"0"}];
+                    }else if(datas.length==1){
+                        /* langsung munculkan di bawahnya */
+                    }
+                    response(datas);
+                },
+                error: function () {
+                    var obj = [{"kode":"Data not found","nama":"Data not found", "id":"0"}];
+                    response(obj);
+                }
+            });
+        }
+    }).autocomplete('instance')._renderItem = function( ul, item ) {
+        return $('<li>')
+            .append('<div class="row" style="padding:10px; border:1px;"><div class="col-md-3">'+ item.kode +'</div><div class="col-md-9">'+ item.nama +'</div></div>')
+            .appendTo(ul);
+    };;
+  } );
+  </script>
+                            
+<script>    
+    function back(){
+        location.href = "<%= JSPHandler.generateUrl(request, "home", "", "") %>";
+    }
+      
+    $("#btnOpenEditor").click(function(){
+        $("#modalPenjualan").modal({backdrop: 'static', keyboard: false});
+        $( "#itemSearch" ).autocomplete( "option", "appendTo", ".eventInsForm" );
+    });
+
     $("#txtSearch").on('keyup', function (e) {
         if (e.keyCode === 13) {
             loadSearch();

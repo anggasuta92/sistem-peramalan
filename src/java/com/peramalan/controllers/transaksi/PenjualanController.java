@@ -88,6 +88,10 @@ public class PenjualanController extends HttpServlet {
             pageName = "Data Master;Barang";
             return;
             
+        }else if(action.equals("editor")){
+            pageName = "Transaksi;Penjualan;Editor";
+            pageLocation = "/WEB-INF/transaksi/penjualan/penjualan-editor.jsp";            
+            
         }else if(action.equals("index")){
             pageName = "Transaksi;Penjualan";
             pageLocation = "/WEB-INF/transaksi/penjualan/penjualan.jsp";            

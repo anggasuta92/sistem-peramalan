@@ -7,14 +7,14 @@
 
 /* table styler */
 #tbl {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
 }
 
 #tbl td, #tbl th {
-  border: 1px solid #ddd;
-  padding: 5px;
+    border: 1px solid #ddd;
+    padding: 5px;
 }
 
 #tbl tr:nth-child(even){background-color: #f2f2f2;}
@@ -22,14 +22,14 @@
 #tbl tr:hover {background-color: #ddd;}
 
 #tbl th {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  text-align: left;
-  /*background-color: #4CAF50;*/
-  /*background-color: #dff0d8;*/
-  background-color: #00cccc;
-  color: #3c763d;
-  text-align: center;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    text-align: left;
+    /*background-color: #4CAF50;*/
+    /*background-color: #dff0d8;*/
+    background-color: #00cccc;
+    color: #3c763d;
+    text-align: center;
 }
 
 /* navbar */
@@ -63,4 +63,57 @@
 
 .side-nav{
     background-color: #222d32;
+}
+
+/*auto complete */
+.ui-menu .ui-menu-item a {
+    font-size: 12px;
+}
+.ui-autocomplete {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1510 !important;
+    float: left;
+    display: none;
+    min-width: 160px;
+    width: 160px;
+    padding: 15px;
+    margin: 2px 0 0 0;
+    list-style: none;
+    background-color: #ffffff;
+    border-color: #ccc;
+    border-color: rgba(0, 0, 0, 0.2);
+    border-style: solid;
+    border-width: 1px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    *border-right-width: 2px;
+    *border-bottom-width: 2px;
+}
+.ui-menu-item > a.ui-corner-all {
+    display: block;
+    padding: 3px 15px;
+    clear: both;
+    font-weight: normal;
+    line-height: 18px;
+    color: #555555;
+    white-space: nowrap;
+    text-decoration: none;
+}
+.ui-state-hover, .ui-state-active {
+    color: #ffffff;
+    text-decoration: none;
+    background-color: #0088cc;
+    border-radius: 0px;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    background-image: none;
 }
