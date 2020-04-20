@@ -6,6 +6,7 @@
 package com.peramalan.model.transaksi;
 
 import com.peramalan.conn.DbConnection;
+import com.peramalan.model.OIDGenerator;
 import com.peramalan.model.master.Barang;
 import com.peramalan.model.master.DbBarang;
 import java.sql.Connection;
@@ -149,6 +150,81 @@ public class DbPenjualan {
         return result;
     }
     
+    public static long save(Penjualan data){
+        long result = 0;
+        String sql = "INSERT INTO "+ tableName +" ("+ COL_PENJUALAN_ID +", "+ COL_TAHUN +", "+ COL_BULAN +", "+ COL_BARANG_ID +", "+ COL_QTY +") VALUES (?, ?, ?, ?, ?)";
+        
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DbConnection.getConnection();
+            ps = conn.prepareStatement(sql);
+            
+            data.setPenjualanId(OIDGenerator.generateOID());
+            ps.setLong(1, data.getPenjualanId());
+            ps.setInt(2, data.getTahun());
+            ps.setInt(3, data.getBulan());
+            ps.setLong(4, data.getBarang().getBarangId());
+            ps.setDouble(5, data.getQty());
+            ps.execute();
+            
+            result = data.getPenjualanId();
+        } catch (Exception e) {
+            System.out.println("err_save_data: " + e.toString() + "/" + e.toString());
+        } finally {
+            if(ps!=null){
+                try{
+                    ps.close();
+                }catch(Exception e){}
+            }
+            if(conn!=null){
+                try{
+                    conn.close();
+                }catch(Exception e){}
+            }
+        }
+        return result;
+    }
+    
+    public static long update(Penjualan data){
+        long result = 0;
+        String sql = "UPDATE "+ tableName +" SET "+ COL_TAHUN +"=?, "+ COL_BULAN +"=?, "+COL_BARANG_ID+"=?, "+ COL_QTY +"=? WHERE "+ COL_PENJUALAN_ID +"=?";
+        
+        if(data.getPenjualanId()==0){
+            return 0;
+        }
+        
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DbConnection.getConnection();
+            ps = conn.prepareStatement(sql);
+            
+            ps.setInt(1, data.getTahun());
+            ps.setInt(2, data.getBulan());
+            ps.setLong(3, data.getBarang().getBarangId());
+            ps.setDouble(4, data.getQty());
+            ps.setLong(5, data.getPenjualanId());
+            ps.execute();
+            
+            result = data.getPenjualanId();
+        } catch (Exception e) {
+            System.out.println("err_save_data: " + e.toString() + "/" + e.toString());
+        } finally {
+            if(ps!=null){
+                try{
+                    ps.close();
+                }catch(Exception e){}
+            }
+            if(conn!=null){
+                try{
+                    conn.close();
+                }catch(Exception e){}
+            }
+        }
+        return result;
+    }
+    
     public static Penjualan findByPeriode(long barangId, int tahun, int bulan){
         Penjualan result = new Penjualan();
         
@@ -182,7 +258,39 @@ public class DbPenjualan {
             } catch (Exception e) {
             }
         }
+        return result;
+    }
+
+    public static long savePenjualan(int tahun, int bulan, long barangId, double qty){
+        Penjualan penjualan = new Penjualan();
+        long result  = 0;
         
+        try{
+            penjualan = findByPeriode(barangId, tahun, bulan);
+        }catch(Exception e){
+            System.out.println("errFindPenjualanById: " + e.toString());
+        }
+        
+        if(penjualan.getPenjualanId()!=0){
+            penjualan.setQty(qty);
+            try {
+                result = update(penjualan);
+                
+            } catch (Exception e) {
+                System.out.println("errUpdatePenjualan: " + e.toString());
+            }
+        }else{
+            Barang barang = DbBarang.findById(barangId);
+            penjualan.setBarang(barang);
+            penjualan.setTahun(tahun);
+            penjualan.setBulan(bulan);
+            penjualan.setQty(qty);
+            try {
+                result = save(penjualan);
+            } catch (Exception e) {
+                System.out.println("errSavePenjualan: " + e.toString());
+            }
+        }
         return result;
     }
 }

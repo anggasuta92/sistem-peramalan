@@ -46,11 +46,13 @@
             }
             
             #loader {
-                position: fixed; /* or absolute */
+                /*position: fixed;  or absolute */
+                position: fixed;
                 top: 50%;
                 left: 60%;
                 /*bottom: 0;
-                right: 0;*/
+                right: 0;
+                z-index: 10; */
                 z-index: 10;
                 transform: translate(-50%, -50%);
                 background-color: #dff0d8;

@@ -110,23 +110,25 @@
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="bulan">Bulan</label>
-                            <select name="param_bulan_editor" id="param_bulan" class="form-control">
+                            <select name="param_bulan_editor" id="param_bulan_editor" class="form-control">
                                 <option value="0"> pilih bulan... </option>
                                 <% for(int bulan = 1; bulan < TransaksiService.periodeBulan.length; bulan++){ %>
                                 <option value="<%= bulan %>"> <%= TransaksiService.periodeBulan[bulan] %> </option>
                                 <% } %>
                             </select>
+                            <input type="hidden" class="" id="bulan_value">
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label for="bulan">Tahun</label>
-                            <select name="param_tahun_editor" id="param_tahun" class="form-control">
+                            <select name="param_tahun_editor" id="param_tahun_editor" class="form-control">
                                 <option value="0"> pilih tahun... </option>
                                 <% for(int tahun = 0; tahun < TransaksiService.periodeTahun().length; tahun++){ %>
                                 <option value="<%= TransaksiService.periodeTahun()[tahun] %>"> <%= TransaksiService.periodeTahun()[tahun] %> </option>
                                 <% } %>
                             </select>
+                            <input type="hidden" class="" id="tahun_value">
                         </div>
                     </div>
                 </div>
@@ -137,58 +139,162 @@
                                 <input type="text" class="form-control" id="itemSearch" placeholder="Masukkan kode / barcode / nama barang...">
                             </div>
                             <div class="form-group">
-                                <label for=""><span class="fa fa-barcode"></span> Code</label>
-                                <input type="text" class="form-control" id="" placeholder="" disabled>
+                                <label for=""><span class="fa fa-barcode"></span> Kode</label>
+                                <input type="text" class="form-control" id="showCode" placeholder="" disabled>
                             </div>
                             <div class="form-group">
                                 <label for=""><span class=""></span> Nama Barang</label>
-                                <input type="text" class="form-control" id="" placeholder="" disabled>
+                                <input type="text" class="form-control" id="showName" placeholder="" disabled>
                             </div>
                             <div class="form-group">
                                 <label for=""><span class=""></span> QTY</label>
-                                <input type="text" class="form-control" id="" placeholder="" disabled>
+                                <input type="hidden" class="" id="input_barang_id">
+                                <input type="number" class="form-control" id="input_qty" onkeypress="return onlyNumberKey(event)">
                             </div>
                         </div>
                     </div>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="fa fa-chevron-circle-left"></span> Keluar</button>
+                <div class="row">
+                    <div class="col-md-12 pull-right" style="padding-top: 20px" align="right">
+                        <button type="submit" id="btnSave" onclick="saveDataPenjualan()" class="btn btn-success btn-default"><span class="fa fa-save"></span> Simpan Data</button>
+                        <button type="submit" id="btnClose" class="btn btn-danger btn-default" data-dismiss="modal"><span class="fa fa-chevron-circle-left"></span> Keluar</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div> 
                             
 <script>
-  $( function() {
-    $( "#itemSearch" ).autocomplete({
-        source: function (request, response) {
+    function saveDataPenjualan(){
+        var xtahun = $("#param_tahun_editor").val();
+        var xbulan = $("#param_bulan_editor").val();
+        var xqty = $("#input_qty").val();
+        var xbarangId = $("#input_barang_id").val();
+
+        if(xtahun>0 && xbulan>0 && xbarangId>0){
             $.ajax({
-                url: "<%= JSPHandler.generateUrl(request, "barang", "get-data", "") %>",
-                data: { param: request.term },
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                //success: response,
-                success: function(data) {
-                    var datas = data.data;
-                    if(datas.length<=0){
-                        datas = [{"kode":"Data not found","nama":"Data not found", "id":"0"}];
-                    }else if(datas.length==1){
-                        /* langsung munculkan di bawahnya */
-                    }
-                    response(datas);
+                type  : 'post',
+                data  : { tahun:xtahun, bulan:xbulan, barangId:xbarangId, qty:xqty},
+                url   : '<%= JSPHandler.generateUrl(request, "penjualan", "save", "") %>',
+                async : false,
+                dataType : 'json',
+                beforeSend: function() {
+                    $("#btnClose").prop('disabled', true);
+                    
+                    $("#btnSave").html('<span class="fa fa-hourglass"></span> Menyimpan Data...');
+                    $("#btnSave").prop('disabled', true);
                 },
-                error: function () {
-                    var obj = [{"kode":"Data not found","nama":"Data not found", "id":"0"}];
-                    response(obj);
+                success : function(datas){
+                    $("#btnClose").prop('disabled', false);
+                    
+                    $("#btnSave").html('<span class="fa fa-save"></span> Simpan Data');
+                    $("#btnSave").prop('disabled', false);
                 }
             });
+            
+            resetForm();
+            $("#itemSearch").focus();
+           
+        }else{
+            var errMsg = "";
+            if(xtahun==0) errMsg += (errMsg.length>0 ? ", ":"") + "Tahun belum dipilih";
+            if(xbulan==0) errMsg += (errMsg.length>0 ? ", ":"") + "Bulan belum dipilih";
+            if(xbarangId==0) errMsg += (errMsg.length>0 ? ", ":"") + "Barang belum dipilih";
+            swal("Perhatian",errMsg,"warning");
         }
-    }).autocomplete('instance')._renderItem = function( ul, item ) {
-        return $('<li>')
-            .append('<div class="row" style="padding:10px; border:1px;"><div class="col-md-3">'+ item.kode +'</div><div class="col-md-9">'+ item.nama +'</div></div>')
-            .appendTo(ul);
-    };;
-  } );
+    }
+    
+    $("#input_qty").on('keydown', function (e) {
+        if (e.keyCode === 13) {
+            saveDataPenjualan();
+        }
+    });
+    
+    function onlyNumberKey(evt) { 
+        var ASCIICode = (evt.which) ? evt.which : evt.keyCode 
+        if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57)) 
+            return false; 
+        return true; 
+    }
+    
+    $("#btnOpenEditor").click(function(){
+        $("#modalPenjualan").modal({backdrop: 'static', keyboard: false});
+        $( "#itemSearch" ).autocomplete( "option", "appendTo", ".eventInsForm" );
+        
+        /* reset form */
+        resetForm();
+        $("#param_bulan_editor").val($("#param_bulan").val());
+        $("#param_tahun_editor").val($("#param_tahun").val());
+    });
+    
+    function edit(tahun, bulan, barangId, qty, kode, namaBarang){
+        $("#modalPenjualan").modal({backdrop: 'static', keyboard: false});
+        $( "#itemSearch" ).autocomplete( "option", "appendTo", ".eventInsForm" );
+        
+        $("#param_tahun_editor").val(tahun);
+        $("#param_bulan_editor").val(bulan);
+        $("#showCode").val(kode);
+        $("#showName").val(namaBarang);
+        $("#input_barang_id").val(barangId);
+        $("#input_qty").val(qty);
+        
+        $("#input_qty").focus();               
+        $("#input_qty").select();
+    }
+    
+    function resetForm(){
+        $("#showCode").val("");
+        $("#showName").val("");
+        $("#input_qty").val("");
+        $("#input_barang_id").val("");
+    }
+
+    $(function() {
+      $( "#itemSearch" ).autocomplete({
+          source: function (request, response) {
+              $.ajax({
+                  url: "<%= JSPHandler.generateUrl(request, "penjualan", "get-data", "") %>",
+                  data: { 
+                      param: request.term ,
+                      bulan: $("#param_bulan_editor").val(),
+                      tahun: $("#param_tahun_editor").val()
+                  },
+                  dataType: "json",
+                  contentType: "application/json; charset=utf-8",
+                  //success: response,
+                  success: function(data) {
+                      var datas = data.data;
+                      if(datas.length<=0){
+                          datas = [{"barang":{"kode":"-","nama":"Data not found", "id":"0"}}];
+                      }else if(datas.length==1){
+                          /* langsung munculkan di bawahnya */
+                      }
+                      response(datas);
+                  },
+                  error: function () {
+                      var obj = [{"barang":{"kode":"-","nama":"Data not found", "id":"0"}}];
+                      response(obj);
+                  }
+              });
+          },
+          select: function(event,ui) {
+            if(ui.item.kode!="-"){
+                $("#showCode").val(ui.item.barang.kode);
+                $("#showName").val(ui.item.barang.nama);
+                $("#input_barang_id").val(ui.item.barang.barangId);
+                $("#input_qty").val(ui.item.qty);
+                $("#input_qty").focus();               
+                $("#input_qty").select();
+            }
+          }
+      }).autocomplete('instance')._renderItem = function( ul, item ) {
+          return $('<li>')
+              .append('<div class="row" style="padding:10px; border:1px;"><div class="col-md-3">'+ item.barang.kode +'</div><div class="col-md-9">'+ item.barang.nama +'</div></div>')
+              .appendTo(ul);
+      };
+    });
   </script>
                             
 <script>    
@@ -196,11 +302,6 @@
         location.href = "<%= JSPHandler.generateUrl(request, "home", "", "") %>";
     }
       
-    $("#btnOpenEditor").click(function(){
-        $("#modalPenjualan").modal({backdrop: 'static', keyboard: false});
-        $( "#itemSearch" ).autocomplete( "option", "appendTo", ".eventInsForm" );
-    });
-
     $("#txtSearch").on('keyup', function (e) {
         if (e.keyCode === 13) {
             loadSearch();
@@ -297,7 +398,7 @@
                                     '<td>'+data[i].barang.satuan+'</td>'+
                                     '<td align="right">'+ numeral(data[i].qty).format('0,00.00') +'&nbsp;</td>'+
                                     '<td align="center" class="margin">'+
-                                        '<button class="btn btn-sm btn-default" onClick="view(\''+data[i].penjualanId+'\')"><span class="fa fa-pencil text-primary"></span></button>&nbsp;'+
+                                        '<button class="btn btn-sm btn-default" onClick="edit(\''+data[i].tahun+'\',\''+data[i].bulan+'\',\''+data[i].barang.barangId+'\', \''+ data[i].qty +'\',\''+data[i].barang.kode+'\', \''+data[i].barang.nama+'\')"><span class="fa fa-pencil text-primary"></span></button>&nbsp;'+
                                     '</td>'+
                                 '</tr>';
                     }

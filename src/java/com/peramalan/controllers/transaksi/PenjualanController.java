@@ -52,7 +52,6 @@ public class PenjualanController extends HttpServlet {
         boolean isSuccess = false;
         
         if(action.equals("get-data")){
-            
             response.setContentType("application/json;charset=UTF-8");
             
             /* persiapan data untuk pagination */
@@ -94,7 +93,32 @@ public class PenjualanController extends HttpServlet {
             
         }else if(action.equals("index")){
             pageName = "Transaksi;Penjualan";
-            pageLocation = "/WEB-INF/transaksi/penjualan/penjualan.jsp";            
+            pageLocation = "/WEB-INF/transaksi/penjualan/penjualan.jsp";
+            
+        }else if(action.equals("save")){
+            int tahun = JSPHandler.requestInt(request, "tahun");
+            int bulan = JSPHandler.requestInt(request, "bulan");
+            long barangId = JSPHandler.requestLong(request, "barangId");
+            double qty = JSPHandler.requestDouble(request, "qty");
+            
+            long oid = DbPenjualan.savePenjualan(tahun, bulan, barangId, qty);
+            
+            Map res = new HashMap();
+            res.put("oid", oid);
+            res.put("message", oid!=0 ? "Data berhasil disimpan":"Gagal tersimpan");
+            
+            /* agar loader terlihat */
+            try{
+                TimeUnit.MILLISECONDS.sleep(100);
+            }catch(Exception e){}
+            
+            response.setContentType("application/json;charset=UTF-8");
+            try {
+                out.print(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(res));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
         }else{
             pageName = "Transaksi;Penjualan";
             pageLocation = "/WEB-INF/transaksi/penjualan/penjualan.jsp";            
