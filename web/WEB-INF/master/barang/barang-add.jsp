@@ -61,7 +61,7 @@
 
 <script>
     function back(){
-        location.href = "<%= JSPHandler.generateUrl(request, "kategori-barang", "", "") %>";
+        location.href = "<%= JSPHandler.generateUrl(request, "barang", "", "") %>";
     }
 </script>
                 

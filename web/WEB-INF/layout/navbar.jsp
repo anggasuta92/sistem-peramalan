@@ -32,8 +32,8 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bar-chart-o"></i> Peramalan <b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">Penentuan Bobot</a></li>
-                                <li><a href="#">Peramalan</a></li>
+                                <!-- <li><a href="#">Penentuan Bobot</a></li> -->
+                                <li><a href="<%= JSPHandler.generateUrl(request, "peramalan", "", "") %>">Peramalan</a></li>
                                 <li><a href="#">Arsip Peramalan</a></li>
                                 <li><a href="#">Analisa Peramalan</a></li>
                             </ul>
