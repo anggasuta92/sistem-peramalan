@@ -12,8 +12,8 @@ package com.peramalan.model.master;
 public class RoleDetail {
     private long roleDetailId;
     private long roleId;
-    private String kodeMenu;
-    private String akses;
+    private int kodeMenu;
+    private int granted;
 
     /**
      * @return the roleDetailId
@@ -46,29 +46,29 @@ public class RoleDetail {
     /**
      * @return the kodeMenu
      */
-    public String getKodeMenu() {
+    public int getKodeMenu() {
         return kodeMenu;
     }
 
     /**
      * @param kodeMenu the kodeMenu to set
      */
-    public void setKodeMenu(String kodeMenu) {
+    public void setKodeMenu(int kodeMenu) {
         this.kodeMenu = kodeMenu;
     }
 
     /**
-     * @return the akses
+     * @return the granted
      */
-    public String getAkses() {
-        return akses;
+    public int getGranted() {
+        return granted;
     }
 
     /**
-     * @param akses the akses to set
+     * @param granted the granted to set
      */
-    public void setAkses(String akses) {
-        this.akses = akses;
+    public void setGranted(int granted) {
+        this.granted = granted;
     }
     
     

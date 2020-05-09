@@ -18,17 +18,21 @@ import java.util.Vector;
  *
  * @author Angga Suta
  */
-public class DbRole {
+public class DbRoleDetail {
     /* table name */
-    public static String tableName = "role";
+    public static String tableName = "role_detail";
     
     /* colName */
+    public static String COL_ROLE_DETAIL_ID = "role_detail_id";
     public static String COL_ROLE_ID = "role_id";
-    public static String COL_NAMA = "nama";
+    public static String COL_KODE_MENU = "kode_menu";
+    public static String COL_GRANTED = "granted";
     
-    public static void fetchObject(ResultSet rs, Role object) throws SQLException{
+    public static void fetchObject(ResultSet rs, RoleDetail object) throws SQLException{
+        object.setRoleDetailId(rs.getLong(COL_ROLE_DETAIL_ID));
         object.setRoleId(rs.getLong(COL_ROLE_ID));
-        object.setNama(rs.getString(COL_NAMA));
+        object.setKodeMenu(rs.getInt(COL_KODE_MENU));
+        object.setGranted(rs.getInt(COL_GRANTED));
     }
     
     public static int count(String where){
@@ -38,7 +42,7 @@ public class DbRole {
         
         try{
             if(where.trim().length()>0) where = " where " + where;
-            String sql = "select count("+ COL_ROLE_ID +") as total from " + tableName + where;
+            String sql = "select count("+ COL_ROLE_DETAIL_ID +") as total from " + tableName + where;
             
             conn = DbConnection.getConnection();
             stmt = conn.createStatement();
@@ -75,7 +79,7 @@ public class DbRole {
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             while(rs.next()){
-                Role object = new Role();
+                RoleDetail object = new RoleDetail();
                 fetchObject(rs, object);
                 result.add(object);
             }
@@ -90,11 +94,11 @@ public class DbRole {
         return result;
     }
     
-    public static boolean delete(Role data){
+    public static boolean delete(RoleDetail data){
         boolean result = false;
         String sql = "delete from "+ tableName +" where " + COL_ROLE_ID + "=?";
         
-        if(data.getRoleId()==0){
+        if(data.getRoleDetailId()==0){
             return false;
         }
         
@@ -104,7 +108,7 @@ public class DbRole {
             conn = DbConnection.getConnection();
             ps = conn.prepareStatement(sql);
             
-            ps.setLong(1, data.getRoleId());
+            ps.setLong(1, data.getRoleDetailId());
             ps.execute();
             
             result = true;
@@ -125,13 +129,13 @@ public class DbRole {
         return result;
     }
     
-    public static Role findById(long id){
-        Role result = new Role();
+    public static RoleDetail findById(long id){
+        RoleDetail result = new RoleDetail();
         
         Connection conn = null;
         PreparedStatement stmt = null;
         try{
-            String sql = "select * from " + tableName + " where " + COL_ROLE_ID + "=?";
+            String sql = "select * from " + tableName + " where " + COL_ROLE_DETAIL_ID + "=?";
             
             conn = DbConnection.getConnection();
             stmt = conn.prepareStatement(sql);
@@ -151,9 +155,9 @@ public class DbRole {
         return result;
     }
     
-    public static long save(Role data){
+    public static long save(RoleDetail data){
         long result = 0;
-        String sql = "insert into "+tableName+" ("+COL_ROLE_ID+","+COL_NAMA+") values (?,?) ";
+        String sql = "insert into "+tableName+" ("+COL_ROLE_DETAIL_ID+","+COL_ROLE_ID+","+COL_KODE_MENU+","+COL_GRANTED+") values (?,?,?,?)";
         
         Connection conn = null;
         PreparedStatement ps = null;
@@ -161,12 +165,14 @@ public class DbRole {
             conn = DbConnection.getConnection();
             ps = conn.prepareStatement(sql);
             
-            data.setRoleId(OIDGenerator.generateOID());
-            ps.setLong(1, data.getRoleId());
-            ps.setString(2, data.getNama());
+            data.setRoleDetailId(OIDGenerator.generateOID());
+            ps.setLong(1, data.getRoleDetailId());
+            ps.setLong(2, data.getRoleId());
+            ps.setInt(3, data.getKodeMenu());
+            ps.setInt(4, data.getGranted());
             ps.execute();
             
-            result = data.getRoleId();
+            result = data.getRoleDetailId();
         } catch (Exception e) {
             System.out.println("err_save_data: " + e.toString() + "/" + e.toString());
         } finally {
@@ -184,11 +190,11 @@ public class DbRole {
         return result;
     }
     
-    public static long update(Role data){
+    public static long update(RoleDetail data){
         long result = 0;
-        String sql = "update "+tableName+" set "+COL_NAMA+"=? where "+ COL_ROLE_ID + "=?";
+        String sql = "update "+tableName+" set "+COL_ROLE_ID+"=?,"+COL_KODE_MENU+"=?,"+COL_GRANTED+"=? where "+ COL_ROLE_DETAIL_ID + "=?";
         
-        if(data.getRoleId()==0){
+        if(data.getRoleDetailId()==0){
             return 0;
         }
         
@@ -198,11 +204,13 @@ public class DbRole {
             conn = DbConnection.getConnection();
             ps = conn.prepareStatement(sql);
             
-            ps.setString(1, data.getNama());
-            ps.setLong(2, data.getRoleId());
+            ps.setLong(1, data.getRoleId());
+            ps.setInt(2, data.getKodeMenu());
+            ps.setInt(3, data.getGranted());
+            ps.setLong(4, data.getRoleDetailId());
             ps.execute();
             
-            result = data.getRoleId();
+            result = data.getRoleDetailId();
         } catch (Exception e) {
             System.out.println("err_save_data: " + e.toString() + "/" + e.toString());
         } finally {

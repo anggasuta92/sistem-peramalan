@@ -14,7 +14,6 @@ import java.util.Vector;
 public class Role {
     private long roleId;
     private String nama;
-    private Vector<RoleDetail> roleDetail;
 
     /**
      * @return the roleId
@@ -43,20 +42,4 @@ public class Role {
     public void setNama(String nama) {
         this.nama = nama;
     }
-
-    /**
-     * @return the roleDetail
-     */
-    public Vector<RoleDetail> getRoleDetail() {
-        return roleDetail;
-    }
-
-    /**
-     * @param roleDetail the roleDetail to set
-     */
-    public void setRoleDetail(Vector<RoleDetail> roleDetail) {
-        this.roleDetail = roleDetail;
-    }
-    
-    
 }
