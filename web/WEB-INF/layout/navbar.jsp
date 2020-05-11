@@ -42,7 +42,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Administrator <b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 <li><a href="<%= JSPHandler.generateUrl(request, "role", "", "") %>">Role Pengguna</a></li>
-                                <li><a href="#">Data Pengguna</a></li>
+                                <li><a href="<%= JSPHandler.generateUrl(request, "user", "", "") %>">Data Pengguna</a></li>
                             </ul>
                         </li>
                     </ul>

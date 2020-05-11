@@ -24,7 +24,7 @@
                     <div class="row">
                         <div class="col-md-12 pull-left" style="padding-top: 20px; text-align: right;">
                             <button class="btn btn-primary" type="submit" ><span class="fa fa-save"></span> Simpan Data</button>
-                            <button class="btn btn-warning" onclick="back()" ><span class="fa fa-chevron-circle-left"></span> Kembali</button>
+                            <button class="btn btn-warning" type="button" onclick="back()" ><span class="fa fa-chevron-circle-left"></span> Kembali</button>
                         </div>
                     </div>
                 </form>

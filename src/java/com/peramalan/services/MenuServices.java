@@ -5,6 +5,16 @@
  */
 package com.peramalan.services;
 
+import com.peramalan.conn.DbConnection;
+import com.peramalan.model.master.DbRole;
+import com.peramalan.model.master.DbRoleDetail;
+import com.peramalan.model.master.DbSystemUser;
+import com.peramalan.model.master.SystemUser;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -14,6 +24,7 @@ import javax.servlet.http.HttpSession;
  */
 public class MenuServices {
     
+    public static String menuPreffix = "menu_";
     public static String[] strMenu = {
         "Data Master > Kategori Barang",
         "Data Master > Barang", 
@@ -32,21 +43,103 @@ public class MenuServices {
     public static final int MENU_ANALISIS_PERAMALAN = 5;
     public static final int MENU_ADMINISTRATOR_ROLE_PENGGUNA = 6;
     public static final int MENU_ADMINISTRATOR_DATA_PENGGUNA = 7;
-    
-    
-    public static boolean isGranted(HttpServletRequest request, int menu){
-        boolean result = false;
+
+    public static void deleteRoleByRoleId(long roleId){
+        String sqlDeleteRole = "delete from " + DbRole.tableName + " where " + DbRole.COL_ROLE_ID + "=?";
+        String sqlDeleteRoleDetail = "delete from " + DbRoleDetail.tableName + " where " +DbRoleDetail.COL_ROLE_ID + "=?";
+        
+        Connection conn = null;
+        PreparedStatement psRole = null;
+        PreparedStatement psRoleDetail = null;
         
         try {
-            HttpSession session = request.getSession(true);
-            int sts = Integer.parseInt(session.getAttribute(String.valueOf(menu)).toString());
-            if(sts==1){
-                result = true;
-            }
+            conn = DbConnection.getConnection();
+            conn.setAutoCommit(false);
+            
+            psRole = conn.prepareStatement(sqlDeleteRole);
+            psRole.setLong(1, roleId);
+            psRole.execute();
+            
+            psRoleDetail = conn.prepareStatement(sqlDeleteRoleDetail);
+            psRoleDetail.setLong(1, roleId);
+            psRoleDetail.execute();
+            
+            conn.commit();
         } catch (Exception e) {
-            System.out.println("err_get_role:" + e.toString());
+            try {
+                conn.rollback();
+                conn.setAutoCommit(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                if(psRole!=null){
+                    psRole.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            try {
+                if(psRoleDetail!=null){
+                    psRoleDetail.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            try {
+                if(conn!=null){
+                    conn.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+    }
+    
+    public static void deleteRoleDetailByRoleId(long roleId){
+        String sqlDeleteRoleDetail = "delete from " + DbRoleDetail.tableName + " where " +DbRoleDetail.COL_ROLE_ID + "=?";
         
-        return result;
+        Connection conn = null;
+        PreparedStatement psRoleDetail = null;
+        
+        try {
+            conn = DbConnection.getConnection();
+            conn.setAutoCommit(false);
+            
+            psRoleDetail = conn.prepareStatement(sqlDeleteRoleDetail);
+            psRoleDetail.setLong(1, roleId);
+            psRoleDetail.execute();
+            
+            conn.commit();
+        } catch (Exception e) {
+            try {
+                conn.rollback();
+                conn.setAutoCommit(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            
+            try {
+                if(psRoleDetail!=null){
+                    psRoleDetail.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            try {
+                if(conn!=null){
+                    conn.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

@@ -1,3 +1,5 @@
+<%@page import="com.peramalan.model.master.Role"%>
+<%@page import="java.util.Vector"%>
 <%@page import="com.peramalan.model.master.DbRole"%>
 <%@page import="com.peramalan.services.MenuServices"%>
 <%@page import="com.peramalan.config.MainConfig"%>
@@ -8,7 +10,7 @@
     <div class="col-lg-12">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-archive"></i> Add Role User</h3>
+                <h3 class="panel-title"><i class="fa fa-archive"></i> Tambah Role User</h3>
             </div>
             <div class="panel-body">
                 <form name="roleAddFrm" action="<%= JSPHandler.generateUrl(request, "role", "save", "") %>" method="post">
@@ -37,7 +39,7 @@
                                     <tr>
                                         <td><%= MenuServices.strMenu[i]%></td>
                                         <td>
-                                            <input type="checkbox" name="check_<%= i %>" value="1" class="form-control" />
+                                            <input type="checkbox" name="<%= MenuServices.menuPreffix + i %>" value="1" class="form-control" />
                                         </td>
                                     </tr>
                                     <%
@@ -50,7 +52,7 @@
                     <div class="row">
                         <div class="col-md-12 pull-left" style="text-align: right;">
                             <button class="btn btn-primary" type="submit" ><span class="fa fa-save"></span> Simpan Data</button>
-                            <button class="btn btn-warning" onclick="back()" ><span class="fa fa-chevron-circle-left"></span> Kembali</button>
+                            <button class="btn btn-warning" type="button" onclick="back()" ><span class="fa fa-chevron-circle-left"></span> Kembali</button>
                         </div>
                     </div>
                 </form>
@@ -58,5 +60,10 @@
         </div>
     </div>
 </div>
-                  
+
+<script>
+    function back(){
+        location.href = "<%= JSPHandler.generateUrl(request, "role", "", "") %>";
+    }
+</script>
 <%@ include file="../../layout/bottom-page.jsp"%>

@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -33,12 +34,32 @@ public class LoginController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        String action = (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)!=null ? (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)) : "");
+        PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession(true);
         
-        if(action.equals("")){
+        String action = (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)!=null ? (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)) : "");
+        String pageLocation = "";
+        String pageName = "";
+  
+        if(action.equals("login")){
+            pageLocation = "/index.jsp";
+            pageName = "Login";
+            
+        }else if(action.equals("auth")){
+            
+            
+            
+        }else if(action.equals("logout")){
+            
+        }else{
+            pageLocation = "/index.jsp";
+            pageName = "Login";
         }
         
-        request.getRequestDispatcher("/").forward(request, response);
+        if(pageLocation.length()>0){
+            request.setAttribute("Page", pageName);
+            request.getRequestDispatcher(pageLocation).forward(request, response);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -26,7 +26,9 @@
                             <thead>
                                 <tr>
                                     <th width="50">#</th>
-                                    <th>Nama Role</th>
+                                    <th>Nama</th>
+                                    <th width="250">Username</th>
+                                    <th width="250">Role</th>
                                     <th width="130">Aksi</th>
                                 </tr>    
                             </thead>
@@ -72,7 +74,7 @@
     }
     
     function addNew(){
-        location.href = "<%= JSPHandler.generateUrl(request, "role", "add", "") %>";
+        location.href = "<%= JSPHandler.generateUrl(request, "user", "add", "") %>";
     }
     
     function back(){
@@ -80,14 +82,14 @@
     }
     
     function view(id){
-        location.href = "<%= JSPHandler.generateUrl(request, "role", "edit", "") %>&id="+id;
+        location.href = "<%= JSPHandler.generateUrl(request, "user", "edit", "") %>&id="+id;
     }
     
     function loadData(cmd, curPage, searchParam){
         $.ajax({
             type  : 'get',
             data  : { command: cmd, currentPage: curPage, param: searchParam},
-            url   : '<%= JSPHandler.generateUrl(request, "role", "get-data", "") %>',
+            url   : '<%= JSPHandler.generateUrl(request, "user", "get-data", "") %>',
             async : true,
             dataType : 'json',
             beforeSend: function() {
@@ -120,16 +122,18 @@
                     for(i=0; i<data.length; i++){
                         html += '<tr>'+
                                     '<td align="center">'+(startNumber+i)+'</td>'+
-                                    '<td>'+data[i].nama+'</td>'+
+                                    '<td>'+data[i].user.nama+'</td>'+
+                                    '<td>'+data[i].user.username+'</td>'+
+                                    '<td>'+data[i].role.nama+'</td>'+
                                     '<td align="center" class="margin">'+
-                                        '<button class="btn btn-sm btn-default" onClick="view(\''+data[i].roleId.toString()+'\')"><span class="fa fa-pencil text-primary"></span></button>&nbsp;'+
-                                        '<button class="btn btn-sm btn-default" onClick="confirmDelete(\''+data[i].roleId+'\', \'Nama: '+ data[i].nama +'\')"><span class="fa fa-trash-o text-danger"></span></button>'+
+                                        '<button class="btn btn-sm btn-default" onClick="view(\''+data[i].user.systemUserId.toString()+'\')"><span class="fa fa-pencil text-primary"></span></button>&nbsp;'+
+                                        '<button class="btn btn-sm btn-default" onClick="confirmDelete(\''+data[i].user.systemUserId+'\', \'Nama: '+ data[i].nama +'\')"><span class="fa fa-trash-o text-danger"></span></button>'+
                                     '</td>'+
                                 '</tr>';
                     }
                 }else{
                     html += '<tr>'+
-                            '<td align="center" colspan="3">Data tidak ditemukan</td>'+
+                            '<td align="center" colspan="5">Data tidak ditemukan</td>'+
                             '</tr>';                    
                 }
                 $('#table-body').html(html);

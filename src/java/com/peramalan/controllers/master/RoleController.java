@@ -8,7 +8,10 @@ package com.peramalan.controllers.master;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.peramalan.model.master.DbKategoriBarang;
 import com.peramalan.model.master.DbRole;
+import com.peramalan.model.master.DbRoleDetail;
 import com.peramalan.model.master.KategoriBarang;
+import com.peramalan.model.master.Role;
+import com.peramalan.model.master.RoleDetail;
 import com.peramalan.services.JSPHandler;
 import com.peramalan.services.MenuServices;
 import com.peramalan.services.PaginationServices;
@@ -87,7 +90,146 @@ public class RoleController extends HttpServlet {
         }else if(action.equals("add")){
             
             pageLocation = "/WEB-INF/master/role/role-add.jsp";
-            pageName = "Administrator;Role User;Add";
+            pageName = "Administrator;Role User;Tambah";
+            
+        }else if(action.equals("update")){
+            
+            long id = JSPHandler.requestLong(request, DbRole.COL_ROLE_ID);
+            boolean allDetailSuccess = true;
+            boolean mainSuccess = false;
+            
+            Role role = new Role();
+            try {
+                role = DbRole.findById(id);
+            } catch (Exception e) {
+            }
+            
+            if(role.getRoleId()!=0){
+                role.setNama(JSPHandler.requestString(request, DbRole.COL_NAMA));
+                
+                try {
+                    long oid = DbRole.update(role);
+                    if(oid!=0){
+                        mainSuccess = true;
+                    }else{
+                        mainSuccess = false;
+                    }
+                } catch (Exception e) {
+                    mainSuccess = false;
+                }
+                
+                if(mainSuccess){
+                    /* hapus dan simpan ulang detail */
+                    MenuServices.deleteRoleDetailByRoleId(role.getRoleId());
+
+                    /* simpan ulang */
+                    for(int i = 0; i < MenuServices.strMenu.length; i++){
+                        int checked = JSPHandler.requestInt(request, MenuServices.menuPreffix + i);
+                        RoleDetail roleDetail = new RoleDetail();
+                        roleDetail.setRoleId(role.getRoleId());
+                        roleDetail.setKodeMenu(i);
+                        roleDetail.setGranted(checked);
+
+                        try {
+                            DbRoleDetail.save(roleDetail);
+                        } catch (Exception e) {
+                            allDetailSuccess = false;
+                            e.printStackTrace();
+                        }
+                    }
+                }else{
+                    allDetailSuccess = false;
+                }
+                    
+            }else{
+                mainSuccess = false;
+            }
+            /* untuk kepentingan perpesanan di halaman jsp */
+            if(mainSuccess && allDetailSuccess){
+                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Data telah tersimpan");
+            }else{
+                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Data gagal tersimpan");
+            }
+            
+            /* redirect setelah simpan */
+            response.sendRedirect(JSPHandler.generateUrl(request, "role", "edit", "id="+role.getRoleId()));
+            return;
+            
+        }else if(action.equals("save")){
+            
+            long oid = 0;
+            boolean allDetailSuccess = true;
+            
+            Role role = new Role();
+            role.setNama(JSPHandler.requestString(request, DbRole.COL_NAMA));
+            
+            try {
+                oid = DbRole.save(role);
+            } catch (Exception e) {
+                allDetailSuccess = false;
+                e.printStackTrace();
+            }
+            
+            /* simpan detail */
+            if(oid!=0){
+                for(int i = 0; i < MenuServices.strMenu.length; i++){
+                    int checked = JSPHandler.requestInt(request, MenuServices.menuPreffix + i);
+                    RoleDetail roleDetail = new RoleDetail();
+                    roleDetail.setRoleId(oid);
+                    roleDetail.setKodeMenu(i);
+                    roleDetail.setGranted(checked);
+                    
+                    try {
+                        DbRoleDetail.save(roleDetail);
+                    } catch (Exception e) {
+                        allDetailSuccess = false;
+                        e.printStackTrace();
+                    }
+                }
+            }
+            
+            if(allDetailSuccess){
+                isSuccess = true;
+            }else{
+                isSuccess = false;
+                
+                /* kalau gagal hapus saja semua */
+            }
+            
+            /* untuk kepentingan perpesanan di halaman jsp */
+            if(isSuccess){
+                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Data telah tersimpan");
+            }else{
+                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Data gagal tersimpan");
+            }
+            
+            /* redirect setelah simpan */
+            response.sendRedirect(JSPHandler.generateUrl(request, "role", "edit", "id="+oid));
+            return;
+            
+        }else if(action.equals("edit")){
+            
+            long id = JSPHandler.requestLong(request, "id");
+            Role role = new Role();
+            try {
+                role = DbRole.findById(id);
+            } catch (Exception e) {
+            }
+            
+            Map details = new HashMap();
+            if(role.getRoleId()!=0){
+                Vector<RoleDetail> list  = DbRoleDetail.list(DbRoleDetail.COL_ROLE_ID + "='"+ role.getRoleId() +"'", "", 0, 0);
+                for(RoleDetail roleDetail : list){
+                    details.put(roleDetail.getKodeMenu(), roleDetail.getGranted());
+                }
+            }
+            
+            request.setAttribute("role", role);
+            request.setAttribute("role_detail", details);
+            
+            pageLocation = "/WEB-INF/master/role/role-edit.jsp";
+            pageName = "Administrator;Role User;Ubah";
+            
         }else{
             pageLocation = "/WEB-INF/master/role/role.jsp";
             pageName = "Administrator;Role User";

@@ -12,6 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -38,7 +40,7 @@ public class DbSystemUser {
         object.setRoleId(rs.getLong(COL_ROLE_ID));
         object.setStatus(rs.getInt(COL_STATUS));
     }
-    
+
     public static int count(String where){
         int result = 0;
         Connection conn = null;
@@ -86,6 +88,51 @@ public class DbSystemUser {
                 SystemUser object = new SystemUser();
                 fetchObject(rs, object);
                 result.add(object);
+            }
+            rs.close();
+        }catch(Exception e){
+            System.out.println("err_select_data: " + e.toString() + "/" + e.toString());
+        }finally{
+            try{if(stmt!=null) stmt.close();}catch(Exception e){}
+            try{if(conn!=null) conn.close();}catch(Exception e){}
+        }
+        
+        return result;
+    }
+    
+    public static Vector listJoinRole(String where, String orderBy, int limitStart, int limitEnd){
+        Vector result = new Vector();
+        String limit = "";
+        
+        if(where.trim().length()>0) where = " where " + where;
+        if(orderBy.trim().length()>0) orderBy = " order by " + orderBy;
+        if(limitStart!=0 || limitEnd!=0){
+            limit = " limit " + limitStart + "," + limitEnd;
+        }
+        
+        Connection conn = null;
+        Statement stmt = null;
+        try{
+            String sql = "select * from " + tableName + where + orderBy + limit;
+            
+            conn = DbConnection.getConnection();
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                SystemUser object = new SystemUser();
+                fetchObject(rs, object);
+                
+                Role role = new Role();
+                try {
+                    role = DbRole.findById(object.getRoleId());
+                } catch (Exception e) {
+                }
+                
+                Map data = new HashMap();
+                data.put("user", object);
+                data.put("role", role);
+                
+                result.add(data);
             }
             rs.close();
         }catch(Exception e){
