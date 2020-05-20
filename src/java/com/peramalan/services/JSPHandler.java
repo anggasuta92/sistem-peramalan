@@ -77,6 +77,9 @@ public class JSPHandler {
         String result = "";
         try{
             result = request.getParameter(requestName);
+            if(result==null){
+                result = "";
+            }
         }catch(Exception e){}
         return result;
     }

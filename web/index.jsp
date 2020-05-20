@@ -34,11 +34,11 @@
     <body>
         <div class="login-page">
             <div class="form">
-                <form class="login-form" action="<%= JSPHandler.generateUrl(request, "home", "", "") %>" method="post">
+                <form class="login-form" action="<%= JSPHandler.generateUrl(request, "login", "auth", "") %>" method="post">
                     <img src="<%= MainConfig.getAssetUrl(request)%>/images/avatar.png" alt="Avatar" style="width:120px;height: 120px;border-radius: 50%;">
                     <h3><strong>SISTEM PERAMALAN</strong></h3>
-                    <input type="text" placeholder="Nama Pengguna"/>
-                    <input type="password" placeholder="Kata Sandi"/>
+                    <input type="text" name="user" placeholder="Nama Pengguna"/>
+                    <input type="password" name="pass" placeholder="Kata Sandi"/>
                     <button>login</button>
                 </form>
             </div>

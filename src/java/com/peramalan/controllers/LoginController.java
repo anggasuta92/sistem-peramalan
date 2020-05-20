@@ -5,7 +5,10 @@
  */
 package com.peramalan.controllers;
 
+import com.peramalan.model.master.DbSystemUser;
+import com.peramalan.model.master.SystemUser;
 import com.peramalan.services.JSPHandler;
+import com.peramalan.services.LoginServices;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -47,9 +50,41 @@ public class LoginController extends HttpServlet {
             
         }else if(action.equals("auth")){
             
+            String username = JSPHandler.requestString(request, "user");
+            String password = JSPHandler.requestString(request, "pass");
             
+            SystemUser user = new SystemUser();
+            try {
+                user = DbSystemUser.findByUsernamePassword(username, password);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            
+            LoginServices.removeAllLoginInformation(session);
+            
+            System.out.println("user:" + user.getNama());
+            
+            if(user.getSystemUserId()!=0){
+                
+                /* login berhasil */
+                LoginServices.setUserPriv(request, user.getRoleId(), user.getSystemUserId());
+                session.setAttribute(LoginServices.LOGIN_STATUS, LoginServices.LOGIN_STATUS_TRUE);
+                session.setAttribute(LoginServices.LOGIN_USER_ID, user.getSystemUserId());
+                System.out.println("sts: "+session.getAttribute(LoginServices.LOGIN_STATUS));
+                System.out.println("redir OK");
+                response.sendRedirect(JSPHandler.generateUrl(request, "home", "", ""));
+                
+            }else{
+                System.out.println("redir false");
+                session.setAttribute(LoginServices.LOGIN_STATUS, LoginServices.LOGIN_STATUS_FALSE);
+                response.sendRedirect(JSPHandler.generateUrl(request, "login", "", ""));
+            }
             
         }else if(action.equals("logout")){
+            
+            LoginServices.removeAllLoginInformation(session);
+            response.sendRedirect(JSPHandler.generateUrl(request, "login", "", ""));
             
         }else{
             pageLocation = "/index.jsp";

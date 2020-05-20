@@ -7,6 +7,7 @@ package com.peramalan.model.master;
 
 import com.peramalan.conn.DbConnection;
 import com.peramalan.model.OIDGenerator;
+import com.peramalan.services.LoginServices;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -122,6 +123,8 @@ public class DbSystemUser {
                 SystemUser object = new SystemUser();
                 fetchObject(rs, object);
                 
+                object.setPassword("-");
+                
                 Role role = new Role();
                 try {
                     role = DbRole.findById(object.getRoleId());
@@ -177,6 +180,34 @@ public class DbSystemUser {
                 }catch(Exception e){}
             }
         }
+        return result;
+    }
+
+    public static SystemUser findByUsernamePassword(String username, String password){
+        SystemUser result = new SystemUser();
+        
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try{
+            String sql = "select * from " + tableName + " where " + COL_USERNAME + "=? and " + COL_PASSWORD + "=?";
+            
+            password = LoginServices.generateMD5(password);
+            conn = DbConnection.getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                fetchObject(rs, result);
+            }
+            rs.close();
+        }catch(Exception e){
+            System.out.println("err_select_data: " + e.toString() + "/" + e.toString());
+        }finally{
+            try{if(stmt!=null) stmt.close();}catch(Exception e){}
+            try{if(conn!=null) conn.close();}catch(Exception e){}
+        }
+        
         return result;
     }
     

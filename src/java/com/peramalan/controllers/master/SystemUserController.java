@@ -6,15 +6,12 @@
 package com.peramalan.controllers.master;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.peramalan.model.master.DbKategoriBarang;
 import com.peramalan.model.master.DbRole;
-import com.peramalan.model.master.DbRoleDetail;
 import com.peramalan.model.master.DbSystemUser;
-import com.peramalan.model.master.KategoriBarang;
 import com.peramalan.model.master.Role;
-import com.peramalan.model.master.RoleDetail;
+import com.peramalan.model.master.SystemUser;
 import com.peramalan.services.JSPHandler;
-import com.peramalan.services.MenuServices;
+import com.peramalan.services.LoginServices;
 import com.peramalan.services.PaginationServices;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -100,18 +97,150 @@ public class SystemUserController extends HttpServlet {
             pageLocation = "/WEB-INF/master/systemuser/systemuser-add.jsp";
             pageName = "Administrator;Data User;Tambah";
             
-        }else if(action.equals("update")){
-            
-            return;
-            
         }else if(action.equals("save")){
             
+            long oid = 0;
+            
+            SystemUser user = new SystemUser();
+            user.setNama(JSPHandler.requestString(request, DbSystemUser.COL_NAMA));
+            user.setStatus(1);
+            user.setPassword(JSPHandler.requestString(request, DbSystemUser.COL_PASSWORD));
+            user.setUsername(JSPHandler.requestString(request, DbSystemUser.COL_USERNAME));
+            user.setRoleId(JSPHandler.requestLong(request, DbSystemUser.COL_ROLE_ID));
+            
+            /* md5 */
+            user.setPassword(LoginServices.generateMD5(user.getPassword()));
+            
+            try {
+                oid = DbSystemUser.save(user);
+                isSuccess = true;
+            } catch (Exception e) {
+                System.out.println("err_insert_controller:" + e.toString());
+            }
+            
+            /* untuk kepentingan perpesanan di halaman jsp */
+            if(isSuccess){
+                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Data telah tersimpan");
+            }else{
+                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Data gagal tersimpan");
+            }
+            
+            /* redirect setelah simpan */
+            response.sendRedirect(JSPHandler.generateUrl(request, "user", "edit", "id="+oid));
+            return;
+        
+        }else if(action.equals("update-pass")){
+
+            long oid = 0;
+            SystemUser data = new SystemUser();
+            try {
+                data = DbSystemUser.findById(JSPHandler.requestLong(request, DbSystemUser.COL_SYSTEM_USER_ID));
+            } catch (Exception e) {
+            }
+            
+            if(data.getSystemUserId()!=0){
+                SystemUser user = new SystemUser();
+                user = data;
+                String pass = JSPHandler.requestString(request, ""+DbSystemUser.COL_PASSWORD);
+                user.setPassword(LoginServices.generateMD5(pass));
+                
+                try {
+                    oid = DbSystemUser.update(user);
+                } catch (Exception e) {
+                    System.out.println("err_insert_controller:" + e.toString());
+                }
+            }else{
+                oid = 0;
+            }
+
+            Map res = new HashMap();
+            res.put("oid", oid);
+            res.put("message", oid!=0 ? "Password berhasil disimpan":"Password gagal tersimpan");
+            
+            response.setContentType("application/json;charset=UTF-8");
+            try {
+                out.print(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(res));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return;
+            
+        }else if(action.equals("update")){
+            
+            long oid = 0;
+            
+            SystemUser data = new SystemUser();
+            try {
+                data = DbSystemUser.findById(JSPHandler.requestLong(request, DbSystemUser.COL_SYSTEM_USER_ID));
+            } catch (Exception e) {
+            }
+            
+            if(data.getSystemUserId()!=0){
+                
+                SystemUser user = new SystemUser();
+                user = data;
+                user.setNama(JSPHandler.requestString(request, DbSystemUser.COL_NAMA));
+                user.setStatus(1);
+                user.setUsername(JSPHandler.requestString(request, DbSystemUser.COL_USERNAME));
+                user.setRoleId(JSPHandler.requestLong(request, DbSystemUser.COL_ROLE_ID));
+
+                /* md5 */
+                /*
+                String pass = JSPHandler.requestString(request, "new_"+DbSystemUser.COL_PASSWORD);
+                if(pass.trim().length()>0){
+                    user.setPassword(LoginServices.generateMD5(user.getPassword()));
+                }
+                */
+                
+                try {
+                    oid = DbSystemUser.update(user);
+                    isSuccess = true;
+                } catch (Exception e) {
+                    System.out.println("err_insert_controller:" + e.toString());
+                }
+            }else{
+                isSuccess = false;
+            }
+
+            /* untuk kepentingan perpesanan di halaman jsp */
+            if(isSuccess){
+                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Data telah tersimpan");
+            }else{
+                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Data gagal tersimpan");
+            }
+            
+            /* redirect setelah simpan */
+            response.sendRedirect(JSPHandler.generateUrl(request, "user", "edit", "id="+oid));
             return;
             
         }else if(action.equals("edit")){
             
-            pageLocation = "/WEB-INF/master/systemuser/systemuser-edit.jsp";
-            pageName = "Administrator;Data User;Ubah";
+            long id = JSPHandler.requestLong(request, "id");
+            
+            SystemUser data = new SystemUser();
+            try{
+                data = DbSystemUser.findById(id);
+            }catch(Exception e){
+                System.out.println("err_findById: " + e.toString());
+            }
+            
+            Vector<Role> roles = new Vector<Role>();
+            try {
+                roles = DbRole.list("", "", 0, 0);
+            } catch (Exception e) {
+            }
+            
+            request.setAttribute("roles", roles);
+            
+            if(data.getSystemUserId()!=0){
+                request.setAttribute("data", data);
+                pageLocation = "/WEB-INF/master/systemuser/systemuser-edit.jsp";
+                pageName = "Data Master;Barang;Ubah";
+                
+            }else{
+                response.sendRedirect(JSPHandler.generateUrl(request, "user", "", ""));
+                return;
+            }
             
         }else{
             pageLocation = "/WEB-INF/master/systemuser/systemuser.jsp";

@@ -60,9 +60,9 @@ public class PeramalanController extends HttpServlet {
             pageName = "Peramalan";
             
             long barangId = Long.parseLong("283062973519184");
-            //PeramalanServices.hitungPeramalan(2018, 12, barangId);
+            //PeramalanServices.hitungPeramalan(2019, 12, barangId);
             
-            double bobotPeramalan = PeramalanServices.tentukanBobot(2019, 12, barangId);
+            double bobotPeramalan = PeramalanServices.tentukanBobot(2020, 12, barangId);
             
             
         }else if(action.equalsIgnoreCase("hitung-peramalan")){
