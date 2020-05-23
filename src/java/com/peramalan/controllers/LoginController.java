@@ -71,13 +71,11 @@ public class LoginController extends HttpServlet {
                 LoginServices.setUserPriv(request, user.getRoleId(), user.getSystemUserId());
                 session.setAttribute(LoginServices.LOGIN_STATUS, LoginServices.LOGIN_STATUS_TRUE);
                 session.setAttribute(LoginServices.LOGIN_USER_ID, user.getSystemUserId());
-                System.out.println("sts: "+session.getAttribute(LoginServices.LOGIN_STATUS));
-                System.out.println("redir OK");
                 response.sendRedirect(JSPHandler.generateUrl(request, "home", "", ""));
                 
             }else{
-                System.out.println("redir false");
                 session.setAttribute(LoginServices.LOGIN_STATUS, LoginServices.LOGIN_STATUS_FALSE);
+                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Login gagal");
                 response.sendRedirect(JSPHandler.generateUrl(request, "login", "", ""));
             }
             

@@ -5,9 +5,6 @@
 --%>
 
 <%@page import="com.peramalan.services.JSPHandler"%>
-<%
-    Connection conn = DbConnection.getConnection();
-%>
 <%@page import="com.peramalan.config.MainConfig"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="com.peramalan.conn.DbConnection"%>
@@ -28,6 +25,8 @@
         <link rel="stylesheet" href="<%= MainConfig.getAssetUrl(request)%>/sb/font-awesome/css/font-awesome.min.css">
         <link href="<%= MainConfig.getAssetUrl(request)%>/css/apps.css" rel="stylesheet">
         <link href="<%= MainConfig.getAssetUrl(request)%>/css/login.css" rel="stylesheet">
+        <script src="<%= MainConfig.getAssetUrl(request)%>/sb/js/jquery-1.10.2.js"></script>
+        <script src="<%= MainConfig.getAssetUrl(request)%>/js/sweetalert.js"></script>
 
     </head>
 
@@ -43,6 +42,18 @@
                 </form>
             </div>
         </div>
+                    
+<script>
+    <%
+        if(session.getAttribute(JSPHandler.SESSION_MESSAGING)!=null){ 
+    %>
+    swal('<%= session.getAttribute(JSPHandler.SESSION_MESSAGING) %>');
+    <%
+            session.removeAttribute(JSPHandler.SESSION_MESSAGING);
+        }
+    %>
+</script>
+                    
         <script src="<%= MainConfig.getAssetUrl(request)%>/sb/js/jquery-1.10.2.js"></script>
         <script src="<%= MainConfig.getAssetUrl(request)%>/sb/js/bootstrap.js"></script>
 

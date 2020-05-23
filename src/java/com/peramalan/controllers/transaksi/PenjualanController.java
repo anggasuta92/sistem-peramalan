@@ -119,9 +119,18 @@ public class PenjualanController extends HttpServlet {
                 e.printStackTrace();
             }
             return;
+        }else if(action.equals("import")){
+            
+            pageName = "Transaksi;Penjualan;Import";
+            pageLocation = "/WEB-INF/transaksi/penjualan/penjualan-import.jsp";
+            
+        }else if(action.equals("download-template")){
+            
+            pageLocation = "/WEB-INF/transaksi/penjualan/penjualan-download-template.jsp";
+            
         }else{
             pageName = "Transaksi;Penjualan";
-            pageLocation = "/WEB-INF/transaksi/penjualan/penjualan.jsp";            
+            pageLocation = "/WEB-INF/transaksi/penjualan/penjualan.jsp";
         }
         
         if(pageLocation.length()>0){

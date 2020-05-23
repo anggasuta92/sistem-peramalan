@@ -12,6 +12,21 @@ import java.text.DecimalFormat;
  * @author Angga Suta
  */
 public class NumberServices {
+    
+    public static String formatNumber(double number, String pattern){
+        String result = "";
+        DecimalFormat df = new DecimalFormat(pattern);
+        result = df.format(number);
+        return result;
+    }
+    
+    public static String formatNumber(int number, String pattern){
+        String result = "";
+        DecimalFormat df = new DecimalFormat(pattern);
+        result = df.format(number);
+        return result;
+    }
+    
     public static double decimalRounded(double number, int decimalPlace){
         double result = 0;
         

@@ -5,8 +5,14 @@
  */
 package com.peramalan.controllers;
 
+import com.peramalan.model.master.DbBarang;
+import com.peramalan.model.transaksi.DbPenjualan;
+import com.peramalan.services.DashboardServices;
 import com.peramalan.services.JSPHandler;
+import com.peramalan.services.NumberServices;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Vector;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -37,10 +43,22 @@ public class HomeController extends HttpServlet {
         String pageLocation = "";
         
         if(action.equals("index")){
-            pageName = "Dashboard;Home;Uhuy";
+            pageName = "Dashboard;Home";
             pageLocation = "/WEB-INF/home/home.jsp";            
         }else{
-            pageName = "Dashboard;Home;Uhuy";
+            
+            int countBarang = DbBarang.count("");
+            request.setAttribute("count_barang", NumberServices.formatNumber(countBarang, "#,##0"));
+            
+            int countPenjualan = DbPenjualan.count("");
+            request.setAttribute("count_penjualan", NumberServices.formatNumber(countPenjualan, "#,##0"));
+            
+            Vector<Map> chartPenjualan = DashboardServices.chartPenjualanData();
+            request.setAttribute("chart_penjualan", chartPenjualan);
+            
+            DashboardServices.chartPenjualanData();
+            
+            pageName = "Dashboard;Home";
             pageLocation = "/WEB-INF/home/home.jsp";
         }
         

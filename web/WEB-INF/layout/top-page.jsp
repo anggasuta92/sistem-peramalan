@@ -32,6 +32,8 @@
         <script src="<%= MainConfig.getAssetUrl(request)%>/js/numeral.js"></script>
         <script src="<%= MainConfig.getAssetUrl(request)%>/jquery-ui-1.12.1/jquery-ui.min.js"></script>
         
+        <script src="<%= MainConfig.getAssetUrl(request)%>/chartjs/Chart.bundle.min.js"></script>
+        
         <style>
             .breadcrumb {
                 margin-top: 20px !important;

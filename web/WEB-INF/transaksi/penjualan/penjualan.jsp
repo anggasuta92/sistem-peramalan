@@ -83,7 +83,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-5 pull-right" style="padding-top: 20px" align="right">
-                        <button class="btn btn-primary"><span class="fa fa-sign-in"></span> Import</button>
+                        <button class="btn btn-primary" onclick="importPenjualan()"><span class="fa fa-sign-in"></span> Import</button>
                         <button class="btn btn-primary"><span class="fa fa-sign-out"></span> Export</button>
                         <button class="btn btn-primary" id="btnOpenEditor"><span class="fa fa-plus-circle"></span> Editor Penjualan</button>
                         <button class="btn btn-warning" onclick="back()" ><span class="fa fa-chevron-circle-left"></span> Kembali</button>
@@ -298,8 +298,11 @@
   </script>
                             
 <script>    
+    function importPenjualan(){
+        location.href = "<%= JSPHandler.generateUrl(request, "penjualan", "import", "") %>";
+    }
     function back(){
-        location.href = "<%= JSPHandler.generateUrl(request, "home", "", "") %>";
+        location.href = "<%= JSPHandler.generateUrl(request, "penjualan", "", "") %>";
     }
       
     $("#txtSearch").on('keyup', function (e) {

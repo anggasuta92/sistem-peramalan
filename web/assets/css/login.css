@@ -97,7 +97,8 @@ body {
   background: -o-linear-gradient(right, #3c8dbc, #8DC26F);
   background: linear-gradient(to left, #3c8dbc, #8DC26F);
   */
-  background: #f2f2f2;
+  /*background: #f2f2f2; */
+  background: #b3b3b3;
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;      

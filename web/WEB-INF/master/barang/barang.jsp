@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-5 pull-right" style="padding-top: 20px" align="right">
+                    <div class="col-md-5 pull-right" style="padding-top: 10px" align="right">
                         <button class="btn btn-primary" onclick="addNew()" ><span class="fa fa-plus-circle"></span> Tambah Data</button>
                         <button class="btn btn-warning" onclick="back()" ><span class="fa fa-chevron-circle-left"></span> Kembali</button>
                     </div>
