@@ -143,6 +143,32 @@ public class DbBarang {
         }
         return result;
     }
+
+    public static Barang findByKode(String kode){
+        Barang result = new Barang();
+        
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try{
+            String sql = "select * from " + tableName + " where " + COL_KODE + "=?";
+            
+            conn = DbConnection.getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, kode);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                fetchObject(rs, result);
+            }
+            rs.close();
+        }catch(Exception e){
+            System.out.println("err_select_data: " + e.toString() + "/" + e.toString());
+        }finally{
+            try{if(stmt!=null) stmt.close();}catch(Exception e){}
+            try{if(conn!=null) conn.close();}catch(Exception e){}
+        }
+        
+        return result;
+    }
     
     public static Barang findById(long id){
         Barang result = new Barang();

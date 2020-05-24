@@ -8,6 +8,7 @@ package com.peramalan.controllers.transaksi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.peramalan.model.master.DbBarang;
 import com.peramalan.model.transaksi.DbPenjualan;
+import com.peramalan.services.ImportPenjualanServices;
 import com.peramalan.services.JSPHandler;
 import com.peramalan.services.PaginationServices;
 import java.io.IOException;
@@ -123,6 +124,10 @@ public class PenjualanController extends HttpServlet {
             
             pageName = "Transaksi;Penjualan;Import";
             pageLocation = "/WEB-INF/transaksi/penjualan/penjualan-import.jsp";
+        }else if(action.equals("upload")){    
+            
+            String x = ImportPenjualanServices.importPenjualan(request);
+            out.println(x);
             
         }else if(action.equals("download-template")){
             

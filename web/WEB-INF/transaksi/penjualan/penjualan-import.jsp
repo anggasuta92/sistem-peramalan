@@ -12,10 +12,12 @@
                 Import data penjualan
             </div>
             <div class="panel-body">
-                <form action="#" method="post" enctype="multipart/form-data">
+                <form action="<%= JSPHandler.generateUrl(request, "penjualan", "upload", "") %>" method="post" enctype="multipart/form-data">
                     <div class="form-group">
-                        <label >Pilih dokumen penjualan yang akan diimport</label>
-                        <input type="file" class="form-control-file" id="filePenjualan">
+                        <label class="label label-success">Pilih dokumen penjualan yang akan diimport</label>
+                        <hr>
+                        <input type="file" class="form-control-file" name="filePenjualan" id="filePenjualan" accept=".xls">
+                        <hr>
                     </div>
                     <div class="form-group">
                         <input type="submit" class="form-control btn btn-primary" name="btnSubmit" value="Import sekarang" />
@@ -36,7 +38,8 @@
 
 <script>
     function downloadTemplate(){  
-       window.open("<%= JSPHandler.generateUrl(request, "penjualan", "download-template", "") %>","","toolbar=no,status=no,menubar=no,location=center,scrollbars=no,resizable=no,height=500,width=657");  
+       //window.open("<%= JSPHandler.generateUrl(request, "penjualan", "download-template", "") %>","","toolbar=no,status=no,menubar=no,location=center,scrollbars=no,resizable=no,height=500,width=657");  
+       window.open("<%= JSPHandler.generateUrl(request, "penjualan", "download-template", "") %>","_blank");
     } 
 </script>
 
