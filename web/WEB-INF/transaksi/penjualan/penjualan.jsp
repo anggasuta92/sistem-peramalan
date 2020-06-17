@@ -84,7 +84,7 @@
                 <div class="row">
                     <div class="col-md-5 pull-right" style="padding-top: 20px" align="right">
                         <button class="btn btn-primary" onclick="importPenjualan()"><span class="fa fa-sign-in"></span> Import</button>
-                        <button class="btn btn-primary"><span class="fa fa-sign-out"></span> Export</button>
+                        <button class="btn btn-primary" onclick="exportData()" id="btnOpenExport"><span class="fa fa-sign-out"></span> Export</button>
                         <button class="btn btn-primary" id="btnOpenEditor"><span class="fa fa-plus-circle"></span> Editor Penjualan</button>
                         <button class="btn btn-warning" onclick="back()" ><span class="fa fa-chevron-circle-left"></span> Kembali</button>
                     </div>
@@ -116,7 +116,6 @@
                                 <option value="<%= bulan %>"> <%= TransaksiService.periodeBulan[bulan] %> </option>
                                 <% } %>
                             </select>
-                            <input type="hidden" class="" id="bulan_value">
                         </div>
                     </div>
                     <div class="col-sm-6">
@@ -128,7 +127,6 @@
                                 <option value="<%= TransaksiService.periodeTahun()[tahun] %>"> <%= TransaksiService.periodeTahun()[tahun] %> </option>
                                 <% } %>
                             </select>
-                            <input type="hidden" class="" id="tahun_value">
                         </div>
                     </div>
                 </div>
@@ -165,8 +163,23 @@
         </div>
     </div>
 </div> 
-                            
+
 <script>
+    function exportData(){
+        var param = document.getElementById('txtSearch').value;
+        var bulan = document.getElementById('param_bulan').value;
+        var tahun = document.getElementById('param_tahun').value;
+        
+        if(tahun>0 && bulan>0){
+            window.open("<%= JSPHandler.generateUrl(request, "penjualan", "export", "") %>&param="+param+"&bulan="+bulan+"&tahun="+tahun,"_blank");
+        }else{
+            var errMsg = "";
+            if(tahun==0) errMsg += (errMsg.length>0 ? ", ":"") + "Tahun belum dipilih";
+            if(bulan==0) errMsg += (errMsg.length>0 ? ", ":"") + "Bulan belum dipilih";
+            swal("Perhatian",errMsg,"warning");
+        }
+    }
+    
     function saveDataPenjualan(){
         var xtahun = $("#param_tahun_editor").val();
         var xbulan = $("#param_bulan_editor").val();
@@ -196,6 +209,13 @@
             
             resetForm();
             $("#itemSearch").focus();
+            
+            var srcBulan = document.getElementById('param_bulan').value;
+            var srcTahun = document.getElementById('param_tahun').value;
+            
+            if(srcBulan!=0 && srcTahun!=0){
+                loadSearch();
+            }
            
         }else{
             var errMsg = "";
@@ -222,7 +242,6 @@
     $("#btnOpenEditor").click(function(){
         $("#modalPenjualan").modal({backdrop: 'static', keyboard: false});
         $( "#itemSearch" ).autocomplete( "option", "appendTo", ".eventInsForm" );
-        
         /* reset form */
         resetForm();
         $("#param_bulan_editor").val($("#param_bulan").val());
@@ -232,14 +251,12 @@
     function edit(tahun, bulan, barangId, qty, kode, namaBarang){
         $("#modalPenjualan").modal({backdrop: 'static', keyboard: false});
         $( "#itemSearch" ).autocomplete( "option", "appendTo", ".eventInsForm" );
-        
         $("#param_tahun_editor").val(tahun);
         $("#param_bulan_editor").val(bulan);
         $("#showCode").val(kode);
         $("#showName").val(namaBarang);
         $("#input_barang_id").val(barangId);
         $("#input_qty").val(qty);
-        
         $("#input_qty").focus();               
         $("#input_qty").select();
     }

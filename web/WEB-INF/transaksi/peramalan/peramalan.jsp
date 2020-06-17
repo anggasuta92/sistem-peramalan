@@ -6,40 +6,72 @@
 <%@ include file="../../layout/top-page.jsp"%>
 
 <div class="row">
-    <div class="col-lg-6">
+    <div class="col-lg-12">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-archive"></i> Perhitungan peramalan</h3>
+                <h3 class="panel-title"><i class="fa fa-archive"></i> Perhitungan Peramalan</h3>
             </div>
             <div class="panel-body">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-2" style="text-align: right">
+                                Meramalkan penjualan periode ke:
+                            </div>
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <select class="form-control" name="peramalan_bulan" id="peramalan_bulan">
+                                        <option value="0">Pilih bulan..</option>
+                                        <% for(int bulan = 1; bulan < TransaksiService.periodeBulan.length; bulan++){ %>
+                                        <option value="<%= bulan %>"> <%= TransaksiService.periodeBulan[bulan] %> </option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <select class="form-control" name="peramalan_tahun" id="peramalan_tahun">
+                                        <option value="0">Pilih tahun..</option>
+                                        <% for(int tahun = 0; tahun < TransaksiService.periodeTahun().length; tahun++){ %>
+                                        <option value="<%= TransaksiService.periodeTahun()[tahun] %>"> <%= TransaksiService.periodeTahun()[tahun] %> </option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-2" style="text-align: right">
+                                Berdasarkan periode penjualan dari:
+                            </div>
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <select class="form-control" name="penjualan_bulan" id="penjualan_bulan">
+                                        <option value="0">Pilih bulan..</option>
+                                        <% for(int bulan = 1; bulan < TransaksiService.periodeBulan.length; bulan++){ %>
+                                        <option value="<%= bulan %>"> <%= TransaksiService.periodeBulan[bulan] %> </option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <select class="form-control" name="penjualan_tahun" id="penjualan_tahun">
+                                        <option value="0">Pilih tahun..</option>
+                                        <% for(int tahun = 0; tahun < TransaksiService.periodeTahun().length; tahun++){ %>
+                                        <option value="<%= TransaksiService.periodeTahun()[tahun] %>"> <%= TransaksiService.periodeTahun()[tahun] %> </option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                        
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="form-group">
-                            <label>Tahun</label>
-                            <select class="form-control" id="tahun" name="tahun">
-                                <option value="0">Pilih tahun..</option>
-                                <% for(int tahun = 0; tahun < TransaksiService.periodeTahun().length; tahun++){ %>
-                                <option value="<%= TransaksiService.periodeTahun()[tahun] %>"> <%= TransaksiService.periodeTahun()[tahun] %> </option>
-                                <% } %>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Bulan</label>
-                            <select class="form-control" id="bulan" name="bulan">
-                                <option value="0">Pilih bulan..</option>
-                                <% for(int bulan = 1; bulan < TransaksiService.periodeBulan.length; bulan++){ %>
-                                <option value="<%= bulan %>"> <%= TransaksiService.periodeBulan[bulan] %> </option>
-                                <% } %>
-                            </select>
-                        </div>
                         <div class="form-group pull-right" id="btn-peramalan">
                             <button class="btn btn-primary" onClick="hitungPeramalan()">Hitung Peramalan</button>
                             <button class="btn btn-warning" onclick="back()">Kembali</button>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
+                        
                         <div class="form-group" id="loader-peramalan" style="display:none;text-align: center;">
                             <div class="alert alert-info">
                                 <img width="30px" height="30px" src="<%= MainConfig.getAssetUrl(request)%>/images/loader-classic.gif"/>
@@ -51,7 +83,8 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>                                
+
 </div>
 
 <script>
@@ -61,20 +94,33 @@
     
     function hitungPeramalan(){
         
-        var bulan = document.getElementById('bulan').value;
-        var tahun = document.getElementById('tahun').value;
+        var peramalan_bulan = document.getElementById('peramalan_bulan').value;
+        var peramalan_tahun = document.getElementById('peramalan_tahun').value;
+        var penjualan_bulan = document.getElementById('penjualan_bulan').value;
+        var penjualan_tahun = document.getElementById('penjualan_tahun').value;
         
-        if(bulan!=0 && tahun!=null){
-            $('#btn-peramalan').hide();
-            $('#loader-peramalan').show();
-            startHitungPeramalan();
+        if(peramalan_bulan!=0 && peramalan_tahun!=null && penjualan_bulan!=null && penjualan_tahun!=null){
+            startHitungPeramalan(peramalan_bulan, peramalan_tahun, penjualan_bulan, penjualan_tahun);
         }else{
-            swal('Perhatian!','Tahun atau bulan belum dipilih', 'warning');
+            swal('Perhatian!','periode peramalan atau penjualan belum dipilih', 'warning');
         }
     }
     
-    function startHitungPeramalan(){
-        
+    function startHitungPeramalan(peramalanBulan, peramalanTahun, penjualanBulan, penjualanTahun){
+        $.ajax({
+            type  : 'post',
+            data  : { peramalan_bulan:peramalanBulan, peramalan_tahun:peramalanTahun, penjualan_bulan:penjualanBulan, penjualan_tahun:penjualanTahun },
+            url   : '<%= JSPHandler.generateUrl(request, "peramalan", "hitung-peramalan", "") %>',
+            async : true,
+            dataType : 'json',
+            beforeSend: function() {
+                $('#btn-peramalan').hide();
+                $('#loader-peramalan').show();
+            },
+            success : function(datas){
+                // redirect here
+            }
+        });
     }
 </script>
 

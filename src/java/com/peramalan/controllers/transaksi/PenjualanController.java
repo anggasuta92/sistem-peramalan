@@ -122,17 +122,23 @@ public class PenjualanController extends HttpServlet {
             return;
         }else if(action.equals("import")){
             
+            int uploaded = JSPHandler.requestInt(request, "uploaded");    
             pageName = "Transaksi;Penjualan;Import";
             pageLocation = "/WEB-INF/transaksi/penjualan/penjualan-import.jsp";
+        }else if(action.equals("export")){
+            
+            pageLocation = "/WEB-INF/transaksi/penjualan/penjualan-export.jsp";
+            
         }else if(action.equals("upload")){    
             
-            String x = ImportPenjualanServices.importPenjualan(request);
-            out.println(x);
+            String importResults = ImportPenjualanServices.importPenjualan(request);
+            request.setAttribute("uploaded", 1);
+            response.sendRedirect(JSPHandler.generateUrl(request, "penjualan", "import", "uploaded=1"));
             
         }else if(action.equals("download-template")){
             
             pageLocation = "/WEB-INF/transaksi/penjualan/penjualan-download-template.jsp";
-            
+
         }else{
             pageName = "Transaksi;Penjualan";
             pageLocation = "/WEB-INF/transaksi/penjualan/penjualan.jsp";

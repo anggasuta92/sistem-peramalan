@@ -5,7 +5,19 @@
 <%@page import="com.peramalan.services.JSPHandler"%>
 <%@ include file="../../layout/top-page.jsp"%>
 
+<%
+    int uploaded = 0;
+    try {
+        uploaded = Integer.parseInt(request.getAttribute("uploaded").toString());
+    } catch (Exception e) {
+    }
+    
+    out.println("uploaded: " + uploaded);
+%>
+
 <div class="row">
+    
+    <% if(uploaded==0){ %>
     <div class="col-md-6">
         <div class="panel panel-primary">
             <div class="panel-heading">
@@ -34,11 +46,14 @@
             </button>
         </div>
     </div>
+
+    <% }else{ %>
+    <% } %>
+                    
 </div>
 
 <script>
     function downloadTemplate(){  
-       //window.open("<%= JSPHandler.generateUrl(request, "penjualan", "download-template", "") %>","","toolbar=no,status=no,menubar=no,location=center,scrollbars=no,resizable=no,height=500,width=657");  
        window.open("<%= JSPHandler.generateUrl(request, "penjualan", "download-template", "") %>","_blank");
     } 
 </script>

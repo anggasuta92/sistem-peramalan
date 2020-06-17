@@ -35,7 +35,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="<%= JSPHandler.generateUrl(request, "home", "", "") %>"><i class="fa fa-fire"></i> <%= MainConfig.APP_NAME %></a>
+                    <a class="navbar-brand" href="<%= JSPHandler.generateUrl(request, "home", "", "") %>"><i class="fa fa-gear"></i> <%= MainConfig.APP_NAME %></a>
                 </div>
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
@@ -43,7 +43,7 @@
                     <ul class="nav navbar-nav side-nav">
                         <li class="" style="padding: 40px;padding-bottom: 10px;margin: auto; text-align: center">
                             <img src="<%= MainConfig.getAssetUrl(request)%>/images/avatar.png" alt="Avatar" style="width:120px;height: 120px;border-radius: 50%;">
-                            <label style="color: #fff;">User Name</label>
+                            <label style="color: #fff;"><%= user.getNama() %></label>
                         </li>
                         <li class=""><a href="<%= JSPHandler.generateUrl(request, "home", "", "") %>"><i class="fa fa-dashboard"></i> Dashboard</a></li>
                         <% if(mnKategoriBarang || mnBarang){ %>

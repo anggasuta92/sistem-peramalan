@@ -10,7 +10,7 @@ import com.peramalan.model.master.Barang;
 import com.peramalan.model.master.DbBarang;
 import com.peramalan.model.master.DbKategoriBarang;
 import com.peramalan.model.master.KategoriBarang;
-import com.peramalan.model.transaksi.DbPeramalan;
+import com.peramalan.model.transaksi.DbPeramalanDetail;
 import com.peramalan.services.JSPHandler;
 import com.peramalan.services.PaginationServices;
 import com.peramalan.services.PeramalanServices;
@@ -59,14 +59,16 @@ public class PeramalanController extends HttpServlet {
             pageLocation = "/WEB-INF/transaksi/peramalan/peramalan.jsp";
             pageName = "Peramalan";
             
-            long barangId = Long.parseLong("283062973519184");
-            //PeramalanServices.hitungPeramalan(2019, 12, barangId);
-            
-            double bobotPeramalan = PeramalanServices.tentukanBobot(2020, 12, barangId);
-            
-            
         }else if(action.equalsIgnoreCase("hitung-peramalan")){
             
+            int peramalanBulan = JSPHandler.requestInt(request, "peramalan_bulan");
+            int peramalanTahun = JSPHandler.requestInt(request, "peramalan_tahun");
+            int penjualanBulan= JSPHandler.requestInt(request, "penjualan_bulan");
+            int penjualanTahun = JSPHandler.requestInt(request, "penjualan_tahun");
+            
+            PeramalanServices.hitungPeramalanByBarang(penjualanBulan, penjualanTahun, peramalanBulan, peramalanTahun, 0.1, 0);
+            
+            /* lakukan peramalan disini */
             
             
         }else{

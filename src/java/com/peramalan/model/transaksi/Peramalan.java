@@ -5,23 +5,21 @@
  */
 package com.peramalan.model.transaksi;
 
-import com.peramalan.model.master.Barang;
+import java.util.Date;
 
 /**
  *
- * @author Angga Suta
+ * @author AnggaSuta
  */
 public class Peramalan {
     private long peramalanId;
-    private int tahun;
-    private int bulan;
-    private Barang barang;
-    private double alpha;
-    private double smoothingSingle;
-    private double smoothingDouble;
-    private double nilaiA;
-    private double nilaiB;
-    private double peramalan;
+    private int penjualan_bulan;
+    private int penjualan_tahun;
+    private int peramalan_bulan;
+    private int peramalan_tahun;
+    private double alphaTerbaik;
+    private Date tanggal;
+    
 
     /**
      * @return the peramalanId
@@ -38,129 +36,87 @@ public class Peramalan {
     }
 
     /**
-     * @return the tahun
+     * @return the startBulan
      */
-    public int getTahun() {
-        return tahun;
+    public int getPenjualanBulan() {
+        return penjualan_bulan;
     }
 
     /**
-     * @param tahun the tahun to set
+     * @param penjualanBulan the startBulan to set
      */
-    public void setTahun(int tahun) {
-        this.tahun = tahun;
+    public void setPenjualanBulan(int penjualanBulan) {
+        this.penjualan_bulan = penjualanBulan;
     }
 
     /**
-     * @return the bulan
+     * @return the startTahun
      */
-    public int getBulan() {
-        return bulan;
+    public int getPenjualanTahun() {
+        return penjualan_tahun;
     }
 
     /**
-     * @param bulan the bulan to set
+     * @param penjualanTahun the startTahun to set
      */
-    public void setBulan(int bulan) {
-        this.bulan = bulan;
+    public void setPenjualanTahun(int penjualanTahun) {
+        this.penjualan_tahun = penjualanTahun;
     }
 
     /**
-     * @return the barang
+     * @return the endBulan
      */
-    public Barang getBarang() {
-        return barang;
+    public int getPeramalanBulan() {
+        return peramalan_bulan;
     }
 
     /**
-     * @param barang the barang to set
+     * @param peramalanBulan the endBulan to set
      */
-    public void setBarang(Barang barang) {
-        this.barang = barang;
+    public void setPeramalanBulan(int peramalanBulan) {
+        this.peramalan_bulan = peramalanBulan;
     }
 
     /**
-     * @return the alpha
+     * @return the endTahun
      */
-    public double getAlpha() {
-        return alpha;
+    public int getPeramalanTahun() {
+        return peramalan_tahun;
     }
 
     /**
-     * @param alpha the alpha to set
+     * @param peramalanTahun the endTahun to set
      */
-    public void setAlpha(double alpha) {
-        this.alpha = alpha;
+    public void setPeramalanTahun(int peramalanTahun) {
+        this.peramalan_tahun = peramalanTahun;
     }
 
     /**
-     * @return the smoothingSingle
+     * @return the alphaTerbaik
      */
-    public double getSmoothingSingle() {
-        return smoothingSingle;
+    public double getAlphaTerbaik() {
+        return alphaTerbaik;
     }
 
     /**
-     * @param smoothingSingle the smoothingSingle to set
+     * @param alphaTerbaik the alphaTerbaik to set
      */
-    public void setSmoothingSingle(double smoothingSingle) {
-        this.smoothingSingle = smoothingSingle;
+    public void setAlphaTerbaik(double alphaTerbaik) {
+        this.alphaTerbaik = alphaTerbaik;
     }
 
     /**
-     * @return the smoothingDouble
+     * @return the tanggal
      */
-    public double getSmoothingDouble() {
-        return smoothingDouble;
+    public Date getTanggal() {
+        return tanggal;
     }
 
     /**
-     * @param smoothingDouble the smoothingDouble to set
+     * @param tanggal the tanggal to set
      */
-    public void setSmoothingDouble(double smoothingDouble) {
-        this.smoothingDouble = smoothingDouble;
-    }
-
-    /**
-     * @return the nilaiA
-     */
-    public double getNilaiA() {
-        return nilaiA;
-    }
-
-    /**
-     * @param nilaiA the nilaiA to set
-     */
-    public void setNilaiA(double nilaiA) {
-        this.nilaiA = nilaiA;
-    }
-
-    /**
-     * @return the nilaiB
-     */
-    public double getNilaiB() {
-        return nilaiB;
-    }
-
-    /**
-     * @param nilaiB the nilaiB to set
-     */
-    public void setNilaiB(double nilaiB) {
-        this.nilaiB = nilaiB;
-    }
-
-    /**
-     * @return the peramalan
-     */
-    public double getPeramalan() {
-        return peramalan;
-    }
-
-    /**
-     * @param peramalan the peramalan to set
-     */
-    public void setPeramalan(double peramalan) {
-        this.peramalan = peramalan;
+    public void setTanggal(Date tanggal) {
+        this.tanggal = tanggal;
     }
     
     
