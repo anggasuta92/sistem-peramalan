@@ -225,6 +225,51 @@ public class DbPenjualan {
         return result;
     }
     
+    public static Penjualan findByLastPeriode(long barangId){
+        Penjualan result = new Penjualan();
+        
+        String sql = "select * from penjualan where barang_id=? order by ((tahun*12)+bulan) desc limit 1";
+        
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        
+        try {
+            conn = DbConnection.getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setLong(1, barangId);
+            
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                fetchObject(rs, result);
+                
+                if(result.getBarang().getBarangId()==0){
+                    Barang barang = new Barang();
+                    try {
+                        barang = DbBarang.findById(barangId);
+                        result.setBarang(barang);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            rs.close();
+        } catch (Exception e) {
+            System.out.println("err_find_penjualan_by_periode:" + e.toString());
+        } finally {
+            try {
+                if(stmt!=null){
+                    stmt.close();
+                }
+                
+                if(conn!=null){
+                    conn.close();
+                }
+            } catch (Exception e) {
+            }
+        }
+        return result;
+    }
+    
     public static Penjualan findByPeriode(long barangId, int tahun, int bulan){
         Penjualan result = new Penjualan();
         
@@ -242,6 +287,16 @@ public class DbPenjualan {
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
                 fetchObject(rs, result);
+                
+                if(result.getBarang().getBarangId()==0){
+                    Barang barang = new Barang();
+                    try {
+                        barang = DbBarang.findById(barangId);
+                        result.setBarang(barang);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             rs.close();
         } catch (Exception e) {

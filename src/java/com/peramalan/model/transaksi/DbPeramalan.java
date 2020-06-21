@@ -7,6 +7,8 @@ package com.peramalan.model.transaksi;
 
 import com.peramalan.conn.DbConnection;
 import com.peramalan.model.OIDGenerator;
+import com.peramalan.services.JSPHandler;
+import com.peramalan.services.TransaksiService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,6 +32,7 @@ public class DbPeramalan {
     public static String COL_END_TAHUN = "end_tahun";
     public static String COL_END_BULAN = "end_bulan";
     public static String COL_ALPHA_TERBAIK = "alpha_terbaik";
+    public static String COL_NOMOR = "nomor";
     public static String COL_TANGGAL = "tanggal";
     
     public static void fetchObject(ResultSet rs, Peramalan o) throws SQLException{
@@ -40,6 +43,7 @@ public class DbPeramalan {
         o.setPeramalanBulan(rs.getInt(COL_END_BULAN));
         o.setAlphaTerbaik(rs.getDouble(COL_ALPHA_TERBAIK));
         o.setTanggal(rs.getTimestamp(COL_TANGGAL));
+        o.setNomor(rs.getString(COL_NOMOR));
     }
     
     public static int count(String where){
@@ -104,7 +108,9 @@ public class DbPeramalan {
     public static long save(Peramalan data){
         long result = 0;
         String sql = "INSERT INTO " + tableName + " "
-                + "("+COL_PERAMALAN_ID+", "+COL_START_BULAN+", "+COL_START_TAHUN+", "+COL_END_BULAN+", "+COL_END_TAHUN+", "+COL_ALPHA_TERBAIK+", "+COL_TANGGAL+") values (?,?,?,?,?,?,?)";
+                + "("+COL_PERAMALAN_ID+", "+COL_START_BULAN+", "+COL_START_TAHUN+", "+COL_END_BULAN+", "
+                +COL_END_TAHUN+", "+COL_ALPHA_TERBAIK+", "+COL_TANGGAL+", "+ COL_NOMOR +") "
+                + "values (?,?,?,?,?,?,?,?)";
         
         Connection conn = null;
         PreparedStatement ps = null;
@@ -120,6 +126,52 @@ public class DbPeramalan {
             ps.setInt(5, data.getPeramalanTahun());
             ps.setDouble(6, data.getAlphaTerbaik());
             ps.setTimestamp(7, new java.sql.Timestamp(new Date().getTime()));
+            ps.setString(8, data.getNomor());
+            
+            ps.execute();
+            
+            result = data.getPeramalanId();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(ps!=null){
+                try{
+                    ps.close();
+                }catch(Exception e){}
+            }
+            if(conn!=null){
+                try{
+                    conn.close();
+                }catch(Exception e){}
+            }
+        }
+        return result;
+    }
+    
+    public static long update(Peramalan data){
+        long result = 0;
+        String sql = "update "+ tableName +" set "
+                + COL_START_BULAN + "=?, "+COL_START_TAHUN+"=?, "+COL_END_BULAN+"=?, "+ COL_END_TAHUN +"=?, "
+                + COL_ALPHA_TERBAIK +"=?, " + COL_TANGGAL + "=?, "+COL_NOMOR+"=? "
+                + "where "+ COL_PERAMALAN_ID +"=?";
+        
+        if(data.getPeramalanId()==0){
+            return 0;
+        }
+        
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = DbConnection.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, data.getPenjualanBulan());
+            ps.setInt(2, data.getPenjualanTahun());
+            ps.setInt(3, data.getPeramalanBulan());
+            ps.setInt(4, data.getPeramalanTahun());
+            ps.setDouble(5, data.getAlphaTerbaik());
+            ps.setLong(6, data.getPeramalanId());
+            ps.setString(7, data.getNomor());
+            ps.setTimestamp(8, new java.sql.Timestamp(data.getTanggal().getTime()));
             
             ps.execute();
             
@@ -141,46 +193,31 @@ public class DbPeramalan {
         return result;
     }
     
-    public static long update(Peramalan data){
-        long result = 0;
-        String sql = "update "+ tableName +" set "
-                + COL_START_BULAN + "=?, "+COL_START_TAHUN+"=?, "+COL_END_BULAN+"=?, "+ COL_END_TAHUN +"=?, "+ COL_ALPHA_TERBAIK +"=?, " + COL_TANGGAL + "=? "
-                + "where "+ COL_PERAMALAN_ID +"=?";
+    public static String nomorOtomatis(String pattern){
+        String result= "";
         
-        if(data.getPeramalanId()==0){
-            return 0;
-        }
-        
-        Connection conn = null;
-        PreparedStatement ps = null;
+        String where = COL_NOMOR + " like '%"+ pattern +"%'";
+        Vector<Peramalan> listPeramalan = new Vector<>();
         try {
-            conn = DbConnection.getConnection();
-            ps = conn.prepareStatement(sql);
-            ps.setInt(1, data.getPenjualanBulan());
-            ps.setInt(2, data.getPenjualanTahun());
-            ps.setInt(3, data.getPeramalanBulan());
-            ps.setInt(4, data.getPeramalanTahun());
-            ps.setDouble(5, data.getAlphaTerbaik());
-            ps.setLong(6, data.getPeramalanId());
-            ps.setTimestamp(7, new java.sql.Timestamp(data.getTanggal().getTime()));
-            
-            ps.execute();
-            
-            result = data.getPeramalanId();
+            listPeramalan = DbPeramalan.list("", COL_TANGGAL + " desc", 0, 1);
         } catch (Exception e) {
-            System.out.println("err_save_data: " + e.toString() + "/" + e.toString());
-        } finally {
-            if(ps!=null){
-                try{
-                    ps.close();
-                }catch(Exception e){}
-            }
-            if(conn!=null){
-                try{
-                    conn.close();
-                }catch(Exception e){}
-            }
         }
+        
+        int number = 0;
+        if(listPeramalan.size()>0){
+            Peramalan peramalan = (Peramalan) listPeramalan.get(0);
+            System.out.println("number: "+ peramalan.getNomor());
+            System.out.println("number: "+ peramalan.getNomor().replace(pattern, "").trim());
+            number = Integer.parseInt(peramalan.getNomor().replace(pattern, "").trim());
+            number +=1;
+            for(int i = 0; i < (5 - String.valueOf(number).length()); i++){
+                result += "0";
+            }
+            result = pattern + result + number;
+        }else{
+            result = pattern + "00001";
+        }
+        
         return result;
     }
     

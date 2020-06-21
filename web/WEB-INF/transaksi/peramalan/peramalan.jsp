@@ -119,6 +119,8 @@
             },
             success : function(datas){
                 // redirect here
+                $('#btn-peramalan').show();
+                $('#loader-peramalan').hide();
             }
         });
     }

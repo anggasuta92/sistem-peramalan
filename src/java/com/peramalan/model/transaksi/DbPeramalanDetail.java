@@ -36,7 +36,13 @@ public class DbPeramalanDetail {
     public static String COL_SMOOTHING_DOUBLE = "smoothing_double";
     public static String COL_NILAI_A = "nilai_a";
     public static String COL_NILAI_B = "nilai_b";
+    public static String COL_NILAI_M = "nilai_m";
     public static String COL_PERAMALAN = "peramalan";
+    public static String COL_PENJUALAN = "penjualan";
+    public static String COL_TIPE = "tipe";
+    
+    public static final int DETAIL_TIPE_PENJUALAN = 0;
+    public static final int DETAIL_TIPE_PERAMALAN = 1;
     
     public static void fetchObject(ResultSet rs, PeramalanDetail object) throws SQLException{
         object.setPeramalanDetailId(rs.getLong(COL_PERAMALAN_DETAIL_ID));
@@ -54,7 +60,10 @@ public class DbPeramalanDetail {
         object.setSmoothingDouble(rs.getDouble(COL_SMOOTHING_DOUBLE));
         object.setNilaiA(rs.getDouble(COL_NILAI_A));
         object.setNilaiB(rs.getDouble(COL_NILAI_B));
+        object.setNilaiM(rs.getDouble(COL_NILAI_M));
         object.setPeramalan(rs.getDouble(COL_PERAMALAN));
+        object.setPenjualan(rs.getDouble(COL_PENJUALAN));
+        object.setTipe(rs.getInt(COL_TIPE));
     }
         
     public static int count(String where){
@@ -119,8 +128,9 @@ public class DbPeramalanDetail {
     public static long save(PeramalanDetail data){
         long result = 0;
         String sql = "INSERT INTO "+ tableName +" ("+ COL_PERAMALAN_ID +", "+ COL_TAHUN +", "+ COL_BULAN +", "+ COL_BARANG_ID +", "
-                + ""+ COL_ALPHA +", "+ COL_SMOOTHING_SINGLE +", "+ COL_SMOOTHING_DOUBLE +", "+ COL_NILAI_A +", "+ COL_NILAI_B +", "+ COL_PERAMALAN +", "+ COL_PERAMALAN_DETAIL_ID +")"
-                + " VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+                + ""+ COL_ALPHA +", "+ COL_SMOOTHING_SINGLE +", "+ COL_SMOOTHING_DOUBLE +", "+ COL_NILAI_A +", "+ COL_NILAI_B +", "+ COL_PERAMALAN +
+                ", "+ COL_PERAMALAN_DETAIL_ID +", "+ COL_PENJUALAN +", "+ COL_NILAI_M +", "+ COL_TIPE +")"
+                + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         
         Connection conn = null;
         PreparedStatement ps = null;
@@ -128,7 +138,7 @@ public class DbPeramalanDetail {
             conn = DbConnection.getConnection();
             ps = conn.prepareStatement(sql);
             
-            data.setPeramalanId(OIDGenerator.generateOID());
+            data.setPeramalanDetailId(OIDGenerator.generateOID());
             ps.setLong(1, data.getPeramalanId());
             ps.setInt(2, data.getTahun());
             ps.setInt(3, data.getBulan());
@@ -140,12 +150,15 @@ public class DbPeramalanDetail {
             ps.setDouble(9, data.getNilaiB());
             ps.setDouble(10, data.getPeramalan());
             ps.setLong(11, data.getPeramalanDetailId());
+            ps.setDouble(12, data.getPenjualan());
+            ps.setDouble(13, data.getNilaiM());
+            ps.setInt(14, data.getTipe());
             
             ps.execute();
             
             result = data.getPeramalanDetailId();
         } catch (Exception e) {
-            System.out.println("err_save_data: " + e.toString() + "/" + e.toString());
+            e.printStackTrace();
         } finally {
             if(ps!=null){
                 try{
@@ -164,7 +177,8 @@ public class DbPeramalanDetail {
     public static long update(PeramalanDetail data){
         long result = 0;
         String sql = "UPDATE "+ tableName +" SET "+ COL_TAHUN +"=?, "+ COL_BULAN +"=?, "+ COL_BARANG_ID +"=?, "+ COL_ALPHA +"=?, "+ COL_SMOOTHING_SINGLE +"=?, "
-                + COL_SMOOTHING_DOUBLE + "=?, "+ COL_NILAI_A +"=?, "+ COL_NILAI_B +"=?, "+ COL_PERAMALAN +"=?, "+ COL_PERAMALAN_ID +"=? WHERE "+ COL_PERAMALAN_DETAIL_ID +"=?";
+                + COL_SMOOTHING_DOUBLE + "=?, "+ COL_NILAI_A +"=?, "+ COL_NILAI_B +"=?, "+ COL_PERAMALAN +"=?, "+ COL_PERAMALAN_ID +"=?, "
+                + COL_PENJUALAN +"=?, "+ COL_NILAI_M +"=?, "+ COL_TIPE +"=? WHERE "+ COL_PERAMALAN_DETAIL_ID +"=?";
         
         if(data.getPeramalanDetailId()==0){
             return 0;
@@ -186,7 +200,10 @@ public class DbPeramalanDetail {
             ps.setDouble(8, data.getNilaiB());
             ps.setDouble(9, data.getPeramalan());
             ps.setLong(10, data.getPeramalanId());
-            ps.setLong(11, data.getPeramalanDetailId());
+            ps.setDouble(11, data.getPenjualan());
+            ps.setDouble(12, data.getNilaiM());
+            ps.setInt(13, data.getTipe());
+            ps.setLong(14, data.getPeramalanDetailId());
             ps.execute();
             
             result = data.getPeramalanDetailId();

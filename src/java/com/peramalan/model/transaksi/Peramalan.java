@@ -18,6 +18,7 @@ public class Peramalan {
     private int peramalan_bulan;
     private int peramalan_tahun;
     private double alphaTerbaik;
+    private String nomor;
     private Date tanggal;
     
 
@@ -117,6 +118,20 @@ public class Peramalan {
      */
     public void setTanggal(Date tanggal) {
         this.tanggal = tanggal;
+    }
+
+    /**
+     * @return the nomor
+     */
+    public String getNomor() {
+        return nomor;
+    }
+
+    /**
+     * @param nomor the nomor to set
+     */
+    public void setNomor(String nomor) {
+        this.nomor = nomor;
     }
     
     

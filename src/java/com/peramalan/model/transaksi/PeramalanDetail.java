@@ -22,8 +22,11 @@ public class PeramalanDetail {
     private double smoothingDouble;
     private double nilaiA;
     private double nilaiB;
+    private double nilaiM;
     private double peramalan;
-
+    private double penjualan;
+    private int tipe;
+    
     /**
      * @return the peramalanId
      */
@@ -176,6 +179,48 @@ public class PeramalanDetail {
      */
     public void setPeramalanDetailId(long peramalanDetailId) {
         this.peramalanDetailId = peramalanDetailId;
+    }
+
+    /**
+     * @return the penjualan
+     */
+    public double getPenjualan() {
+        return penjualan;
+    }
+
+    /**
+     * @param penjualan the penjualan to set
+     */
+    public void setPenjualan(double penjualan) {
+        this.penjualan = penjualan;
+    }
+
+    /**
+     * @return the nilaiM
+     */
+    public double getNilaiM() {
+        return nilaiM;
+    }
+
+    /**
+     * @param nilaiM the nilaiM to set
+     */
+    public void setNilaiM(double nilaiM) {
+        this.nilaiM = nilaiM;
+    }
+
+    /**
+     * @return the tipe
+     */
+    public int getTipe() {
+        return tipe;
+    }
+
+    /**
+     * @param tipe the tipe to set
+     */
+    public void setTipe(int tipe) {
+        this.tipe = tipe;
     }
     
     

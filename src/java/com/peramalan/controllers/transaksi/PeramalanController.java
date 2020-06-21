@@ -66,7 +66,9 @@ public class PeramalanController extends HttpServlet {
             int penjualanBulan= JSPHandler.requestInt(request, "penjualan_bulan");
             int penjualanTahun = JSPHandler.requestInt(request, "penjualan_tahun");
             
-            PeramalanServices.hitungPeramalanByBarang(penjualanBulan, penjualanTahun, peramalanBulan, peramalanTahun, 0.1, 0);
+            long oidPeramlan = PeramalanServices.hitungPeramalan(penjualanBulan, penjualanTahun, peramalanBulan, peramalanTahun);
+            
+            return;
             
             /* lakukan peramalan disini */
             

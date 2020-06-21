@@ -14,6 +14,7 @@ import com.peramalan.model.transaksi.DbPeramalanDetail;
 import com.peramalan.model.transaksi.Penjualan;
 import com.peramalan.model.transaksi.Peramalan;
 import com.peramalan.model.transaksi.PeramalanDetail;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
@@ -121,7 +122,8 @@ public class PeramalanServices {
         return result;
     }
     
-    public static void hitungPeramalan(int penjualanBulan, int penjualanTahun, int peramalanBulan, int peramalanTahun){
+    public static long hitungPeramalan(int penjualanBulan, int penjualanTahun, int peramalanBulan, int peramalanTahun){
+        long result = 0;
         
         Vector<Barang> listBarang = new Vector<Barang>();
         try {
@@ -129,28 +131,45 @@ public class PeramalanServices {
         } catch (Exception e) {
         }
         
-        long peramalanId = 0;
         Peramalan peramalan = new Peramalan();
         peramalan.setPeramalanBulan(peramalanBulan);
         peramalan.setPeramalanTahun(peramalanTahun);
         peramalan.setPenjualanBulan(penjualanBulan);
         peramalan.setPenjualanTahun(penjualanTahun);
+        
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
+        String pattern = format.format(new Date());
+        peramalan.setNomor(DbPeramalan.nomorOtomatis(pattern));
         peramalan.setTanggal(new Date());
         
         try {
-            peramalanId = DbPeramalan.save(peramalan);
+            result = DbPeramalan.save(peramalan);
         } catch (Exception e) {
+            e.printStackTrace();
         }
         
-        if(peramalanId!=0){
+        if(result!=0){
             for(Barang barang : listBarang){
                 for(int a = 1; a<=9; a++){
                     double alpha = a / 10.0;
                     hitungPeramalanByBarang(penjualanBulan, penjualanTahun, peramalanBulan, peramalanTahun, 
-                            alpha, barang.getBarangId(), peramalanId);
+                            alpha, barang.getBarangId(), result);
                 }
             }
+            
+            /* cari alpha terbaik */
+            
         }
+        
+        return result;
+    }
+    
+    public static double tentukanAlphaTerbaik(long peramalanId){
+        double result = 0;
+        
+        
+        
+        return result;
     }
     
     public static void hitungPeramalanByBarang(int penjualanBulan, int penjualanTahun, 
@@ -165,23 +184,40 @@ public class PeramalanServices {
         double prevNilaiA = 0;
         double prevNilaiB = 0;
         
+        Penjualan penjualanTerbaru = new Penjualan();
+        try {
+            penjualanTerbaru = DbPenjualan.findByLastPeriode(barangId);
+        } catch (Exception e) {
+        }
+        
+        int periodeTerbaruPenjualan = (penjualanTerbaru.getTahun() * 12) + penjualanTerbaru.getBulan();
+        
         for(int i = periodeAwal; i<=periodeAkhir; i++){
             int bulan = (i%12==0) ? 12:(i%12);
             int tahun = Integer.parseInt(String.valueOf(i/12));
+            double qtyPenjualan = 0;
+            
             if(bulan==12){
                 tahun = tahun - 1;
+            }
+            
+            Barang barang = new Barang();
+            try {
+                barang = DbBarang.findById(barangId);
+            } catch (Exception e) {
             }
             
             Penjualan penjualan = new Penjualan();
             try {
                 penjualan = DbPenjualan.findByPeriode(barangId, tahun, bulan);
+                qtyPenjualan = penjualan.getQty();
             } catch (Exception e) {
                 e.printStackTrace();
             }
             
             if(i==periodeAwal){
-                prevSmoothSingle = penjualan.getQty();
-                prevSmoothDouble = penjualan.getQty();
+                prevSmoothSingle = qtyPenjualan;
+                prevSmoothDouble = qtyPenjualan;
             }
             
             double smoothSingle = 0;
@@ -189,58 +225,73 @@ public class PeramalanServices {
             double nilaiA = 0;
             double nilaiB = 0;
             double peramalan = 0;
+            int m = 1;
+            int tipe = DbPeramalanDetail.DETAIL_TIPE_PENJUALAN;
 
             if(i>periodeAwal){
-                /* hitung pemulusan I */
-                smoothSingle = (alpha * penjualan.getQty()) + ((1 - alpha) * prevSmoothSingle);
-                smoothSingle = NumberServices.decimalRounded(smoothSingle, 2);
+                
+                /* cek periode berjalan atau periode dimasa yang akan datang, tanpa ada penjualan */
+                if(i>(periodeTerbaruPenjualan)){
+                    m = i - periodeTerbaruPenjualan;
+                }else{
+                    /* hitung pemulusan I */
+                    smoothSingle = (alpha * qtyPenjualan) + ((1 - alpha) * prevSmoothSingle);
+                    smoothSingle = NumberServices.decimalRounded(smoothSingle, 2);
 
-                /* hitung pemulusan II */
-                smoothDouble = (alpha * smoothSingle) + ((1-alpha) * prevSmoothDouble);
-                smoothDouble = NumberServices.decimalRounded(smoothDouble, 2);
+                    /* hitung pemulusan II */
+                    smoothDouble = (alpha * smoothSingle) + ((1-alpha) * prevSmoothDouble);
+                    smoothDouble = NumberServices.decimalRounded(smoothDouble, 2);
 
-                /* hitung nilai A */
-                nilaiA = (2 * smoothSingle) - smoothDouble;
-                nilaiA = NumberServices.decimalRounded(nilaiA, 2);
+                    /* hitung nilai A */
+                    nilaiA = (2 * smoothSingle) - smoothDouble;
+                    nilaiA = NumberServices.decimalRounded(nilaiA, 2);
 
-                /* hitung nilai B */
-                nilaiB = (alpha/(1-alpha)) * (smoothSingle - smoothDouble);
-                nilaiB = NumberServices.decimalRounded(nilaiB, 2);
+                    /* hitung nilai B */
+                    nilaiB = (alpha/(1-alpha)) * (smoothSingle - smoothDouble);
+                    nilaiB = NumberServices.decimalRounded(nilaiB, 2);
+                }
 
                 /* hitung peramalan */
                 if(i>(periodeAwal+1)){
-                    peramalan = prevNilaiA + (prevNilaiB * 1);
+                    peramalan = prevNilaiA + (prevNilaiB * m);
                     peramalan = NumberServices.decimalRounded(peramalan, 2);
-                }                    
-                prevSmoothSingle = smoothSingle;
-                prevSmoothDouble = smoothDouble;
-                prevNilaiA = nilaiA;
-                prevNilaiB = nilaiB;
+                }
+                
+                if(i<=(periodeTerbaruPenjualan)){
+                    /* peramalan periode berikutnya */
+                    prevSmoothSingle = smoothSingle;
+                    prevSmoothDouble = smoothDouble;
+                    prevNilaiA = nilaiA;
+                    prevNilaiB = nilaiB;
+                }else{
+                    tipe = DbPeramalanDetail.DETAIL_TIPE_PERAMALAN;
+                }
+            }else{
+                smoothSingle = qtyPenjualan;
+                smoothDouble = qtyPenjualan;
             }
-
-            /* simpan ke table temporary */
+            
             PeramalanDetail peramalanDetail = new PeramalanDetail();
             peramalanDetail.setPeramalanId(peramalanId);
-            peramalanDetail.setTahun(penjualan.getTahun());
-            peramalanDetail.setBulan(penjualan.getBulan());
-            peramalanDetail.setBarang(penjualan.getBarang());
+            peramalanDetail.setTahun(tahun);
+            peramalanDetail.setBulan(bulan);
+            peramalanDetail.setBarang(barang);
             peramalanDetail.setAlpha(alpha);
             peramalanDetail.setSmoothingSingle(smoothSingle);
             peramalanDetail.setSmoothingDouble(smoothDouble);
             peramalanDetail.setNilaiA(nilaiA);
             peramalanDetail.setNilaiB(nilaiB);
+            peramalanDetail.setNilaiM(m);
             peramalanDetail.setPeramalan(peramalan);
+            peramalanDetail.setPenjualan(penjualan.getQty());
+            peramalanDetail.setTipe(tipe);
             
             try {
                 DbPeramalanDetail.save(peramalanDetail);
             } catch (Exception e) {
+                e.printStackTrace();
             }
             
         }
-    }
-    
-    public static PeramalanDetail hitungPeramalanPerBarang(int tahun, int bulan, long barangId, double bobot){
-        PeramalanDetail result = new PeramalanDetail();
-        return result;
     }
 }
