@@ -10,7 +10,12 @@ import com.peramalan.model.master.Barang;
 import com.peramalan.model.master.DbBarang;
 import com.peramalan.model.master.DbKategoriBarang;
 import com.peramalan.model.master.KategoriBarang;
+import com.peramalan.model.transaksi.DbPenjualan;
+import com.peramalan.model.transaksi.DbPeramalan;
 import com.peramalan.model.transaksi.DbPeramalanDetail;
+import com.peramalan.model.transaksi.Penjualan;
+import com.peramalan.model.transaksi.Peramalan;
+import com.peramalan.model.transaksi.PeramalanDetail;
 import com.peramalan.services.JSPHandler;
 import com.peramalan.services.PaginationServices;
 import com.peramalan.services.PeramalanServices;
@@ -68,10 +73,173 @@ public class PeramalanController extends HttpServlet {
             
             long oidPeramlan = PeramalanServices.hitungPeramalan(penjualanBulan, penjualanTahun, peramalanBulan, peramalanTahun);
             
+            Map result = new HashMap();
+            result.put("status", oidPeramlan!=0 ? "OK":"GAGAL");
+            result.put("peramalan_id", oidPeramlan);
+            
+            try {
+                out.print(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return;
             
             /* lakukan peramalan disini */
+        }else if(action.equalsIgnoreCase("arsip-get")){
+            response.setContentType("application/json;charset=UTF-8");
             
+            /* persiapan data untuk pagination */
+            int currentPage = JSPHandler.requestInt(request, "currentPage")==0 ? 1:JSPHandler.requestInt(request, "currentPage");
+            int command = JSPHandler.requestInt(request, "command");
+            String param = JSPHandler.requestString(request, "param");
+            int tahun = JSPHandler.requestInt(request, "tahun");
+            int bulan = JSPHandler.requestInt(request, "bulan");
+            
+            String where = "" + DbPeramalan.COL_NOMOR + " like '%"+ param +"%'";
+            
+            if(tahun!=0){
+                where += " and " + DbPeramalan.COL_END_TAHUN + "='"+ tahun +"'";
+            }
+            
+            if(bulan!=0){
+                where += " and " + DbPeramalan.COL_END_BULAN + "='"+ bulan +"'";
+            }
+            
+            int totalData = DbPeramalan.count(where);
+            PaginationServices pagination = new PaginationServices(totalData, limitData, currentPage, command);            
+            Vector datas = DbPeramalan.list(where, "", pagination.getStart(), pagination.getRecordToGet());
+            
+            Map res = new HashMap();
+            res.put("pagination", pagination);
+            res.put("data", datas);
+            
+            /* agar loader terlihat */
+            try{
+                TimeUnit.MILLISECONDS.sleep(100);
+            }catch(Exception e){}
+            
+            try {
+                out.print(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(res));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            return;
+            
+        }else if(action.equalsIgnoreCase("arsip")){
+            pageLocation = "/WEB-INF/transaksi/peramalan/peramalan-arsip.jsp";
+            pageName = "Peramalan;Arsip";
+            
+        }else if(action.equalsIgnoreCase("detail-get")){    
+            response.setContentType("application/json;charset=UTF-8");
+            
+            /* persiapan data untuk pagination */
+            int currentPage = JSPHandler.requestInt(request, "currentPage")==0 ? 1:JSPHandler.requestInt(request, "currentPage");
+            int command = JSPHandler.requestInt(request, "command");
+            String param = JSPHandler.requestString(request, "param");
+            int tahun = JSPHandler.requestInt(request, "tahun");
+            int bulan = JSPHandler.requestInt(request, "bulan");
+            long id = JSPHandler.requestLong(request, "id");
+            double alpha = JSPHandler.requestDouble(request, "alpha");
+            
+            
+            int totalData = DbPeramalanDetail.countPeramalanDetailJoinBarang(param, tahun, bulan, id, alpha, DbPeramalanDetail.DETAIL_TIPE_PERAMALAN);
+            PaginationServices pagination = new PaginationServices(totalData, limitData, currentPage, command);            
+            Vector datas = DbPeramalanDetail.listPeramalanDetailJoinBarang(param, tahun, bulan, id, alpha, DbPeramalanDetail.DETAIL_TIPE_PERAMALAN, "", pagination.getStart(), pagination.getRecordToGet());
+            
+            Map res = new HashMap();
+            res.put("pagination", pagination);
+            res.put("data", datas);
+            
+            /* agar loader terlihat */
+            try{
+                TimeUnit.MILLISECONDS.sleep(100);
+            }catch(Exception e){}
+            
+            try {
+                out.print(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(res));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            return;
+            
+        }else if(action.equalsIgnoreCase("analisa")){
+            int tahun = JSPHandler.requestInt(request, "tahun");
+            int bulan = JSPHandler.requestInt(request, "bulan");
+            long id = JSPHandler.requestLong(request, "id");
+            long barangId = JSPHandler.requestLong(request, "barangId");
+            double alpha = JSPHandler.requestDouble(request, "alpha");
+            
+            Peramalan peramalan = new Peramalan();
+            try {
+                peramalan = DbPeramalan.findById(id);
+            } catch (Exception e) {
+            }
+            
+            Barang barang = new Barang();
+            try {
+                barang = DbBarang.findById(barangId);
+            } catch (Exception e) {
+            }
+            
+            String where = "peramalan_id='"+ id +"' and barang_id='"+ barangId +"' and alpha='"+ alpha +"' and ((tahun*12)+bulan)<='"+ ((tahun * 12)+bulan) +"'";
+            Vector<PeramalanDetail> peramalanDetails = new Vector<PeramalanDetail>();
+            try {
+                peramalanDetails = DbPeramalanDetail.list(where, "barang_id asc, tahun asc, bulan asc", 0, 0);
+            } catch (Exception e) {
+            }
+            
+            Penjualan penjualanTerakhir = new Penjualan();
+            try {
+                penjualanTerakhir = DbPenjualan.findByLastPeriode(barangId);
+            } catch (Exception e) {
+            }
+
+            int periodeTerakhirPenjualan = (penjualanTerakhir.getTahun() * 12) + penjualanTerakhir.getBulan();
+            
+            request.setAttribute("peramalan", peramalan);
+            request.setAttribute("peramalanDetails", peramalanDetails);
+            request.setAttribute("barang", barang);
+            request.setAttribute("alpha", alpha);
+            request.setAttribute("periodeTerakhirPenjualan", periodeTerakhirPenjualan);
+            
+            pageLocation = "/WEB-INF/transaksi/peramalan/peramalan-analisa.jsp";
+            pageName = "Peramalan;Detail;Analisa";
+            
+        }else if(action.equalsIgnoreCase("detail")){
+            long id = JSPHandler.requestLong(request, "id");
+            
+            Peramalan peramalan = new Peramalan();
+            try {
+                peramalan = DbPeramalan.findById(id);
+            } catch (Exception e) {
+            }
+            
+            request.setAttribute("peramalan", peramalan);
+            
+            pageLocation = "/WEB-INF/transaksi/peramalan/peramalan-detail.jsp";
+            pageName = "Peramalan;Detail";
+            
+        }else if(action.equals("export-detail-pdf")){
+            
+            long id = JSPHandler.requestLong(request, "id");
+            
+            Peramalan peramalan = new Peramalan();
+            try {
+                peramalan = DbPeramalan.findById(id);
+            } catch (Exception e) {
+            }
+            
+            Vector<PeramalanDetail> peramalanDetails = new Vector<PeramalanDetail>();
+            try{
+                peramalanDetails = DbPeramalanDetail.listPeramalanDetailJoinBarang("", 0, 0, id, 0, DbPeramalanDetail.DETAIL_TIPE_PERAMALAN, "", 0, 0);
+            }catch(Exception e){}
+            
+            request.setAttribute("peramalan", peramalan);
+            request.setAttribute("peramalanDetails", peramalanDetails);
+            
+            pageLocation = "/WEB-INF/transaksi/peramalan/peramalan-detail-pdf.jsp";
             
         }else{
             pageLocation = "/WEB-INF/transaksi/peramalan/peramalan.jsp";

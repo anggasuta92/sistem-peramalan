@@ -104,9 +104,6 @@ public class PeramalanServices {
                     tmp.setPeramalan(peramalan);
 
                     listTmpPeramalan.add(tmp);
-
-                    //DbPeramalan dbTempPeramalan = new DbPeramalan("tmp_peramalan");
-                    //dbTempPeramalan.save(tmp);
                 }
             }
         }
@@ -115,7 +112,6 @@ public class PeramalanServices {
         if(listTmpPeramalan!=null && listTmpPeramalan.size()>0){
             for(int i = 0; i < listTmpPeramalan.size(); i++){
                 PeramalanDetail peramalan = (PeramalanDetail) listTmpPeramalan.get(i);
-                System.out.println("->" + peramalan.getPeramalanId() + "; " + peramalan.getTahun() + "-" + peramalan.getBulan() + "; "+ peramalan.getAlpha() + "; " + peramalan.getPeramalan());
             }
         }
         
@@ -158,7 +154,14 @@ public class PeramalanServices {
             }
             
             /* cari alpha terbaik */
-            
+            try {
+                peramalan = DbPeramalan.findById(peramalan.getPeramalanId());
+                double alphaTerbaik = tentukanAlphaTerbaik(peramalan.getPeramalanId());
+                peramalan.setAlphaTerbaik(alphaTerbaik);;
+                DbPeramalan.update(peramalan);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         
         return result;
@@ -167,7 +170,38 @@ public class PeramalanServices {
     public static double tentukanAlphaTerbaik(long peramalanId){
         double result = 0;
         
-        
+        double prevMape = 100;
+        for(int a = 1; a<=9; a++){
+            double alpha = a / 10.0;
+            
+            /* tampil data */
+            String wherePeramalanDetail = DbPeramalanDetail.COL_PERAMALAN_ID + "='"+ peramalanId +"'"
+                    + " and " + DbPeramalanDetail.COL_TIPE + "='"+ DbPeramalanDetail.DETAIL_TIPE_PENJUALAN +"'"
+                    + " and " + DbPeramalanDetail.COL_ALPHA + "='"+ alpha +"'";
+            Vector<PeramalanDetail> peramalanDetails = new Vector<>();
+            try {
+                peramalanDetails = DbPeramalanDetail.list(wherePeramalanDetail, "(("+ DbPeramalanDetail.COL_TAHUN +" * 12)+"+ DbPeramalanDetail.COL_BULAN +") asc", 0, 0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            double totalAPE = 0;
+            
+            for(PeramalanDetail peramalanDetail : peramalanDetails){
+                double err = peramalanDetail.getPenjualan() - peramalanDetail.getPeramalan();
+                double percentError = err / peramalanDetail.getPenjualan() * 100;
+                double absPercentError = Math.abs(percentError);
+                totalAPE += absPercentError;
+            }
+            
+            double meanAbsPercentErr = totalAPE / peramalanDetails.size();
+            
+            /* cek angka terkecil */
+            if(meanAbsPercentErr<prevMape){
+                result = alpha;
+                prevMape = meanAbsPercentErr;
+            }
+        }
         
         return result;
     }
@@ -263,12 +297,17 @@ public class PeramalanServices {
                     prevSmoothDouble = smoothDouble;
                     prevNilaiA = nilaiA;
                     prevNilaiB = nilaiB;
+                    
                 }else{
                     tipe = DbPeramalanDetail.DETAIL_TIPE_PERAMALAN;
                 }
             }else{
                 smoothSingle = qtyPenjualan;
                 smoothDouble = qtyPenjualan;
+            }
+            
+            if(i==periodeAkhir){
+                tipe = DbPeramalanDetail.DETAIL_TIPE_PERAMALAN;
             }
             
             PeramalanDetail peramalanDetail = new PeramalanDetail();

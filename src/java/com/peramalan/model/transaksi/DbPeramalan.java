@@ -39,7 +39,7 @@ public class DbPeramalan {
         o.setPeramalanId(rs.getLong(COL_PERAMALAN_ID));
         o.setPenjualanTahun(rs.getInt(COL_START_TAHUN));
         o.setPenjualanBulan(rs.getInt(COL_START_BULAN));
-        o.setPeramalanTahun(rs.getInt(COL_END_BULAN));
+        o.setPeramalanTahun(rs.getInt(COL_END_TAHUN));
         o.setPeramalanBulan(rs.getInt(COL_END_BULAN));
         o.setAlphaTerbaik(rs.getDouble(COL_ALPHA_TERBAIK));
         o.setTanggal(rs.getTimestamp(COL_TANGGAL));
@@ -169,9 +169,9 @@ public class DbPeramalan {
             ps.setInt(3, data.getPeramalanBulan());
             ps.setInt(4, data.getPeramalanTahun());
             ps.setDouble(5, data.getAlphaTerbaik());
-            ps.setLong(6, data.getPeramalanId());
+            ps.setTimestamp(6, new java.sql.Timestamp(data.getTanggal().getTime()));
             ps.setString(7, data.getNomor());
-            ps.setTimestamp(8, new java.sql.Timestamp(data.getTanggal().getTime()));
+            ps.setLong(8, data.getPeramalanId());
             
             ps.execute();
             
@@ -216,6 +216,32 @@ public class DbPeramalan {
             result = pattern + result + number;
         }else{
             result = pattern + "00001";
+        }
+        
+        return result;
+    }
+    
+    public static Peramalan findById(long id){
+        Peramalan result = new Peramalan();
+        
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try{
+            String sql = "select * from " + tableName + " where " + COL_PERAMALAN_ID + "=?";
+            
+            conn = DbConnection.getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                fetchObject(rs, result);
+            }
+            rs.close();
+        }catch(Exception e){
+            System.out.println("err_select_data: " + e.toString() + "/" + e.toString());
+        }finally{
+            try{if(stmt!=null) stmt.close();}catch(Exception e){}
+            try{if(conn!=null) conn.close();}catch(Exception e){}
         }
         
         return result;

@@ -15,7 +15,6 @@ public class Barang {
     private String barcode;
     private String nama;
     private String satuan;
-    private double alpha;
     private KategoriBarang kategoriBarang;
 
     /**
@@ -86,20 +85,6 @@ public class Barang {
      */
     public void setSatuan(String satuan) {
         this.satuan = satuan;
-    }
-
-    /**
-     * @return the alpha
-     */
-    public double getAlpha() {
-        return alpha;
-    }
-
-    /**
-     * @param alpha the alpha to set
-     */
-    public void setAlpha(double alpha) {
-        this.alpha = alpha;
     }
 
     /**

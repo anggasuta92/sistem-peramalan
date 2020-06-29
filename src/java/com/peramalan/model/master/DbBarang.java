@@ -29,7 +29,6 @@ public class DbBarang {
     public static String COL_BARCODE = "barcode";
     public static String COL_NAMA = "nama";
     public static String COL_SATUAN = "satuan";
-    public static String COL_ALPHA = "alpha";
     
     public static void fetchObject(ResultSet rs, Barang object) throws SQLException{
         object.setBarangId(rs.getLong(COL_BARANG_ID));
@@ -46,7 +45,6 @@ public class DbBarang {
         object.setBarcode(rs.getString(COL_BARCODE));
         object.setNama(rs.getString(COL_NAMA));
         object.setSatuan(rs.getString(COL_SATUAN));
-        object.setAlpha(rs.getDouble(COL_ALPHA));
     }
     
     public static int count(String where){
@@ -198,7 +196,7 @@ public class DbBarang {
 
     public static long save(Barang data){
         long result = 0;
-        String sql = "insert into "+tableName+" ("+COL_KATEGORI_BARANG_ID+", "+ COL_KODE +", "+ COL_BARCODE +", "+ COL_NAMA +", "+ COL_SATUAN +", "+ COL_ALPHA +", "+ COL_BARANG_ID +") values (?,?,?,?,?,?,?)";
+        String sql = "insert into "+tableName+" ("+COL_KATEGORI_BARANG_ID+", "+ COL_KODE +", "+ COL_BARCODE +", "+ COL_NAMA +", "+ COL_SATUAN +", "+ COL_BARANG_ID +") values (?,?,?,?,?,?)";
         
         Connection conn = null;
         PreparedStatement ps = null;
@@ -212,8 +210,7 @@ public class DbBarang {
             ps.setString(3, data.getBarcode());
             ps.setString(4, data.getNama());
             ps.setString(5, data.getSatuan());
-            ps.setDouble(6, data.getAlpha());
-            ps.setLong(7, data.getBarangId());
+            ps.setLong(6, data.getBarangId());
             ps.execute();
             
             result = data.getBarangId();
@@ -236,7 +233,7 @@ public class DbBarang {
     
     public static long update(Barang data){
         long result = 0;
-        String sql = "update "+ tableName +" set "+ COL_KATEGORI_BARANG_ID +"=?, "+ COL_KODE +"=?, "+ COL_BARCODE +"=?, "+ COL_NAMA +"=?, "+ COL_SATUAN +"=?, "+ COL_ALPHA +"=? where " + COL_BARANG_ID + "=?";
+        String sql = "update "+ tableName +" set "+ COL_KATEGORI_BARANG_ID +"=?, "+ COL_KODE +"=?, "+ COL_BARCODE +"=?, "+ COL_NAMA +"=?, "+ COL_SATUAN +"=? where " + COL_BARANG_ID + "=?";
         
         if(data.getBarangId()==0){
             return 0;
@@ -253,8 +250,7 @@ public class DbBarang {
             ps.setString(3, data.getBarcode());
             ps.setString(4, data.getNama());
             ps.setString(5, data.getSatuan());
-            ps.setDouble(6, data.getAlpha());
-            ps.setLong(7, data.getBarangId());
+            ps.setLong(6, data.getBarangId());
             ps.execute();
             
             result = data.getBarangId();

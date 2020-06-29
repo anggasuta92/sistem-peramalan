@@ -223,4 +223,112 @@ public class DbPeramalanDetail {
         }
         return result;
     }
+    
+    public static int countPeramalanDetailJoinBarang(String paramBarang, 
+            int tahun, int bulan, long peramalanId, double alpha, int tipe){
+        
+        int result = 0;
+        
+        if(paramBarang.trim().length()>0) paramBarang = " and (b.kode like '%"+ paramBarang +"%' or b.barcode like '%"+ paramBarang +"%' or b.nama like '%"+ paramBarang +"%')";
+        
+        String where = "";
+        if(bulan!=0){
+            where += " and bulan='"+ bulan +"'";
+        }
+        
+        if(tahun!=0){
+            where += " and bulan='"+ tahun +"'";
+        }
+        
+        if(alpha!=0){
+            where += " and alpha='"+ alpha +"' ";
+        }
+        
+        if(tipe!=-1){
+            where += " and tipe='"+ tipe +"' ";
+        }
+        
+        String sql = "select count(pd.peramalan_detail_id) as total from peramalan_detail pd" +
+            " inner join barang b on pd.barang_id=b.barang_id" +
+            " where pd.peramalan_id='"+ peramalanId +"' " + paramBarang + where;
+        
+        System.out.println("::" + sql);
+        
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = DbConnection.getConnection();
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            
+            while(rs.next()){
+                result += rs.getInt("total");
+            }
+            rs.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try{if(stmt!=null) stmt.close();}catch(Exception e){}
+            try{if(conn!=null) conn.close();}catch(Exception e){}
+        }
+        
+        return result;
+    }
+    
+    public static Vector listPeramalanDetailJoinBarang(String paramBarang, 
+            int tahun, int bulan, long peramalanId, double alpha, int tipe,
+            String orderBy, int limitStart, int limitEnd){
+        Vector result = new Vector();
+        String limit = "";
+        
+        if(orderBy.trim().length()>0) orderBy = " order by " + orderBy;
+        if(limitStart!=0 || limitEnd!=0){
+            limit = " limit " + limitStart + "," + limitEnd;
+        }
+        
+        if(paramBarang.trim().length()>0) paramBarang = " and (b.kode like '%"+ paramBarang +"%' or b.barcode like '%"+ paramBarang +"%' or b.nama like '%"+ paramBarang +"%')";
+        
+        String where = "";
+        if(bulan!=0){
+            where += " and bulan='"+ bulan +"' ";
+        }
+        
+        if(tahun!=0){
+            where += " and bulan='"+ tahun +"' ";
+        }
+        
+        if(alpha!=0){
+            where += " and alpha='"+ alpha +"' ";
+        }
+        
+        if(tipe!=-1){
+            where += " and tipe='"+ tipe +"' ";
+        }
+        
+        String sql = "select pd.* from peramalan_detail pd" +
+            " inner join barang b on pd.barang_id=b.barang_id" +
+            " where pd.peramalan_id='"+ peramalanId +"' " + paramBarang + where + orderBy + limit;
+        
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = DbConnection.getConnection();
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            
+            while(rs.next()){
+                PeramalanDetail peramalanDetail = new PeramalanDetail();
+                fetchObject(rs, peramalanDetail);
+                result.add(peramalanDetail);
+            }
+            rs.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try{if(stmt!=null) stmt.close();}catch(Exception e){}
+            try{if(conn!=null) conn.close();}catch(Exception e){}
+        }
+        
+        return result;
+    }
 }

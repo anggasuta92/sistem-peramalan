@@ -73,7 +73,7 @@
                                 <li><a href="<%= JSPHandler.generateUrl(request, "peramalan", "", "") %>">Peramalan</a></li>
                                 <% } %>
                                 <% if(mnArsipPeramalan){ %>
-                                <li><a href="#">Arsip Peramalan</a></li>
+                                <li><a href="<%= JSPHandler.generateUrl(request, "peramalan", "arsip", "") %>">Arsip Peramalan</a></li>
                                 <% } %>
                                 <% if(mnAnalisisPeramalan){ %>
                                 <li><a href="#">Analisa Peramalan</a></li>

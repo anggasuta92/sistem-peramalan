@@ -125,6 +125,7 @@ public class PenjualanController extends HttpServlet {
             int uploaded = JSPHandler.requestInt(request, "uploaded");    
             pageName = "Transaksi;Penjualan;Import";
             pageLocation = "/WEB-INF/transaksi/penjualan/penjualan-import.jsp";
+            
         }else if(action.equals("export")){
             
             pageLocation = "/WEB-INF/transaksi/penjualan/penjualan-export.jsp";

@@ -19,7 +19,6 @@
     int bulan = JSPHandler.requestInt(request, "bulan");
     int tahun = JSPHandler.requestInt(request, "tahun");
     String param = JSPHandler.requestString(request, "param");
-    xxxxxxxxxx;
     
     String where = "";
     if(param!=null && param.length()>0){

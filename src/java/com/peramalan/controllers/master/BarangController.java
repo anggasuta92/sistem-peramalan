@@ -143,7 +143,6 @@ public class BarangController extends HttpServlet {
             data.setBarcode(JSPHandler.requestString(request, DbBarang.COL_BARCODE));
             data.setNama(JSPHandler.requestString(request, DbBarang.COL_NAMA));
             data.setSatuan(JSPHandler.requestString(request, DbBarang.COL_SATUAN));
-            data.setAlpha(JSPHandler.requestDouble(request, DbBarang.COL_ALPHA));
             data.setBarangId(JSPHandler.requestLong(request, DbBarang.COL_BARANG_ID));
             
             try {
@@ -180,7 +179,6 @@ public class BarangController extends HttpServlet {
             data.setBarcode(JSPHandler.requestString(request, DbBarang.COL_BARCODE));
             data.setNama(JSPHandler.requestString(request, DbBarang.COL_NAMA));
             data.setSatuan(JSPHandler.requestString(request, DbBarang.COL_SATUAN));
-            data.setAlpha(JSPHandler.requestDouble(request, DbBarang.COL_ALPHA));
             
             try {
                 oid = DbBarang.save(data);
