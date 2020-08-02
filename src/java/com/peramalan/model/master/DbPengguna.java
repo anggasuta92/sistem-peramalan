@@ -21,20 +21,20 @@ import java.util.Vector;
  *
  * @author Angga Suta
  */
-public class DbSystemUser {
+public class DbPengguna {
     /* table name */
-    public static String tableName = "system_user";
+    public static String tableName = "pengguna";
     
     /* colName */
-    public static String COL_SYSTEM_USER_ID = "system_user_id";
+    public static String COL_PENGGUNA_ID = "pengguna_id";
     public static String COL_NAMA = "nama";
     public static String COL_USERNAME = "username";
     public static String COL_PASSWORD = "password";
     public static String COL_ROLE_ID = "role_id";
     public static String COL_STATUS = "status";
  
-    public static void fetchObject(ResultSet rs, SystemUser object) throws SQLException{
-        object.setSystemUserId(rs.getLong(COL_SYSTEM_USER_ID));
+    public static void fetchObject(ResultSet rs, Pengguna object) throws SQLException{
+        object.setPenggunaId(rs.getLong(COL_PENGGUNA_ID));
         object.setNama(rs.getString(COL_NAMA));
         object.setUsername(rs.getString(COL_USERNAME));
         object.setPassword(rs.getString(COL_PASSWORD));
@@ -49,7 +49,7 @@ public class DbSystemUser {
         
         try{
             if(where.trim().length()>0) where = " where " + where;
-            String sql = "select count("+ COL_SYSTEM_USER_ID +") as total from " + tableName + where;
+            String sql = "select count("+ COL_PENGGUNA_ID +") as total from " + tableName + where;
             
             conn = DbConnection.getConnection();
             stmt = conn.createStatement();
@@ -86,7 +86,7 @@ public class DbSystemUser {
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             while(rs.next()){
-                SystemUser object = new SystemUser();
+                Pengguna object = new Pengguna();
                 fetchObject(rs, object);
                 result.add(object);
             }
@@ -120,7 +120,7 @@ public class DbSystemUser {
             stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             while(rs.next()){
-                SystemUser object = new SystemUser();
+                Pengguna object = new Pengguna();
                 fetchObject(rs, object);
                 
                 object.setPassword("-");
@@ -148,11 +148,11 @@ public class DbSystemUser {
         return result;
     }
     
-    public static boolean delete(SystemUser data){
+    public static boolean delete(Pengguna data){
         boolean result = false;
-        String sql = "delete from "+ tableName +" where " + COL_SYSTEM_USER_ID + "=?";
+        String sql = "delete from "+ tableName +" where " + COL_PENGGUNA_ID + "=?";
         
-        if(data.getSystemUserId()==0){
+        if(data.getPenggunaId()==0){
             return false;
         }
         
@@ -162,7 +162,7 @@ public class DbSystemUser {
             conn = DbConnection.getConnection();
             ps = conn.prepareStatement(sql);
             
-            ps.setLong(1, data.getSystemUserId());
+            ps.setLong(1, data.getPenggunaId());
             ps.execute();
             
             result = true;
@@ -183,13 +183,13 @@ public class DbSystemUser {
         return result;
     }
 
-    public static SystemUser findByUsernamePassword(String username, String password){
-        SystemUser result = new SystemUser();
+    public static Pengguna findByUsernamePassword(String username, String password){
+        Pengguna result = new Pengguna();
         
         Connection conn = null;
         PreparedStatement stmt = null;
         try{
-            String sql = "select * from " + tableName + " where " + COL_USERNAME + "=? and " + COL_PASSWORD + "=?";
+            String sql = "select * from " + tableName + " where " + COL_USERNAME + "=? and " + COL_PASSWORD + "=? ";
             
             password = LoginServices.generateMD5(password);
             conn = DbConnection.getConnection();
@@ -211,13 +211,13 @@ public class DbSystemUser {
         return result;
     }
     
-    public static SystemUser findById(long id){
-        SystemUser result = new SystemUser();
+    public static Pengguna findById(long id){
+        Pengguna result = new Pengguna();
         
         Connection conn = null;
         PreparedStatement stmt = null;
         try{
-            String sql = "select * from " + tableName + " where " + COL_SYSTEM_USER_ID + "=?";
+            String sql = "select * from " + tableName + " where " + COL_PENGGUNA_ID + "=?";
             
             conn = DbConnection.getConnection();
             stmt = conn.prepareStatement(sql);
@@ -237,9 +237,9 @@ public class DbSystemUser {
         return result;
     }
     
-    public static long save(SystemUser data){
+    public static long save(Pengguna data){
         long result = 0;
-        String sql = "insert into "+ tableName +" ("+COL_SYSTEM_USER_ID+", "+COL_NAMA+", "
+        String sql = "insert into "+ tableName +" ("+COL_PENGGUNA_ID+", "+COL_NAMA+", "
                 + ""+COL_USERNAME+", "+COL_PASSWORD+", "+COL_ROLE_ID+", "+COL_STATUS+") values (?,?,?,?,?,?)";
 
         
@@ -249,8 +249,8 @@ public class DbSystemUser {
             conn = DbConnection.getConnection();
             ps = conn.prepareStatement(sql);
             
-            data.setSystemUserId(OIDGenerator.generateOID());
-            ps.setLong(1, data.getSystemUserId());
+            data.setPenggunaId(OIDGenerator.generateOID());
+            ps.setLong(1, data.getPenggunaId());
             ps.setString(2, data.getNama());
             ps.setString(3, data.getUsername());
             ps.setString(4,  data.getPassword());
@@ -258,7 +258,7 @@ public class DbSystemUser {
             ps.setInt(6, data.getStatus());
             ps.execute();
             
-            result = data.getSystemUserId();
+            result = data.getPenggunaId();
         } catch (Exception e) {
             System.out.println("err_save_data: " + e.toString() + "/" + e.toString());
         } finally {
@@ -276,12 +276,12 @@ public class DbSystemUser {
         return result;
     }
     
-    public static long update(SystemUser data){
+    public static long update(Pengguna data){
         long result = 0;
         String sql = "update "+ tableName +" set "+COL_NAMA+"=?, "
-                + ""+COL_USERNAME+"=?, "+COL_PASSWORD+"=?, "+COL_ROLE_ID+"=?, "+COL_STATUS+"=? where " + COL_SYSTEM_USER_ID + "=?";
+                + ""+COL_USERNAME+"=?, "+COL_PASSWORD+"=?, "+COL_ROLE_ID+"=?, "+COL_STATUS+"=? where " + COL_PENGGUNA_ID + "=?";
         
-        if(data.getSystemUserId()==0){
+        if(data.getPenggunaId()==0){
             return 0;
         }
         
@@ -296,10 +296,11 @@ public class DbSystemUser {
             ps.setString(3, data.getPassword());
             ps.setLong(4, data.getRoleId());
             ps.setInt(5, data.getStatus());
-            ps.setLong(6, data.getSystemUserId());
+            ps.setLong(6, data.getPenggunaId());
+            
             ps.execute();
             
-            result = data.getSystemUserId();
+            result = data.getPenggunaId();
         } catch (Exception e) {
             System.out.println("err_save_data: " + e.toString() + "/" + e.toString());
         } finally {

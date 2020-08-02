@@ -25,27 +25,27 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-sm-1">Nomor</div>
-                    <div class="col-sm-2">: <%= peramalan.getNomor() %></div>
+                    <div class="col-sm-3">: <%= peramalan.getNomor() %></div>
                     <div class="col-sm-1"></div>
                     <div class="col-sm-2">Periode Peramlan</div>
                     <div class="col-sm-3">: <%= TransaksiService.periodeBulan[peramalan.getPeramalanBulan()] + " " + peramalan.getPeramalanTahun() %></div>
                     <div class="col-sm-1"></div>
-                    <div class="col-sm-2" style="text-align: center">Alpha Terbaik</div>
+                    <div class="col-sm-1" style="text-align: center"></div>
                 </div>
                 <div class="row">
                     <div class="col-sm-1">Tanggal</div>
-                    <div class="col-sm-2">: <%= peramalan.getTanggal() %></div>
+                    <div class="col-sm-3">: <%= peramalan.getTanggal() %></div>
                     <div class="col-sm-1"></div>
                     <div class="col-sm-2">Periode Penjualan</div>
                     <div class="col-sm-3">: <%= TransaksiService.periodeBulan[peramalan.getPenjualanBulan()] + " " + peramalan.getPenjualanTahun() %></div>
                     <div class="col-sm-1"></div>
-                    <div class="col-sm-2" style="text-align: center; font-size: 14pt"><strong><%= peramalan.getAlphaTerbaik() %></strong></div>
+                    <div class="col-sm-1" style="text-align: center; font-size: 14pt"><strong></strong></div>
                 </div>
                 <hr/>
                 <div class="row" style="padding-bottom: 10px">
-                    <div class="col-md-7 pull-left">
-                        <div class="col-md-1" style="padding: 5px"><label for="">Bulan</label></div>
-                        <div class="col-md-3">
+                    <div class="col-md-8 pull-left">
+                        <div class="col-md-1" style="padding: 5px"><label for=""><small>Bulan</small></label></div>
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <select name="param_bulan" id="param_bulan" class="form-control">
                                     <option value="0"> pilih bulan... </option>
@@ -55,8 +55,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-1" style="padding: 5px"><label for="">Tahun</label></div>
-                        <div class="col-md-3">
+                        <div class="col-md-1" style="padding: 5px"><label for=""><small>Tahun</small></label></div>
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <select name="param_tahun" id="param_tahun" class="form-control">
                                     <option value="0"> pilih tahun... </option>
@@ -66,8 +66,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-1" style="padding: 5px"><label for="">Alpha</label></div>
-                        <div class="col-md-3">
+                        <div class="col-md-1" style="padding: 5px"><label for=""><small>Alpha</small></label></div>
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <select name="param_alpha" id="param_alpha" class="form-control">
                                     <option value="0"> pilih alpha... </option>
@@ -78,8 +78,12 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-2" style="padding: 5px"><label for=""><small>Disarankan</small></label></div>
+                        <div class="col-md-1" style="padding: 5px">
+                            <input type="checkbox" name="disarankan" id="disarankan" value="1" />
+                        </div>
                     </div>
-                    <div class="col-md-5 pull-right">
+                    <div class="col-md-4 pull-right">
                         <div class="input-group">
                             <input type="text" name="txtSearch" id="txtSearch" class="form-control" placeholder="Cari Code / Barcode / Nama...">
                             <span class="input-group-btn">
@@ -98,6 +102,7 @@
                                     <th width="300">Barang</th>
                                     <th width="30">Alpha</th>
                                     <th width="90">Peramalan</th>
+                                    <th width="90">Keterangan</th>
                                     <th width="30">Analisa</th>
                                 </tr>    
                             </thead>
@@ -109,7 +114,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-5 pull-right" style="padding-top: 20px" align="right">
-                        <button class="btn btn-success" onclick="back()" ><span class="fa fa-print"></span> Cetak Laporan</button>
+                        <button class="btn btn-success" id="btn-pdf" onclick="printPDF('<%= peramalan.getPeramalanId() %>')" ><span class="fa fa-print"></span> Cetak Laporan</button>
                         <button class="btn btn-warning" onclick="back()" ><span class="fa fa-chevron-circle-left"></span> Kembali</button>
                     </div>
                     <div class="col-md-5 pull-left" id="nav-button">
@@ -123,6 +128,11 @@
 </div>
 
 <script>
+    function printPDF(id){  
+       var alpha = (document.getElementById('param_alpha')!==null ? document.getElementById('param_alpha').value : 0);
+       window.open("<%= JSPHandler.generateUrl(request, "peramalan", "export-detail-pdf", "") %>&id="+id+"&alpha="+alpha,"_blank");
+    } 
+    
     function genPeriodeName(tahun, bulan){
         var strBulans = ["","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","Nopember","Desember"];
         return strBulans[bulan] + " " + tahun;
@@ -137,15 +147,17 @@
         var bulan = document.getElementById('param_bulan').value;
         var tahun = document.getElementById('param_tahun').value;
         var alpha = (document.getElementById('param_alpha')!==null ? document.getElementById('param_alpha').value : 0);
+        var disarankan = (document.getElementById('disarankan').checked == true ? 1 : 0);
+        
         var id = '<%= peramalan.getPeramalanId() %>';
         
-        loadData(0,0,param,bulan,tahun, id, alpha);
+        loadData(0,0,param,bulan,tahun, id, alpha, disarankan);
     }
     
-    function loadData(cmd, curPage, searchParam, paramBulan, paramTahun, idx, alphax){
+    function loadData(cmd, curPage, searchParam, paramBulan, paramTahun, idx, alphax, disarankan){
         $.ajax({
             type  : 'get',
-            data  : { alpha:alphax, id:idx, command: cmd, currentPage: curPage, param: searchParam, bulan: paramBulan, tahun: paramTahun},
+            data  : { disarankan:disarankan, alpha:alphax, id:idx, command: cmd, currentPage: curPage, param: searchParam, bulan: paramBulan, tahun: paramTahun},
             url   : '<%= JSPHandler.generateUrl(request, "peramalan", "detail-get", "") %>',
             async : true,
             dataType : 'json',
@@ -176,6 +188,7 @@
                 var data = datas.data;
                 var startNumber = ((paginationInfo.currentPage - 1) * paginationInfo.recordToGet)+1;
                 if(data.length>0){
+                    $("#btn-pdf").attr('disabled', false);
                     for(i=0; i<data.length; i++){
                         html += '<tr>'+
                                     '<td align="center">'+(startNumber+i)+'</td>'+
@@ -183,6 +196,7 @@
                                     '<td align="center">'+ data[i].barang.kode +'/' + data[i].barang.nama + '</td>'+
                                     '<td align="right">'+ data[i].alpha + '</td>'+
                                     '<td align="right">'+ data[i].peramalan + '</td>'+
+                                    '<td align="left">'+ (data[i].disarankan==1 ? " <strong><i> *Disarankan</i></strong>" : "") + '</td>'+
                                     '<td align="center" class="margin">'+
                                         '<button class="btn btn-sm btn-default" onClick="analisa(\''+ data[i].peramalanId +'\', \''+ data[i].tahun +'\', \''+ data[i].bulan +'\', \''+ data[i].alpha +'\', \''+ data[i].barang.barangId +'\')"><span class="fa fa-eye text-primary"></span></button>&nbsp;'+
                                     '</td>'+
@@ -191,7 +205,8 @@
                 }else{
                     html += '<tr>'+
                             '<td align="center" colspan="6">Data tidak ditemukan</td>'+
-                            '</tr>';                    
+                            '</tr>';
+                    $("#btn-pdf").attr('disabled', true);
                 }
                 $('#table-body').html(html);
                 $("#loader").hide();

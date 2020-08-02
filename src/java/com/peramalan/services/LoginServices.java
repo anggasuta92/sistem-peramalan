@@ -7,11 +7,12 @@ package com.peramalan.services;
 
 import com.peramalan.model.master.DbRoleDetail;
 import com.peramalan.model.master.RoleDetail;
-import com.peramalan.model.master.SystemUser;
+import com.peramalan.model.master.Pengguna;
 import static com.peramalan.services.MenuServices.menuPreffix;
 import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,6 +28,9 @@ public class LoginServices {
     public static final int LOGIN_STATUS_TRUE = 1;
     public static final int LOGIN_STATUS_FALSE = 0;
     public static final String LOGIN_USER_ID = "user_id";
+    
+    public static final String PERUSAHAN_NAMA = "perusahaan_nama";
+    public static final String PERUSAHAN_ALAMAT = "perusahaan_alamat";
     
     public static void removeAllLoginInformation(HttpSession session){
         if(session.getAttribute(LOGIN_STATUS)!=null){
@@ -68,16 +72,85 @@ public class LoginServices {
         return result;
     }
     
+    public static boolean isGrantedByUrl(HttpServletRequest request){
+        boolean result = false;
+        
+        long userId = Long.parseLong(request.getSession().getAttribute(LoginServices.LOGIN_USER_ID).toString());
+
+        String url = ((HttpServletRequest) request).getRequestURL().toString();
+        String baseURL = url.substring(0, url.length() - request.getRequestURI().length()) + request.getContextPath() + "/";
+        String queryString = ((HttpServletRequest)request).getQueryString();        
+        String urlName = url.replaceAll(baseURL, "");
+        String action = getTokenValue(queryString, JSPHandler.PAGE_QUERY_REQUEST_PREFFIX);
+        
+        switch(urlName.trim()){
+            case "home":
+                result = true;
+                break;
+            case "kategori-barang":
+                result = LoginServices.isGranted(request, MenuServices.MENU_KATEGORI_BARANG, userId);
+                break;
+            case "barang":
+                result = LoginServices.isGranted(request, MenuServices.MENU_BARANG, userId);
+                break;
+            case "penjualan":
+                result = LoginServices.isGranted(request, MenuServices.MENU_PENJUALAN, userId);
+                break;
+            case "peramalan":
+                if(action.equals("arsip")){
+                    result = LoginServices.isGranted(request, MenuServices.MENU_ARSIP_PERAMALAN, userId);
+                }else{
+                    result = LoginServices.isGranted(request, MenuServices.MENU_PERAMALAN, userId);
+                }
+                break;
+            case "role":
+                result = LoginServices.isGranted(request, MenuServices.MENU_ADMINISTRATOR_ROLE_PENGGUNA, userId);
+                break;
+            case "user":
+                result = LoginServices.isGranted(request, MenuServices.MENU_ADMINISTRATOR_DATA_PENGGUNA, userId);
+                break;
+            case "perusahaan":
+                result = LoginServices.isGranted(request, MenuServices.MENU_ADMINISTRATOR_INFO_PERUSAHAAN, userId);
+                break;
+            default:
+                break;
+        }
+        
+        return result;
+    }
+    
+    public static String getTokenValue(String str, String strKey){
+        String result = "";
+        try{
+            StringTokenizer stringTokenizer = new StringTokenizer(str, "&");
+            while (stringTokenizer.hasMoreTokens()) {
+                String strx = stringTokenizer.nextToken();
+                StringTokenizer st = new StringTokenizer(strx, "=");
+                while (st.hasMoreTokens()) {                    
+                    String key = st.nextToken();
+                    if(key.trim().equals(strKey)){
+                        result = st.nextToken();
+                    }
+                }
+            }
+        }catch(Exception e){}
+        return result;
+    }
+    
     public static boolean isGranted(HttpServletRequest request, int menu, long userId){
         boolean result = false;
         try {
             HttpSession session = request.getSession(true);
-            int sts = Integer.parseInt(session.getAttribute(userId + "_" + MenuServices.menuPreffix+String.valueOf(menu)).toString());
+            int sts = 0;
+            try{
+                sts = Integer.parseInt(session.getAttribute(userId + "_" + MenuServices.menuPreffix+String.valueOf(menu)).toString());
+            }catch(Exception e){}
             if(sts==1){
                 result = true;
             }
         } catch (Exception e) {
             System.out.println("err_get_role:" + e.toString());
+            e.printStackTrace();
         }
         
         return result;

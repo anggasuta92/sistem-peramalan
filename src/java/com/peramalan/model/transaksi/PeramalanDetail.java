@@ -26,6 +26,7 @@ public class PeramalanDetail {
     private double peramalan;
     private double penjualan;
     private int tipe;
+    private int disarankan;
     
     /**
      * @return the peramalanId
@@ -221,6 +222,20 @@ public class PeramalanDetail {
      */
     public void setTipe(int tipe) {
         this.tipe = tipe;
+    }
+
+    /**
+     * @return the disarankan
+     */
+    public int getDisarankan() {
+        return disarankan;
+    }
+
+    /**
+     * @param disarankan the disarankan to set
+     */
+    public void setDisarankan(int disarankan) {
+        this.disarankan = disarankan;
     }
     
     

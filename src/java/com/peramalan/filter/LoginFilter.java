@@ -51,7 +51,13 @@ public class LoginFilter implements Filter {
         
         boolean isLogedIn = LoginServices.isLogedIn(request);
         if(isLogedIn){
-            fc.doFilter(sr, sr1);
+            /* hak akses */
+            boolean isGranted = LoginServices.isGrantedByUrl(request);
+            if(isGranted){
+                fc.doFilter(sr, sr1);
+            }else{
+                response.sendRedirect(JSPHandler.generateUrl(request, "home", "restricted", ""));
+            }
         }else{
             response.sendRedirect(JSPHandler.generateUrl(request, "login", "", ""));
         }

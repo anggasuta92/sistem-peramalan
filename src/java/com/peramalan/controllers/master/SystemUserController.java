@@ -7,9 +7,9 @@ package com.peramalan.controllers.master;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.peramalan.model.master.DbRole;
-import com.peramalan.model.master.DbSystemUser;
+import com.peramalan.model.master.DbPengguna;
 import com.peramalan.model.master.Role;
-import com.peramalan.model.master.SystemUser;
+import com.peramalan.model.master.Pengguna;
 import com.peramalan.services.JSPHandler;
 import com.peramalan.services.LoginServices;
 import com.peramalan.services.PaginationServices;
@@ -66,9 +66,9 @@ public class SystemUserController extends HttpServlet {
                 where = DbRole.COL_NAMA + " like '%"+ param +"%'";
             }
             
-            int totalData = DbSystemUser.count(where);
+            int totalData = DbPengguna.count(where);
             PaginationServices pagination = new PaginationServices(totalData, limitData, currentPage, command);            
-            Vector datas = DbSystemUser.listJoinRole(where, DbSystemUser.COL_NAMA, pagination.getStart(), pagination.getRecordToGet());
+            Vector datas = DbPengguna.listJoinRole(where, DbPengguna.COL_NAMA, pagination.getStart(), pagination.getRecordToGet());
             
             Map res = new HashMap();
             res.put("pagination", pagination);
@@ -97,22 +97,49 @@ public class SystemUserController extends HttpServlet {
             pageLocation = "/WEB-INF/master/systemuser/systemuser-add.jsp";
             pageName = "Administrator;Data User;Tambah";
             
+        }else if(action.equals("update-nama")){    
+            long oid = 0;
+            Pengguna user = new Pengguna();
+            try {
+                user = DbPengguna.findById(JSPHandler.requestLong(request, DbPengguna.COL_PENGGUNA_ID));
+            } catch (Exception e) {
+            }
+            if(user.getPenggunaId()!=0){
+                user.setNama(JSPHandler.requestString(request, DbPengguna.COL_NAMA));
+                DbPengguna.update(user);
+                isSuccess = true;
+            }else{
+                oid = 0;
+                isSuccess = false;
+            }
+            
+            /* untuk kepentingan perpesanan di halaman jsp */
+            if(isSuccess){
+                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Data telah tersimpan");
+            }else{
+                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Data gagal tersimpan");
+            }
+            
+            /* redirect setelah simpan */
+            response.sendRedirect(JSPHandler.generateUrl(request, "user", "akun", ""));
+            return;
+            
         }else if(action.equals("save")){
             
             long oid = 0;
             
-            SystemUser user = new SystemUser();
-            user.setNama(JSPHandler.requestString(request, DbSystemUser.COL_NAMA));
+            Pengguna user = new Pengguna();
+            user.setNama(JSPHandler.requestString(request, DbPengguna.COL_NAMA));
             user.setStatus(1);
-            user.setPassword(JSPHandler.requestString(request, DbSystemUser.COL_PASSWORD));
-            user.setUsername(JSPHandler.requestString(request, DbSystemUser.COL_USERNAME));
-            user.setRoleId(JSPHandler.requestLong(request, DbSystemUser.COL_ROLE_ID));
+            user.setPassword(JSPHandler.requestString(request, DbPengguna.COL_PASSWORD));
+            user.setUsername(JSPHandler.requestString(request, DbPengguna.COL_USERNAME));
+            user.setRoleId(JSPHandler.requestLong(request, DbPengguna.COL_ROLE_ID));
             
             /* md5 */
             user.setPassword(LoginServices.generateMD5(user.getPassword()));
             
             try {
-                oid = DbSystemUser.save(user);
+                oid = DbPengguna.save(user);
                 isSuccess = true;
             } catch (Exception e) {
                 System.out.println("err_insert_controller:" + e.toString());
@@ -132,20 +159,21 @@ public class SystemUserController extends HttpServlet {
         }else if(action.equals("update-pass")){
 
             long oid = 0;
-            SystemUser data = new SystemUser();
+            Pengguna data = new Pengguna();
             try {
-                data = DbSystemUser.findById(JSPHandler.requestLong(request, DbSystemUser.COL_SYSTEM_USER_ID));
+                data = DbPengguna.findById(JSPHandler.requestLong(request, DbPengguna.COL_PENGGUNA_ID));
             } catch (Exception e) {
+                e.printStackTrace();
             }
             
-            if(data.getSystemUserId()!=0){
-                SystemUser user = new SystemUser();
+            if(data.getPenggunaId()!=0){
+                Pengguna user = new Pengguna();
                 user = data;
-                String pass = JSPHandler.requestString(request, ""+DbSystemUser.COL_PASSWORD);
+                String pass = JSPHandler.requestString(request, ""+DbPengguna.COL_PASSWORD);
                 user.setPassword(LoginServices.generateMD5(pass));
                 
                 try {
-                    oid = DbSystemUser.update(user);
+                    oid = DbPengguna.update(user);
                 } catch (Exception e) {
                     System.out.println("err_insert_controller:" + e.toString());
                 }
@@ -169,20 +197,20 @@ public class SystemUserController extends HttpServlet {
             
             long oid = 0;
             
-            SystemUser data = new SystemUser();
+            Pengguna data = new Pengguna();
             try {
-                data = DbSystemUser.findById(JSPHandler.requestLong(request, DbSystemUser.COL_SYSTEM_USER_ID));
+                data = DbPengguna.findById(JSPHandler.requestLong(request, DbPengguna.COL_PENGGUNA_ID));
             } catch (Exception e) {
             }
             
-            if(data.getSystemUserId()!=0){
+            if(data.getPenggunaId()!=0){
                 
-                SystemUser user = new SystemUser();
+                Pengguna user = new Pengguna();
                 user = data;
-                user.setNama(JSPHandler.requestString(request, DbSystemUser.COL_NAMA));
-                user.setStatus(1);
-                user.setUsername(JSPHandler.requestString(request, DbSystemUser.COL_USERNAME));
-                user.setRoleId(JSPHandler.requestLong(request, DbSystemUser.COL_ROLE_ID));
+                user.setNama(JSPHandler.requestString(request, DbPengguna.COL_NAMA));
+                user.setStatus(JSPHandler.requestInt(request, DbPengguna.COL_STATUS));
+                user.setUsername(JSPHandler.requestString(request, DbPengguna.COL_USERNAME));
+                user.setRoleId(JSPHandler.requestLong(request, DbPengguna.COL_ROLE_ID));
 
                 /* md5 */
                 /*
@@ -193,7 +221,7 @@ public class SystemUserController extends HttpServlet {
                 */
                 
                 try {
-                    oid = DbSystemUser.update(user);
+                    oid = DbPengguna.update(user);
                     isSuccess = true;
                 } catch (Exception e) {
                     System.out.println("err_insert_controller:" + e.toString());
@@ -217,9 +245,9 @@ public class SystemUserController extends HttpServlet {
             
             long id = JSPHandler.requestLong(request, "id");
             
-            SystemUser data = new SystemUser();
+            Pengguna data = new Pengguna();
             try{
-                data = DbSystemUser.findById(id);
+                data = DbPengguna.findById(id);
             }catch(Exception e){
                 System.out.println("err_findById: " + e.toString());
             }
@@ -232,7 +260,7 @@ public class SystemUserController extends HttpServlet {
             
             request.setAttribute("roles", roles);
             
-            if(data.getSystemUserId()!=0){
+            if(data.getPenggunaId()!=0){
                 request.setAttribute("data", data);
                 pageLocation = "/WEB-INF/master/systemuser/systemuser-edit.jsp";
                 pageName = "Data Master;Barang;Ubah";
@@ -241,7 +269,44 @@ public class SystemUserController extends HttpServlet {
                 response.sendRedirect(JSPHandler.generateUrl(request, "user", "", ""));
                 return;
             }
+        }else if(action.equals("delete")){
+            response.setContentType("application/json;charset=UTF-8");
             
+            long id = JSPHandler.requestLong(request, "id");
+            
+            Pengguna sysuser = new Pengguna();
+            try{
+                sysuser = DbPengguna.findById(id);
+            }catch(Exception e){
+                System.out.println("err_delete_controller: findById " + e.toString());
+            }
+            
+            if(sysuser.getPenggunaId()!=0){
+                boolean success = DbPengguna.delete(sysuser);
+                if(success){
+                    out.println(JSPHandler.generateJsonMessage(0, "Data telah terhapus"));
+                }else{
+                    out.println(JSPHandler.generateJsonMessage(0, "Data gagal dihapus"));
+                }
+            }else{
+                out.println(JSPHandler.generateJsonMessage(0, "Data gagal dihapus"));
+            }
+            return;
+            
+        }else if(action.equals("akun")){
+            
+            long id = Long.parseLong(session.getAttribute(LoginServices.LOGIN_USER_ID).toString());
+            
+            Pengguna systemUser = new Pengguna();
+            try {
+                systemUser = DbPengguna.findById(id);
+            } catch (Exception e) {
+            }
+            
+            request.setAttribute("data", systemUser);
+            
+            pageLocation = "/WEB-INF/master/systemuser/systemuser-akun.jsp";
+            pageName = "Akun Saya";
         }else{
             pageLocation = "/WEB-INF/master/systemuser/systemuser.jsp";
             pageName = "Administrator;Data User";

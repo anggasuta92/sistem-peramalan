@@ -1,6 +1,6 @@
 <%@page import="java.util.Vector"%>
 <%@page import="com.peramalan.model.master.Role"%>
-<%@page import="com.peramalan.model.master.DbSystemUser"%>
+<%@page import="com.peramalan.model.master.DbPengguna"%>
 <%@page import="com.peramalan.services.MenuServices"%>
 <%@page import="com.peramalan.config.MainConfig"%>
 <%@page import="com.peramalan.services.JSPHandler"%>
@@ -18,31 +18,31 @@
     <div class="col-lg-5">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-archive"></i> Tambah Role User</h3>
+                <h3 class="panel-title"><i class="fa fa-archive"></i> Tambah Pengguna</h3>
             </div>
             <div class="panel-body">
                 <form name="roleAddFrm" action="<%= JSPHandler.generateUrl(request, "user", "save", "") %>" method="post">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="<%= DbSystemUser.COL_NAMA %>">Nama Lengkap</label>
-                                <input type="text" name="<%= DbSystemUser.COL_NAMA %>" value="" class="form-control" />
+                                <label for="<%= DbPengguna.COL_NAMA %>">Nama Lengkap</label>
+                                <input type="text" name="<%= DbPengguna.COL_NAMA %>" value="" class="form-control" />
                             </div>
                             <div class="form-group">
-                                <label for="<%= DbSystemUser.COL_USERNAME %>">Username</label>
-                                <input type="text" name="<%= DbSystemUser.COL_USERNAME %>" value="" class="form-control" />
+                                <label for="<%= DbPengguna.COL_USERNAME %>">Username</label>
+                                <input type="text" name="<%= DbPengguna.COL_USERNAME %>" value="" class="form-control" />
                             </div>
                             <div class="form-group">
-                                <label for="<%= DbSystemUser.COL_PASSWORD %>">Password</label>
-                                <input type="text" name="<%= DbSystemUser.COL_PASSWORD %>" value="" class="form-control" />
+                                <label for="<%= DbPengguna.COL_PASSWORD %>">Password</label>
+                                <input type="password" name="<%= DbPengguna.COL_PASSWORD %>" value="" class="form-control" />
                             </div>
                             <div class="form-group">
-                                <label for="ulang_<%= DbSystemUser.COL_PASSWORD %>">Ketik Ulang Password</label>
-                                <input type="text" name="ulang_<%= DbSystemUser.COL_PASSWORD %>" value="" class="form-control" />
+                                <label for="ulang_<%= DbPengguna.COL_PASSWORD %>">Ketik Ulang Password</label>
+                                <input type="password" name="ulang_<%= DbPengguna.COL_PASSWORD %>" value="" class="form-control" />
                             </div>
                             <div class="form-group">
-                                <label for="<%= DbSystemUser.COL_ROLE_ID %>">Role</label>
-                                <select class="form-control" name="<%= DbSystemUser.COL_ROLE_ID %>">
+                                <label for="<%= DbPengguna.COL_ROLE_ID %>">Role</label>
+                                <select class="form-control" name="<%= DbPengguna.COL_ROLE_ID %>">
                                     <option value="0">Pilih role...</option>
                                     <%
                                         if(roles!=null && roles.size()>0){

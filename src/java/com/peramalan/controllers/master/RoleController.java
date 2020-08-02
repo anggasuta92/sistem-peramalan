@@ -124,10 +124,10 @@ public class RoleController extends HttpServlet {
 
                     /* simpan ulang */
                     for(int i = 0; i < MenuServices.strMenu.length; i++){
-                        int checked = JSPHandler.requestInt(request, MenuServices.menuPreffix + i);
+                        int checked = JSPHandler.requestInt(request, MenuServices.menuPreffix + MenuServices.strMenuKode[i]);
                         RoleDetail roleDetail = new RoleDetail();
                         roleDetail.setRoleId(role.getRoleId());
-                        roleDetail.setKodeMenu(i);
+                        roleDetail.setKodeMenu(MenuServices.strMenuKode[i]);
                         roleDetail.setGranted(checked);
 
                         try {
@@ -173,10 +173,10 @@ public class RoleController extends HttpServlet {
             /* simpan detail */
             if(oid!=0){
                 for(int i = 0; i < MenuServices.strMenu.length; i++){
-                    int checked = JSPHandler.requestInt(request, MenuServices.menuPreffix + i);
+                    int checked = JSPHandler.requestInt(request, MenuServices.menuPreffix + MenuServices.strMenuKode[i]);
                     RoleDetail roleDetail = new RoleDetail();
                     roleDetail.setRoleId(oid);
-                    roleDetail.setKodeMenu(i);
+                    roleDetail.setKodeMenu(MenuServices.strMenuKode[i]);
                     roleDetail.setGranted(checked);
                     
                     try {
@@ -229,7 +229,43 @@ public class RoleController extends HttpServlet {
             
             pageLocation = "/WEB-INF/master/role/role-edit.jsp";
             pageName = "Administrator;Role User;Ubah";
+        
+        }else if(action.equals("delete")){
+            response.setContentType("application/json;charset=UTF-8");
             
+            long id = JSPHandler.requestLong(request, "id");
+            
+            Role role = new Role();
+            try{
+                role = DbRole.findById(id);
+            }catch(Exception e){
+                System.out.println("err_delete_controller: findById " + e.toString());
+            }
+            
+            if(role.getRoleId()!=0){
+                MenuServices.deleteRoleByRoleId(role.getRoleId());
+                boolean success = false;
+                
+                Role checkRole = new Role();
+                try {
+                    checkRole = DbRole.findById(role.getRoleId());
+                } catch (Exception e) {
+                }
+                
+                if(checkRole.getRoleId()==0){
+                    success = true;
+                }
+                
+                if(success){
+                    out.println(JSPHandler.generateJsonMessage(0, "Data telah terhapus"));
+                }else{
+                    out.println(JSPHandler.generateJsonMessage(0, "Data gagal dihapus"));
+                }
+            }else{
+                out.println(JSPHandler.generateJsonMessage(0, "Data gagal dihapus"));
+            }
+            return;
+           
         }else{
             pageLocation = "/WEB-INF/master/role/role.jsp";
             pageName = "Administrator;Role User";

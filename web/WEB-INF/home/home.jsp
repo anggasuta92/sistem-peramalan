@@ -1,3 +1,4 @@
+<%@page import="java.util.HashMap"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Vector"%>
 <%@page import="com.peramalan.services.NumberServices"%>
@@ -7,6 +8,7 @@
 
 <%
     Vector<Map> result = (Vector<Map>) request.getAttribute("chart_penjualan");
+    Vector<Map> listPenjualan = (Vector<Map>) request.getAttribute("list_penjualan");
     
     String periode = "";
     String valueCurrent = "";
@@ -39,7 +41,7 @@
     <div class="col-lg-4 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body" style="text-align: center">
-                Total Data Peramalan : <span style="font-size: x-large; font-weight: bolder">0</span>
+                Total Data Peramalan : <span style="font-size: x-large; font-weight: bolder"><%= request.getAttribute("count_peramalan") %></span>
             </div>
         </div>
     </div>
@@ -62,12 +64,35 @@
     <div class="col-lg-6">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <strong>Perbandingan Penjualan</strong>
+                <strong>Penjualan Terbaik</strong>
             </div>
             <div class="card-body">
-                <div class="chart-container" style="position: inherit;">
-                    <canvas id="chartPeramalan"></canvas>
-                </div>
+                <table class="table" width="auto">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col" width="10">#</th>
+                            <th scope="col">Kode</th>
+                            <th scope="col" width="300">Nama Barang</th>
+                            <th scope="col">Qty</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%
+                            for(int i = 0; i < listPenjualan.size(); i++){
+                                Map data = (HashMap) listPenjualan.get(i);
+                                double qty = Double.parseDouble(data.get("qty").toString());
+                        %>
+                        <tr>
+                            <td align="center"><%= (i+1) %></td>
+                            <td><%= data.get("kode").toString() %></td>
+                            <td><%= data.get("nama").toString() %></td>
+                            <td align="right"><%= NumberServices.formatNumber(qty, "#,###.##") %></td>
+                        </tr>
+                        <%
+                            }
+                        %>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

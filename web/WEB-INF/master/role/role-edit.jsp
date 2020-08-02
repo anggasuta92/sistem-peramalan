@@ -14,6 +14,7 @@
         try {
             result = Integer.parseInt(details.get(kodeMenu).toString());
         } catch (Exception e) {
+            e.printStackTrace();
         }
         
         return result;
@@ -64,12 +65,12 @@
                                 <tbody id="table-body">
                                     <%
                                         for (int i = 0; i < MenuServices.strMenu.length; i++) {
-                                            int sts = getGrantedFromMap(detail, i);
+                                            int sts = getGrantedFromMap(detail, MenuServices.strMenuKode[i]);
                                     %>
                                     <tr>
                                         <td><%= MenuServices.strMenu[i]%></td>
                                         <td>
-                                            <input type="checkbox" name="<%= MenuServices.menuPreffix + i %>" value="1" class="form-control" <%= (sts==1 ? "checked":"") %> />
+                                            <input type="checkbox" name="<%= MenuServices.menuPreffix + MenuServices.strMenuKode[i] %>" value="1" class="form-control" <%= (sts==1 ? "checked":"") %> />
                                         </td>
                                     </tr>
                                     <%

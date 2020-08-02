@@ -10,6 +10,7 @@ import com.peramalan.model.master.DbBarang;
 import com.peramalan.model.transaksi.DbPenjualan;
 import com.peramalan.model.transaksi.Penjualan;
 import java.util.List;
+import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -25,8 +26,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public class ImportPenjualanServices {
     
-    public static String importPenjualan(HttpServletRequest request){
-        String result = "";
+    public static Vector importPenjualan(HttpServletRequest request){
+        Vector results = new Vector();
         
         try {
             if(ServletFileUpload.isMultipartContent(request)){
@@ -114,7 +115,13 @@ public class ImportPenjualanServices {
                                 }
                             }
                             
-                            result += "Data ke-" + (i-3) + " > Periode:" + TransaksiService.periodeBulan[bulan] + " " + tahun + "; Barang:" + kodeBarang + "; qty:" + qty + "; status:" + info + "; " + (success==0 ? "Gagal":"Sukses") + "\n";
+                            String[] x = new String[5];
+                            x[0] = "Data ke-" + (i-3);
+                            x[1] = TransaksiService.periodeBulan[bulan] + " " + tahun;
+                            x[2] = kodeBarang;
+                            x[3] = NumberServices.formatNumber(qty, "#,###.##");
+                            x[4] = (success==0 ? "Gagal":"Sukses");
+                            results.add(x);
                         }
                         
                     }
@@ -124,7 +131,7 @@ public class ImportPenjualanServices {
             e.printStackTrace();
         }
         
-        return result;
+        return results;
     }
     
 }

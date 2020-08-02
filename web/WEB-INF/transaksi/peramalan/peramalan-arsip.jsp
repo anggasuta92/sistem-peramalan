@@ -56,7 +56,6 @@
                                     <th width="120">Nomor Peramalan</th>
                                     <th width="150">Periode Peramalan</th>
                                     <th width="150">Periode Penjualan</th>
-                                    <th width="90">Alpha</th>
                                     <th width="90">Detail</th>
                                 </tr>    
                             </thead>
@@ -166,7 +165,6 @@
                                     '<td align="center">'+ data[i].nomor +'</td>'+
                                     '<td align="center">'+ genPeriodeName(data[i].peramalanTahun, data[i].peramalanBulan) +'</td>'+
                                     '<td align="center">'+ genPeriodeName(data[i].penjualanTahun, data[i].penjualanBulan) +'</td>'+
-                                    '<td align="right">'+ data[i].alphaTerbaik +'</td>'+
                                     '<td align="center" class="margin">'+
                                         '<button class="btn btn-sm btn-default" onClick="detail(\''+ data[i].peramalanId +'\')"><span class="fa fa-eye text-primary"></span></button>&nbsp;'+
                                     '</td>'+

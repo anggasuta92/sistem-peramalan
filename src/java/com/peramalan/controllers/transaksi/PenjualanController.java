@@ -132,10 +132,10 @@ public class PenjualanController extends HttpServlet {
             
         }else if(action.equals("upload")){    
             
-            String importResults = ImportPenjualanServices.importPenjualan(request);
-            request.setAttribute("uploaded", 1);
-            response.sendRedirect(JSPHandler.generateUrl(request, "penjualan", "import", "uploaded=1"));
-            
+            Vector importResults = ImportPenjualanServices.importPenjualan(request);
+            session.setAttribute("result", importResults);
+            response.sendRedirect(JSPHandler.generateUrl(request, "penjualan", "import", ""));
+
         }else if(action.equals("download-template")){
             
             pageLocation = "/WEB-INF/transaksi/penjualan/penjualan-download-template.jsp";

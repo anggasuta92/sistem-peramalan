@@ -8,8 +8,6 @@ package com.peramalan.controllers.transaksi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.peramalan.model.master.Barang;
 import com.peramalan.model.master.DbBarang;
-import com.peramalan.model.master.DbKategoriBarang;
-import com.peramalan.model.master.KategoriBarang;
 import com.peramalan.model.transaksi.DbPenjualan;
 import com.peramalan.model.transaksi.DbPeramalan;
 import com.peramalan.model.transaksi.DbPeramalanDetail;
@@ -17,6 +15,7 @@ import com.peramalan.model.transaksi.Penjualan;
 import com.peramalan.model.transaksi.Peramalan;
 import com.peramalan.model.transaksi.PeramalanDetail;
 import com.peramalan.services.JSPHandler;
+import com.peramalan.services.LoginServices;
 import com.peramalan.services.PaginationServices;
 import com.peramalan.services.PeramalanServices;
 import java.io.IOException;
@@ -71,7 +70,8 @@ public class PeramalanController extends HttpServlet {
             int penjualanBulan= JSPHandler.requestInt(request, "penjualan_bulan");
             int penjualanTahun = JSPHandler.requestInt(request, "penjualan_tahun");
             
-            long oidPeramlan = PeramalanServices.hitungPeramalan(penjualanBulan, penjualanTahun, peramalanBulan, peramalanTahun);
+            long userId = Long.parseLong(session.getAttribute(LoginServices.LOGIN_USER_ID).toString());
+            long oidPeramlan = PeramalanServices.hitungPeramalan(penjualanBulan, penjualanTahun, peramalanBulan, peramalanTahun, userId);
             
             Map result = new HashMap();
             result.put("status", oidPeramlan!=0 ? "OK":"GAGAL");
@@ -141,11 +141,12 @@ public class PeramalanController extends HttpServlet {
             int bulan = JSPHandler.requestInt(request, "bulan");
             long id = JSPHandler.requestLong(request, "id");
             double alpha = JSPHandler.requestDouble(request, "alpha");
+            int disarankan = JSPHandler.requestInt(request, "disarankan");
             
             
-            int totalData = DbPeramalanDetail.countPeramalanDetailJoinBarang(param, tahun, bulan, id, alpha, DbPeramalanDetail.DETAIL_TIPE_PERAMALAN);
+            int totalData = DbPeramalanDetail.countPeramalanDetailJoinBarang(param, tahun, bulan, id, alpha, DbPeramalanDetail.DETAIL_TIPE_PERAMALAN, disarankan);
             PaginationServices pagination = new PaginationServices(totalData, limitData, currentPage, command);            
-            Vector datas = DbPeramalanDetail.listPeramalanDetailJoinBarang(param, tahun, bulan, id, alpha, DbPeramalanDetail.DETAIL_TIPE_PERAMALAN, "", pagination.getStart(), pagination.getRecordToGet());
+            Vector datas = DbPeramalanDetail.listPeramalanDetailJoinBarang(param, tahun, bulan, id, alpha, DbPeramalanDetail.DETAIL_TIPE_PERAMALAN, disarankan, "", pagination.getStart(), pagination.getRecordToGet());
             
             Map res = new HashMap();
             res.put("pagination", pagination);
@@ -224,6 +225,7 @@ public class PeramalanController extends HttpServlet {
         }else if(action.equals("export-detail-pdf")){
             
             long id = JSPHandler.requestLong(request, "id");
+            double alpha = JSPHandler.requestDouble(request, "alpha");
             
             Peramalan peramalan = new Peramalan();
             try {
@@ -233,7 +235,7 @@ public class PeramalanController extends HttpServlet {
             
             Vector<PeramalanDetail> peramalanDetails = new Vector<PeramalanDetail>();
             try{
-                peramalanDetails = DbPeramalanDetail.listPeramalanDetailJoinBarang("", 0, 0, id, 0, DbPeramalanDetail.DETAIL_TIPE_PERAMALAN, "", 0, 0);
+                peramalanDetails = DbPeramalanDetail.listPeramalanDetailJoinBarang("", 0, 0, id, alpha, DbPeramalanDetail.DETAIL_TIPE_PERAMALAN,0, "", 0, 0);
             }catch(Exception e){}
             
             request.setAttribute("peramalan", peramalan);

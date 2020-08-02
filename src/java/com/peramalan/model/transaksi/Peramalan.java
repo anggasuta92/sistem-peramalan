@@ -17,7 +17,7 @@ public class Peramalan {
     private int penjualan_tahun;
     private int peramalan_bulan;
     private int peramalan_tahun;
-    private double alphaTerbaik;
+    private long penggunaId;
     private String nomor;
     private Date tanggal;
     
@@ -92,18 +92,12 @@ public class Peramalan {
         this.peramalan_tahun = peramalanTahun;
     }
 
-    /**
-     * @return the alphaTerbaik
-     */
-    public double getAlphaTerbaik() {
-        return alphaTerbaik;
+    public long getPenggunaId() {
+        return penggunaId;
     }
 
-    /**
-     * @param alphaTerbaik the alphaTerbaik to set
-     */
-    public void setAlphaTerbaik(double alphaTerbaik) {
-        this.alphaTerbaik = alphaTerbaik;
+    public void setPenggunaId(long penggunaId) {
+        this.penggunaId = penggunaId;
     }
 
     /**

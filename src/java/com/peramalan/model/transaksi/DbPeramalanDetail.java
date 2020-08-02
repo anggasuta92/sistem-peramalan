@@ -40,6 +40,7 @@ public class DbPeramalanDetail {
     public static String COL_PERAMALAN = "peramalan";
     public static String COL_PENJUALAN = "penjualan";
     public static String COL_TIPE = "tipe";
+    public static String COL_DISARANKAN = "disarankan";
     
     public static final int DETAIL_TIPE_PENJUALAN = 0;
     public static final int DETAIL_TIPE_PERAMALAN = 1;
@@ -64,6 +65,7 @@ public class DbPeramalanDetail {
         object.setPeramalan(rs.getDouble(COL_PERAMALAN));
         object.setPenjualan(rs.getDouble(COL_PENJUALAN));
         object.setTipe(rs.getInt(COL_TIPE));
+        object.setDisarankan(rs.getInt(COL_DISARANKAN));
     }
         
     public static int count(String where){
@@ -129,8 +131,8 @@ public class DbPeramalanDetail {
         long result = 0;
         String sql = "INSERT INTO "+ tableName +" ("+ COL_PERAMALAN_ID +", "+ COL_TAHUN +", "+ COL_BULAN +", "+ COL_BARANG_ID +", "
                 + ""+ COL_ALPHA +", "+ COL_SMOOTHING_SINGLE +", "+ COL_SMOOTHING_DOUBLE +", "+ COL_NILAI_A +", "+ COL_NILAI_B +", "+ COL_PERAMALAN +
-                ", "+ COL_PERAMALAN_DETAIL_ID +", "+ COL_PENJUALAN +", "+ COL_NILAI_M +", "+ COL_TIPE +")"
-                + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                ", "+ COL_PERAMALAN_DETAIL_ID +", "+ COL_PENJUALAN +", "+ COL_NILAI_M +", "+ COL_TIPE +", "+ COL_DISARANKAN +")"
+                + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         
         Connection conn = null;
         PreparedStatement ps = null;
@@ -153,6 +155,7 @@ public class DbPeramalanDetail {
             ps.setDouble(12, data.getPenjualan());
             ps.setDouble(13, data.getNilaiM());
             ps.setInt(14, data.getTipe());
+            ps.setInt(15, data.getDisarankan());
             
             ps.execute();
             
@@ -178,7 +181,7 @@ public class DbPeramalanDetail {
         long result = 0;
         String sql = "UPDATE "+ tableName +" SET "+ COL_TAHUN +"=?, "+ COL_BULAN +"=?, "+ COL_BARANG_ID +"=?, "+ COL_ALPHA +"=?, "+ COL_SMOOTHING_SINGLE +"=?, "
                 + COL_SMOOTHING_DOUBLE + "=?, "+ COL_NILAI_A +"=?, "+ COL_NILAI_B +"=?, "+ COL_PERAMALAN +"=?, "+ COL_PERAMALAN_ID +"=?, "
-                + COL_PENJUALAN +"=?, "+ COL_NILAI_M +"=?, "+ COL_TIPE +"=? WHERE "+ COL_PERAMALAN_DETAIL_ID +"=?";
+                + COL_PENJUALAN +"=?, "+ COL_NILAI_M +"=?, "+ COL_TIPE +"=?, "+ COL_DISARANKAN +"=? WHERE "+ COL_PERAMALAN_DETAIL_ID +"=?";
         
         if(data.getPeramalanDetailId()==0){
             return 0;
@@ -203,7 +206,8 @@ public class DbPeramalanDetail {
             ps.setDouble(11, data.getPenjualan());
             ps.setDouble(12, data.getNilaiM());
             ps.setInt(13, data.getTipe());
-            ps.setLong(14, data.getPeramalanDetailId());
+            ps.setInt(14, data.getDisarankan());
+            ps.setLong(15, data.getPeramalanDetailId());
             ps.execute();
             
             result = data.getPeramalanDetailId();
@@ -225,7 +229,7 @@ public class DbPeramalanDetail {
     }
     
     public static int countPeramalanDetailJoinBarang(String paramBarang, 
-            int tahun, int bulan, long peramalanId, double alpha, int tipe){
+            int tahun, int bulan, long peramalanId, double alpha, int tipe, int disarankan){
         
         int result = 0;
         
@@ -248,11 +252,13 @@ public class DbPeramalanDetail {
             where += " and tipe='"+ tipe +"' ";
         }
         
+        if(disarankan==1){
+            where += " and pd.disarankan='1' ";
+        }
+        
         String sql = "select count(pd.peramalan_detail_id) as total from peramalan_detail pd" +
             " inner join barang b on pd.barang_id=b.barang_id" +
             " where pd.peramalan_id='"+ peramalanId +"' " + paramBarang + where;
-        
-        System.out.println("::" + sql);
         
         Connection conn = null;
         Statement stmt = null;
@@ -276,7 +282,7 @@ public class DbPeramalanDetail {
     }
     
     public static Vector listPeramalanDetailJoinBarang(String paramBarang, 
-            int tahun, int bulan, long peramalanId, double alpha, int tipe,
+            int tahun, int bulan, long peramalanId, double alpha, int tipe, int disarankan,
             String orderBy, int limitStart, int limitEnd){
         Vector result = new Vector();
         String limit = "";
@@ -305,6 +311,10 @@ public class DbPeramalanDetail {
             where += " and tipe='"+ tipe +"' ";
         }
         
+        if(disarankan==1){
+            where += " and pd.disarankan='1' ";
+        }
+        
         String sql = "select pd.* from peramalan_detail pd" +
             " inner join barang b on pd.barang_id=b.barang_id" +
             " where pd.peramalan_id='"+ peramalanId +"' " + paramBarang + where + orderBy + limit;
@@ -329,6 +339,42 @@ public class DbPeramalanDetail {
             try{if(conn!=null) conn.close();}catch(Exception e){}
         }
         
+        return result;
+    }
+    
+    public static Vector<PeramalanDetail> findByPeramalanBarangTipeAlpha(long peramalanId, long barangId, int tipe, double alpha){
+        
+        Vector<PeramalanDetail> result = new Vector<>();
+        String sql = "select * from " + tableName + " where " + COL_PERAMALAN_ID + "='"+ peramalanId +
+                "' and "+ COL_BARANG_ID + "='"+ barangId +"' and "+ COL_TIPE +"='"+ tipe +"' and " + COL_ALPHA + "='"+ alpha +"'";
+
+        System.out.println("sql:" + sql);
+        Connection connection = null;
+        Statement statement = null;
+        
+        try {
+            connection = DbConnection.getConnection();
+            statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sql);
+            while(rs.next()){
+                PeramalanDetail peramalanDetail = new PeramalanDetail();
+                fetchObject(rs, peramalanDetail);
+                result.add(peramalanDetail);
+            }
+            rs.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if(statement!=null) statement.close();
+            } catch (Exception e) {
+            }
+            
+            try {
+                if(connection!=null) connection.close();
+            } catch (Exception e) {
+            }
+        }
         return result;
     }
 }

@@ -159,6 +159,35 @@
         var param = document.getElementById('txtSearch').value;
         loadData(<%= PaginationServices.FIRST %>, currentPage, param);
     }
+    
+    function confirmDelete(idRole, note){
+        swal({
+        title: "Konfirmasi",
+        text: "Apakah anda ingin menghapus data role: \n" + note + "?",
+        icon: "info",
+        buttons: true,
+        dangerMode: true,
+        })
+        .then((deleteSaja) => {
+            if (deleteSaja) {
+                $.ajax({
+                    type  : 'post',
+                    data  : { id: idRole},
+                    url   : '<%= JSPHandler.generateUrl(request, "role", "delete", "") %>',
+                    async : false,
+                    dataType : 'json',
+                    success : function(datas){
+                        var messages = datas.message;
+                        var code = datas.code;
+                        swal(messages);
+                        if(code==0){
+                            loadData("", 1, "");
+                        }
+                    }
+                });
+            }
+        });
+    }
 </script>
 
 <%@ include file="../../layout/bottom-page.jsp"%>

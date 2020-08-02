@@ -18,7 +18,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="<%= DbRole.COL_NAMA %>">Nama Role</label>
-                                <input type="text" name="<%= DbRole.COL_NAMA %>" value="" class="form-control" />
+                                <input type="text" name="<%= DbRole.COL_NAMA %>" value="" class="form-control" required="true"/>
                             </div>
                         </div>
                     </div>

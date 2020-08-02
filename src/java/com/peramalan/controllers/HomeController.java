@@ -7,6 +7,7 @@ package com.peramalan.controllers;
 
 import com.peramalan.model.master.DbBarang;
 import com.peramalan.model.transaksi.DbPenjualan;
+import com.peramalan.model.transaksi.DbPeramalan;
 import com.peramalan.services.DashboardServices;
 import com.peramalan.services.JSPHandler;
 import com.peramalan.services.NumberServices;
@@ -45,6 +46,11 @@ public class HomeController extends HttpServlet {
         if(action.equals("index")){
             pageName = "Dashboard;Home";
             pageLocation = "/WEB-INF/home/home.jsp";            
+            
+        }else if(action.equals("restricted")){
+            pageName = "Dashboard;Restricted";
+            pageLocation = "/WEB-INF/home/restricted.jsp";
+            
         }else{
             
             int countBarang = DbBarang.count("");
@@ -53,10 +59,14 @@ public class HomeController extends HttpServlet {
             int countPenjualan = DbPenjualan.count("");
             request.setAttribute("count_penjualan", NumberServices.formatNumber(countPenjualan, "#,##0"));
             
+            int countPeramalan = DbPeramalan.count("");
+            request.setAttribute("count_peramalan", NumberServices.formatNumber(countPeramalan, "#,##0"));
+            
             Vector<Map> chartPenjualan = DashboardServices.chartPenjualanData();
             request.setAttribute("chart_penjualan", chartPenjualan);
             
-            DashboardServices.chartPenjualanData();
+            Vector<Map> listPenjualanTerbaik = DashboardServices.getPenjualanTerbaik();
+            request.setAttribute("list_penjualan", listPenjualanTerbaik);
             
             pageName = "Dashboard;Home";
             pageLocation = "/WEB-INF/home/home.jsp";

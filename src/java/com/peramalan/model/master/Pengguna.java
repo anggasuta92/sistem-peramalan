@@ -11,28 +11,26 @@ import java.util.Date;
  *
  * @author Angga Suta
  */
-public class SystemUser {
-    private long systemUserId;
+public class Pengguna {
+    private long penggunaId;
     private String nama;
     private String username;
     private String password;
     private long roleId;
     private int status;
-    private Date createdAt;
-    private Date updatedAt;
 
     /**
      * @return the systemUserId
      */
-    public long getSystemUserId() {
-        return systemUserId;
+    public long getPenggunaId() {
+        return penggunaId;
     }
 
     /**
-     * @param systemUserId the systemUserId to set
+     * @param penggunaId the systemUserId to set
      */
-    public void setSystemUserId(long systemUserId) {
-        this.systemUserId = systemUserId;
+    public void setPenggunaId(long penggunaId) {
+        this.penggunaId = penggunaId;
     }
 
     /**
@@ -104,34 +102,4 @@ public class SystemUser {
     public void setStatus(int status) {
         this.status = status;
     }
-
-    /**
-     * @return the createdAt
-     */
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    /**
-     * @param createdAt the createdAt to set
-     */
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    /**
-     * @return the updatedAt
-     */
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    /**
-     * @param updatedAt the updatedAt to set
-     */
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    
 }

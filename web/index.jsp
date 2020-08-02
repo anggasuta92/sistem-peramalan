@@ -36,8 +36,8 @@
                 <form class="login-form" action="<%= JSPHandler.generateUrl(request, "login", "auth", "") %>" method="post">
                     <img src="<%= MainConfig.getAssetUrl(request)%>/images/avatar.png" alt="Avatar" style="width:120px;height: 120px;border-radius: 50%;">
                     <h3><strong>SISTEM PERAMALAN</strong></h3>
-                    <input type="text" name="user" placeholder="Nama Pengguna"/>
-                    <input type="password" name="pass" placeholder="Kata Sandi"/>
+                    <input type="text" name="user" placeholder="Username"/>
+                    <input type="password" name="pass" placeholder="Password"/>
                     <button>login</button>
                 </form>
             </div>
@@ -48,6 +48,7 @@
         if(session.getAttribute(JSPHandler.SESSION_MESSAGING)!=null){ 
     %>
     swal('<%= session.getAttribute(JSPHandler.SESSION_MESSAGING) %>');
+    swal("Login gagal...", "<%= session.getAttribute(JSPHandler.SESSION_MESSAGING) %>", "warning");
     <%
             session.removeAttribute(JSPHandler.SESSION_MESSAGING);
         }

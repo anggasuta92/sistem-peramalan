@@ -3,11 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.peramalan.controllers;
+package com.peramalan.controllers.master;
 
-import com.peramalan.model.master.DbPengguna;
 import com.peramalan.model.master.DbPerusahaan;
-import com.peramalan.model.master.Pengguna;
 import com.peramalan.model.master.Perusahaan;
 import com.peramalan.services.JSPHandler;
 import com.peramalan.services.LoginServices;
@@ -24,8 +22,8 @@ import javax.servlet.http.HttpSession;
  *
  * @author OxysystemPC
  */
-@WebServlet(name = "LoginController", urlPatterns = {"/login"})
-public class LoginController extends HttpServlet {
+@WebServlet(name = "PerusahaanController", urlPatterns = {"/perusahaan"})
+public class PerusahaanController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,64 +43,54 @@ public class LoginController extends HttpServlet {
         String action = (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)!=null ? (request.getParameter(JSPHandler.PAGE_QUERY_REQUEST_PREFFIX)) : "");
         String pageLocation = "";
         String pageName = "";
+        int limitData = 5;
+        boolean isSuccess = false;
   
-        if(action.equals("login")){
-            pageLocation = "/index.jsp";
-            pageName = "Login";
+        if(action.equals("")){
             
-        }else if(action.equals("auth")){
-            
-            String username = JSPHandler.requestString(request, "user");
-            String password = JSPHandler.requestString(request, "pass");
-            
-            Pengguna user = new Pengguna();
+            Perusahaan perusahaan = new Perusahaan();
             try {
-                user = DbPengguna.findByUsernamePassword(username, password);
+                perusahaan = DbPerusahaan.getPerusahaan();
+            } catch (Exception e) {
+            }
+            
+            request.setAttribute("perusahaan", perusahaan);
+            
+            pageLocation = "/WEB-INF/master/perusahaan/perusahaan.jsp";
+            pageName = "Administrator;Perusahaan";
+            
+        }else if(action.equals("update")){
+            
+            Perusahaan data = new Perusahaan();
+            data.setPerusahaanId(JSPHandler.requestLong(request, DbPerusahaan.COL_PERUSAHAAN_ID));
+            data.setNama(JSPHandler.requestString(request, DbPerusahaan.COL_NAMA));
+            data.setAlamat(JSPHandler.requestString(request, DbPerusahaan.COL_ALAMAT));
+            data.setTelepon(JSPHandler.requestString(request, DbPerusahaan.COL_TELEPON));
+            data.setNamaPemilik(JSPHandler.requestString(request, DbPerusahaan.COL_NAMA_PEMILIK));
+            
+            try {
+                long oid = DbPerusahaan.update(data);
+                session.setAttribute(LoginServices.PERUSAHAN_NAMA, data.getNama());
+                session.setAttribute(LoginServices.PERUSAHAN_ALAMAT, data.getAlamat());
+                
+                isSuccess = true;
             } catch (Exception e) {
                 e.printStackTrace();
             }
             
-            
-            LoginServices.removeAllLoginInformation(session);
-            
-            if(user.getPenggunaId()!=0){
-                
-                /* login berhasil */
-                if(user.getStatus()==1){
-                    LoginServices.setUserPriv(request, user.getRoleId(), user.getPenggunaId());
-                    session.setAttribute(LoginServices.LOGIN_STATUS, LoginServices.LOGIN_STATUS_TRUE);
-                    session.setAttribute(LoginServices.LOGIN_USER_ID, user.getPenggunaId());
-
-                    Perusahaan perusahaan = new Perusahaan();
-                    try {
-                        perusahaan = DbPerusahaan.getPerusahaan();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    session.setAttribute(LoginServices.PERUSAHAN_NAMA, perusahaan.getNama());
-                    session.setAttribute(LoginServices.PERUSAHAN_ALAMAT, perusahaan.getAlamat());
-
-                    response.sendRedirect(JSPHandler.generateUrl(request, "home", "", ""));
-                }else{
-                    session.setAttribute(LoginServices.LOGIN_STATUS, LoginServices.LOGIN_STATUS_FALSE);
-                    session.setAttribute(JSPHandler.SESSION_MESSAGING, "Maaf user anda sudah tidak aktif");
-                    response.sendRedirect(JSPHandler.generateUrl(request, "login", "", ""));
-                }
+            /* untuk kepentingan perpesanan di halaman jsp */
+            if(isSuccess){
+                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Data telah tersimpan");
             }else{
-                session.setAttribute(LoginServices.LOGIN_STATUS, LoginServices.LOGIN_STATUS_FALSE);
-                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Username atau password anda tidak sesuai");
-                response.sendRedirect(JSPHandler.generateUrl(request, "login", "", ""));
+                session.setAttribute(JSPHandler.SESSION_MESSAGING, "Data gagal tersimpan");
             }
             
-        }else if(action.equals("logout")){
-            
-            LoginServices.removeAllLoginInformation(session);
-            response.sendRedirect(JSPHandler.generateUrl(request, "login", "", ""));
+            response.sendRedirect(JSPHandler.generateUrl(request, "perusahaan", "", ""));
+            return;
             
         }else{
-            pageLocation = "/index.jsp";
-            pageName = "Login";
+            pageLocation = "/WEB-INF/master/perusahaan/perusahaan.jsp";
+            pageName = "Administrator;Perusahaan";
         }
         
         if(pageLocation.length()>0){

@@ -119,8 +119,13 @@
             },
             success : function(datas){
                 // redirect here
+                
+                window.location.href = "<%= JSPHandler.generateUrl(request, "peramalan", "detail", "") %>&id=" + datas.peramalan_id;
+                
                 $('#btn-peramalan').show();
                 $('#loader-peramalan').hide();
+                
+                
             }
         });
     }

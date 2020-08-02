@@ -77,16 +77,22 @@
                 <hr/>
                 
                 <div class="row">
-                    <div class="col-lg-5">
+                    <div class="col-lg-8">
+                        <canvas id="chartPeramalan"></canvas>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
                         <table id="tblx" class="table table-bordered table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th width="50">#</th>
-                                    <th width="150">Periode</th>
-                                    <th width="50">Penjualan</th>
-                                    <th width="50">Peramalan</th>
-                                    <th width="50">Selisih</th>
-                                    <th width="50">APE</th>
+                                    <th width="200">Periode</th>
+                                    <th width="80">Penjualan</th>
+                                    <th width="80">Peramalan</th>
+                                    <th width="80">Selisih</th>
+                                    <th width="80">Persen Selisih</th>
+                                    <th>Keterangan</th>
                                 </tr>    
                             </thead>
                             <tbody id="table-body">
@@ -113,16 +119,24 @@
                                         double selisih = 0; 
                                         double error = 0;
                                         
-                                        if(i>=2 && hitungError){
-                                            selisih = peramalanDetail.getPenjualan() - peramalanDetail.getPeramalan();
-                                            error = selisih / peramalanDetail.getPenjualan() * 100;
-                                            error = Math.abs(error);
-                                            
-                                            strPeriode = addString(strPeriode, "'"+ periodeName +"'");
-                                            strPeramalanQty = addString(strPeramalanQty, ""+ NumberServices.formatNumber(peramalanDetail.getPeramalan(), "###0.00") +"");
-                                            strPenjualanQty = addString(strPenjualanQty, ""+ NumberServices.formatNumber(peramalanDetail.getPenjualan(), "###0.00") +"");
-                                            
-                                            countPeramalan++;
+                                        String strKeterangan = "-";
+                                        
+                                        if(i>=2){
+                                            if(hitungError){
+                                                selisih = peramalanDetail.getPenjualan() - peramalanDetail.getPeramalan();
+                                                error = selisih / peramalanDetail.getPenjualan() * 100;
+                                                error = Math.abs(error);
+
+                                                strPeriode = addString(strPeriode, "'"+ periodeName +"'");
+                                                strPeramalanQty = addString(strPeramalanQty, ""+ NumberServices.formatNumber(peramalanDetail.getPeramalan(), "###0.00") +"");
+                                                strPenjualanQty = addString(strPenjualanQty, ""+ NumberServices.formatNumber(peramalanDetail.getPenjualan(), "###0.00") +"");
+
+                                                countPeramalan++;
+
+                                                strKeterangan = "Persentase kesalahan : "+ NumberServices.formatNumber(error, "#,##0.00") + "%";
+                                            }else{
+                                                strKeterangan = "Hasil peramalan periode " + periodeName;
+                                            }
                                         }   
                                         
                                         totalPeramalan += peramalanDetail.getPeramalan();
@@ -130,12 +144,13 @@
                                         totalAPE += error;
                                 %>
                                 <tr>
-                                    <td align="center"><%= (i+1) %></td>
-                                    <td><%= periodeName %></td>
-                                    <td align="right"><%= NumberServices.formatNumber(peramalanDetail.getPenjualan(), "#,##0.00") %></td>
-                                    <td align="right"><%= NumberServices.formatNumber(peramalanDetail.getPeramalan(), "#,##0.00") %></td>
-                                    <td align="right"><%= NumberServices.formatNumber(selisih, "#,##0.00") %></td>
-                                    <td align="right"><%= NumberServices.formatNumber(error, "#,##0.00") %></td>
+                                    <td align="center" style="font-size: smaller"><%= (i+1) %></td>
+                                    <td style="font-size: smaller"><%= periodeName %></td>
+                                    <td align="right" style="font-size: smaller"><%= NumberServices.formatNumber(peramalanDetail.getPenjualan(), "#,##0.00") %></td>
+                                    <td align="right" style="font-size: smaller"><%= NumberServices.formatNumber(peramalanDetail.getPeramalan(), "#,##0.00") %></td>
+                                    <td align="right" style="font-size: smaller"><%= NumberServices.formatNumber(selisih, "#,##0.00") %></td>
+                                    <td align="right" style="font-size: smaller"><%= NumberServices.formatNumber(error, "#,##0.00") %></td>
+                                    <td align="left"><small><%= strKeterangan %></small></td>
                                 </tr>
                                 <%
                                     }
@@ -146,19 +161,18 @@
                                     <td style="background-color: silver; font-weight: bolder" align="right"><%= NumberServices.formatNumber(totalPenjualan, "#,##0.00") %></td>
                                     <td style="background-color: silver; font-weight: bolder" align="right"><%= NumberServices.formatNumber((totalPenjualan - totalPeramalan), "#,##0.00") %></td>
                                     <td style="background-color: silver; font-weight: bolder" align="right"><%= NumberServices.formatNumber(totalAPE, "#,##0.00") %></td>
+                                    <td style="background-color: silver; font-weight: bolder" align="right"></td>
                                 </tr>
                                 <tr>
-                                    <td style="background-color: silver; font-weight: bolder" align="right" colspan="2">MAPE </td>
-                                    <td style="background-color: silver; font-weight: bolder" align="right" colspan="3">
-                                        <%= NumberServices.formatNumber(totalAPE, "#,##0.00") %> / <%= NumberServices.formatNumber(countPeramalan, "#,##0.00") %> = 
+                                    <td style="background-color: silver; font-weight: bolder" align="right" colspan="3">Rata rata persentase kesalahan </td>
+                                    <td style="background-color: silver; font-weight: bolder" align="right" colspan="2">
+                                        <%= NumberServices.formatNumber(totalAPE, "#,##0.00") %> / <%= NumberServices.formatNumber(countPeramalan, "#,##0.00") %>  
                                     </td>
                                     <td style="background-color: silver; font-weight: bolder" align="right"><%= NumberServices.formatNumber(totalAPE / countPeramalan, "#,##0.00") %></td>
+                                    <td style="background-color: silver; font-weight: bolder" align="right"></td>
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="col-lg-7">
-                        <canvas id="chartPeramalan"></canvas>
                     </div>
                 </div>
                 <div class="row">

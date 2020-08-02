@@ -7,13 +7,12 @@ package com.peramalan.model.transaksi;
 
 import com.peramalan.conn.DbConnection;
 import com.peramalan.model.OIDGenerator;
-import com.peramalan.services.JSPHandler;
-import com.peramalan.services.TransaksiService;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 
@@ -31,7 +30,7 @@ public class DbPeramalan {
     public static String COL_START_BULAN = "start_bulan";
     public static String COL_END_TAHUN = "end_tahun";
     public static String COL_END_BULAN = "end_bulan";
-    public static String COL_ALPHA_TERBAIK = "alpha_terbaik";
+    public static String COL_PENGGUNA_ID = "pengguna_id";
     public static String COL_NOMOR = "nomor";
     public static String COL_TANGGAL = "tanggal";
     
@@ -41,7 +40,7 @@ public class DbPeramalan {
         o.setPenjualanBulan(rs.getInt(COL_START_BULAN));
         o.setPeramalanTahun(rs.getInt(COL_END_TAHUN));
         o.setPeramalanBulan(rs.getInt(COL_END_BULAN));
-        o.setAlphaTerbaik(rs.getDouble(COL_ALPHA_TERBAIK));
+        o.setPenggunaId(rs.getLong(COL_PENGGUNA_ID));
         o.setTanggal(rs.getTimestamp(COL_TANGGAL));
         o.setNomor(rs.getString(COL_NOMOR));
     }
@@ -109,7 +108,7 @@ public class DbPeramalan {
         long result = 0;
         String sql = "INSERT INTO " + tableName + " "
                 + "("+COL_PERAMALAN_ID+", "+COL_START_BULAN+", "+COL_START_TAHUN+", "+COL_END_BULAN+", "
-                +COL_END_TAHUN+", "+COL_ALPHA_TERBAIK+", "+COL_TANGGAL+", "+ COL_NOMOR +") "
+                +COL_END_TAHUN+", "+COL_PENGGUNA_ID+", "+COL_TANGGAL+", "+ COL_NOMOR +") "
                 + "values (?,?,?,?,?,?,?,?)";
         
         Connection conn = null;
@@ -124,7 +123,7 @@ public class DbPeramalan {
             ps.setInt(3, data.getPenjualanTahun());
             ps.setInt(4, data.getPeramalanBulan());
             ps.setInt(5, data.getPeramalanTahun());
-            ps.setDouble(6, data.getAlphaTerbaik());
+            ps.setLong(6, data.getPenggunaId());
             ps.setTimestamp(7, new java.sql.Timestamp(new Date().getTime()));
             ps.setString(8, data.getNomor());
             
@@ -152,7 +151,7 @@ public class DbPeramalan {
         long result = 0;
         String sql = "update "+ tableName +" set "
                 + COL_START_BULAN + "=?, "+COL_START_TAHUN+"=?, "+COL_END_BULAN+"=?, "+ COL_END_TAHUN +"=?, "
-                + COL_ALPHA_TERBAIK +"=?, " + COL_TANGGAL + "=?, "+COL_NOMOR+"=? "
+                + COL_PENGGUNA_ID +"=?, " + COL_TANGGAL + "=?, "+COL_NOMOR+"=? "
                 + "where "+ COL_PERAMALAN_ID +"=?";
         
         if(data.getPeramalanId()==0){
@@ -168,7 +167,7 @@ public class DbPeramalan {
             ps.setInt(2, data.getPenjualanTahun());
             ps.setInt(3, data.getPeramalanBulan());
             ps.setInt(4, data.getPeramalanTahun());
-            ps.setDouble(5, data.getAlphaTerbaik());
+            ps.setLong(5, data.getPenggunaId());
             ps.setTimestamp(6, new java.sql.Timestamp(data.getTanggal().getTime()));
             ps.setString(7, data.getNomor());
             ps.setLong(8, data.getPeramalanId());
@@ -199,7 +198,8 @@ public class DbPeramalan {
         String where = COL_NOMOR + " like '%"+ pattern +"%'";
         Vector<Peramalan> listPeramalan = new Vector<>();
         try {
-            listPeramalan = DbPeramalan.list("", COL_TANGGAL + " desc", 0, 1);
+            Calendar calendar = Calendar.getInstance();
+            listPeramalan = DbPeramalan.list("year(tanggal)='"+ calendar.get(Calendar.YEAR) +"' and month(tanggal)='"+ (calendar.get(Calendar.MONTH)+1) +"'", COL_TANGGAL + " desc", 0, 1);
         } catch (Exception e) {
         }
         

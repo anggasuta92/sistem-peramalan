@@ -7,7 +7,7 @@
     <div class="col-lg-12">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-archive"></i> Role User</h3>
+                <h3 class="panel-title"><i class="fa fa-archive"></i> Pengguna</h3>
             </div>
             <div class="panel-body">
                 <div class="row" style="padding-bottom: 10px">
@@ -29,6 +29,7 @@
                                     <th>Nama</th>
                                     <th width="250">Username</th>
                                     <th width="250">Role</th>
+                                    <th width="100">Status</th>
                                     <th width="130">Aksi</th>
                                 </tr>    
                             </thead>
@@ -120,14 +121,19 @@
                 var startNumber = ((paginationInfo.currentPage - 1) * paginationInfo.recordToGet)+1;
                 if(data.length>0){
                     for(i=0; i<data.length; i++){
+                        var status = 'Aktif';
+                        if(data[i].user.status=='0'){
+                            status = 'Tidak Aktif';
+                        }
                         html += '<tr>'+
                                     '<td align="center">'+(startNumber+i)+'</td>'+
                                     '<td>'+data[i].user.nama+'</td>'+
                                     '<td>'+data[i].user.username+'</td>'+
                                     '<td>'+data[i].role.nama+'</td>'+
+                                    '<td>'+status+'</td>'+
                                     '<td align="center" class="margin">'+
-                                        '<button class="btn btn-sm btn-default" onClick="view(\''+data[i].user.systemUserId.toString()+'\')"><span class="fa fa-pencil text-primary"></span></button>&nbsp;'+
-                                        '<button class="btn btn-sm btn-default" onClick="confirmDelete(\''+data[i].user.systemUserId+'\', \'Nama: '+ data[i].nama +'\')"><span class="fa fa-trash-o text-danger"></span></button>'+
+                                        '<button class="btn btn-sm btn-default" onClick="view(\''+data[i].user.penggunaId.toString()+'\')"><span class="fa fa-pencil text-primary"></span></button>&nbsp;'+
+//                                        '<button class="btn btn-sm btn-default" onClick="confirmDelete(\''+data[i].user.penggunaId+'\', \'Nama: '+ data[i].user.nama +'\')"><span class="fa fa-trash-o text-danger"></span></button>'+
                                     '</td>'+
                                 '</tr>';
                     }
@@ -162,6 +168,35 @@
     function loadFirst(){
         var param = document.getElementById('txtSearch').value;
         loadData(<%= PaginationServices.FIRST %>, currentPage, param);
+    }
+    
+    function confirmDelete(idUser, note){
+        swal({
+        title: "Konfirmasi",
+        text: "Apakah anda ingin menghapus data user: \n" + note + "?",
+        icon: "info",
+        buttons: true,
+        dangerMode: true,
+        })
+        .then((deleteSaja) => {
+            if (deleteSaja) {
+                $.ajax({
+                    type  : 'post',
+                    data  : { id: idUser},
+                    url   : '<%= JSPHandler.generateUrl(request, "user", "delete", "") %>',
+                    async : false,
+                    dataType : 'json',
+                    success : function(datas){
+                        var messages = datas.message;
+                        var code = datas.code;
+                        swal(messages);
+                        if(code==0){
+                            loadData("", 1, "");
+                        }
+                    }
+                });
+            }
+        });
     }
 </script>
 

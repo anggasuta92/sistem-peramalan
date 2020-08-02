@@ -118,7 +118,7 @@ public class PeramalanServices {
         return result;
     }
     
-    public static long hitungPeramalan(int penjualanBulan, int penjualanTahun, int peramalanBulan, int peramalanTahun){
+    public static long hitungPeramalan(int penjualanBulan, int penjualanTahun, int peramalanBulan, int peramalanTahun, long userId){
         long result = 0;
         
         Vector<Barang> listBarang = new Vector<Barang>();
@@ -132,6 +132,7 @@ public class PeramalanServices {
         peramalan.setPeramalanTahun(peramalanTahun);
         peramalan.setPenjualanBulan(penjualanBulan);
         peramalan.setPenjualanTahun(penjualanTahun);
+        peramalan.setPenggunaId(userId);
         
         SimpleDateFormat format = new SimpleDateFormat("yyyyMM");
         String pattern = format.format(new Date());
@@ -156,15 +157,88 @@ public class PeramalanServices {
             /* cari alpha terbaik */
             try {
                 peramalan = DbPeramalan.findById(peramalan.getPeramalanId());
-                double alphaTerbaik = tentukanAlphaTerbaik(peramalan.getPeramalanId());
-                peramalan.setAlphaTerbaik(alphaTerbaik);;
-                DbPeramalan.update(peramalan);
+                menentukanBobotTerbaik(peramalan.getPeramalanId());
+//                double alphaTerbaik = tentukanAlphaTerbaik(peramalan.getPeramalanId());
+//                peramalan.setAlphaTerbaik(alphaTerbaik);;
+//                DbPeramalan.update(peramalan);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         
         return result;
+    }
+    
+    public static void menentukanBobotTerbaik(long peramalanId){
+        
+        Vector<Barang> listBarangs = new Vector<>();
+        try {
+            listBarangs = DbBarang.list("", "", 0, 0);
+        } catch (Exception e) {
+        }
+        
+        /* cek semua barang */
+        for(Barang barang : listBarangs){
+            double result = 0;
+            double prevMape = 100;
+            
+            for(int a = 1; a<=9; a++){
+                double alpha = a / 10.0;
+                
+                /* tampil data */
+                String wherePeramalanDetail = DbPeramalanDetail.COL_PERAMALAN_ID + "='"+ peramalanId +"'"
+                        + " and " + DbPeramalanDetail.COL_TIPE + "='"+ DbPeramalanDetail.DETAIL_TIPE_PENJUALAN +"'"
+                        + " and " + DbPeramalanDetail.COL_ALPHA + "='"+ alpha +"' and " + DbPeramalanDetail.COL_BARANG_ID + "='"+ barang.getBarangId() +"'";
+                
+                Vector<PeramalanDetail> peramalanDetails = new Vector<>();
+                try {
+                    peramalanDetails = DbPeramalanDetail.list(wherePeramalanDetail, "(("+ DbPeramalanDetail.COL_TAHUN +" * 12)+"+ DbPeramalanDetail.COL_BULAN +") asc", 0, 0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+                double totalAPE = 0;
+                for(PeramalanDetail peramalanDetail : peramalanDetails){
+                    double err = peramalanDetail.getPenjualan() - peramalanDetail.getPeramalan();
+                    double percentError = err / peramalanDetail.getPenjualan() * 100;
+                    double absPercentError = Math.abs(percentError);
+                    totalAPE += absPercentError;
+                    
+                    System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+                    System.out.print(" PERIODE: " + peramalanDetail.getBulan() + "/" + peramalanDetail.getTahun());
+                    System.out.print(" penjualan: " + peramalanDetail.getPenjualan());
+                    System.out.print(" peramalan: " + peramalanDetail.getPeramalan());
+                    System.out.print(" err: " + err);
+                    System.out.print(" errPercent: " + percentError);
+                    System.out.println(" totalAPE: " + totalAPE);
+                }
+                double meanAbsPercentErr = totalAPE / peramalanDetails.size();
+                
+                System.out.println("MAPE:" + meanAbsPercentErr);
+                
+                /* cek angka terkecil */
+                if(meanAbsPercentErr<prevMape){
+                    result = alpha;
+                    prevMape = meanAbsPercentErr;
+                }
+            }
+            
+            /* simpan data bobot terbaik dengan error terendah */
+            Vector<PeramalanDetail> peramalanDetails = new Vector<>();
+            try {
+                peramalanDetails = DbPeramalanDetail.findByPeramalanBarangTipeAlpha(peramalanId, barang.getBarangId(), DbPeramalanDetail.DETAIL_TIPE_PERAMALAN, result);
+                for(PeramalanDetail peramalanDetail : peramalanDetails){
+                    peramalanDetail.setDisarankan(1);
+                    try{
+                        DbPeramalanDetail.update(peramalanDetail);
+                    }catch(Exception e){
+                    }
+                    
+                    System.out.println("--->> update rekomendasi: " + peramalanDetail.getBarang().getNama() + " | " + result);
+                }
+            } catch (Exception e) {
+            }
+        }
     }
     
     public static double tentukanAlphaTerbaik(long peramalanId){

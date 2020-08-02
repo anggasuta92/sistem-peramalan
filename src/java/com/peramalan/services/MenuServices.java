@@ -8,8 +8,8 @@ package com.peramalan.services;
 import com.peramalan.conn.DbConnection;
 import com.peramalan.model.master.DbRole;
 import com.peramalan.model.master.DbRoleDetail;
-import com.peramalan.model.master.DbSystemUser;
-import com.peramalan.model.master.SystemUser;
+import com.peramalan.model.master.DbPengguna;
+import com.peramalan.model.master.Pengguna;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -31,18 +31,30 @@ public class MenuServices {
         "Data Penjualan", 
         "Peramalan > Peramalan",
         "Peramalan > Arsip Peramalan",
-        "Peramalan > Analisis Peramalan",
         "Administrator > Role Pengguna",
-        "Administrator > Data Pengguna"
+        "Administrator > Data Pengguna",
+        "Administrator > Info Perusahaan"
     };
+    
+    public static int[] strMenuKode = {
+        0,
+        1, 
+        2, 
+        3,
+        4,
+        6,
+        7,
+        8
+    };
+    
     public static final int MENU_KATEGORI_BARANG = 0;
     public static final int MENU_BARANG = 1;
     public static final int MENU_PENJUALAN = 2;
     public static final int MENU_PERAMALAN = 3;
     public static final int MENU_ARSIP_PERAMALAN = 4;
-    public static final int MENU_ANALISIS_PERAMALAN = 5;
     public static final int MENU_ADMINISTRATOR_ROLE_PENGGUNA = 6;
     public static final int MENU_ADMINISTRATOR_DATA_PENGGUNA = 7;
+    public static final int MENU_ADMINISTRATOR_INFO_PERUSAHAAN = 8;
 
     public static void deleteRoleByRoleId(long roleId){
         String sqlDeleteRole = "delete from " + DbRole.tableName + " where " + DbRole.COL_ROLE_ID + "=?";

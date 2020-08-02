@@ -99,7 +99,10 @@
             <div id="page-wrapper">
                 <div class="row border-bottom">
                     <div class="col-lg-7">
-                        <h3>UD. Parama Store <small>Jalan Gatsu VI no. 46 Denpasar</small> </h3>
+                        <h3>
+                            <%= session.getAttribute(LoginServices.PERUSAHAN_NAMA) %>
+                            <small>&nbsp;|&nbsp;<%= session.getAttribute(LoginServices.PERUSAHAN_ALAMAT) %> </small> 
+                        </h3>
                     </div>
                     <div class="col-lg-5" align="right">
                         <% try{ %>
