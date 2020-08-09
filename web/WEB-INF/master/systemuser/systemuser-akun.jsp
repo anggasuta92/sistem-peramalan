@@ -24,7 +24,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label for="<%= DbPengguna.COL_NAMA %>" >Nama</label>
-                                <input type="text" class="form-control" name="<%= DbPengguna.COL_NAMA %>" value="<%= systemUser.getNama() %>" />
+                                <input type="text" class="form-control" name="<%= DbPengguna.COL_NAMA %>" value="<%= systemUser.getNama() %>" required="true"/>
                             </div>
                             <div class="form-group">
                                 <label for="<%= DbPengguna.COL_USERNAME %>" >Username</label>

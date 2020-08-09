@@ -21,25 +21,25 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="<%= DbPerusahaan.COL_NAMA %>">Nama Perusahaan</label>
-                                <input type="text" name="<%= DbPerusahaan.COL_NAMA %>" value="<%= perusahaan.getNama()%>" class="form-control" />
+                                <input type="text" name="<%= DbPerusahaan.COL_NAMA %>" value="<%= perusahaan.getNama()%>" class="form-control" required="true" />
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="<%= DbPerusahaan.COL_ALAMAT %>">Alamat</label>
-                                <input type="text" name="<%= DbPerusahaan.COL_ALAMAT %>" value="<%= perusahaan.getAlamat() %>" class="form-control" />
+                                <input type="text" name="<%= DbPerusahaan.COL_ALAMAT %>" value="<%= perusahaan.getAlamat() %>" class="form-control" required="true"/>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="<%= DbPerusahaan.COL_TELEPON %>">Telepon</label>
-                                <input type="text" name="<%= DbPerusahaan.COL_TELEPON %>" value="<%= perusahaan.getTelepon() %>" class="form-control" />
+                                <input type="text" name="<%= DbPerusahaan.COL_TELEPON %>" value="<%= perusahaan.getTelepon() %>" class="form-control" required="true"/>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="<%= DbPerusahaan.COL_NAMA_PEMILIK %>">Nama Pemilik</label>
-                                <input type="text" name="<%= DbPerusahaan.COL_NAMA_PEMILIK %>" value="<%= perusahaan.getNamaPemilik()%>" class="form-control" />
+                                <input type="text" name="<%= DbPerusahaan.COL_NAMA_PEMILIK %>" value="<%= perusahaan.getNamaPemilik()%>" class="form-control" required="true"/>
                             </div>
                         </div>
                         <div class="col-md-12">

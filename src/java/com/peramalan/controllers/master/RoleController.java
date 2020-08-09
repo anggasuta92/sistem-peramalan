@@ -222,6 +222,9 @@ public class RoleController extends HttpServlet {
                 for(RoleDetail roleDetail : list){
                     details.put(roleDetail.getKodeMenu(), roleDetail.getGranted());
                 }
+            }else{
+                response.sendRedirect(JSPHandler.generateUrl(request, "role", "", ""));
+                return;
             }
             
             request.setAttribute("role", role);

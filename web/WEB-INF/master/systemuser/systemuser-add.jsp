@@ -26,19 +26,19 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="<%= DbPengguna.COL_NAMA %>">Nama Lengkap</label>
-                                <input type="text" name="<%= DbPengguna.COL_NAMA %>" value="" class="form-control" />
+                                <input type="text" name="<%= DbPengguna.COL_NAMA %>" value="" class="form-control" required="true"/>
                             </div>
                             <div class="form-group">
                                 <label for="<%= DbPengguna.COL_USERNAME %>">Username</label>
-                                <input type="text" name="<%= DbPengguna.COL_USERNAME %>" value="" class="form-control" />
+                                <input type="text" name="<%= DbPengguna.COL_USERNAME %>" value="" class="form-control" required="true"/>
                             </div>
                             <div class="form-group">
                                 <label for="<%= DbPengguna.COL_PASSWORD %>">Password</label>
-                                <input type="password" name="<%= DbPengguna.COL_PASSWORD %>" value="" class="form-control" />
+                                <input type="password" name="<%= DbPengguna.COL_PASSWORD %>" value="" class="form-control" required="true"/>
                             </div>
                             <div class="form-group">
                                 <label for="ulang_<%= DbPengguna.COL_PASSWORD %>">Ketik Ulang Password</label>
-                                <input type="password" name="ulang_<%= DbPengguna.COL_PASSWORD %>" value="" class="form-control" />
+                                <input type="password" name="ulang_<%= DbPengguna.COL_PASSWORD %>" value="" class="form-control" required="true"/>
                             </div>
                             <div class="form-group">
                                 <label for="<%= DbPengguna.COL_ROLE_ID %>">Role</label>
