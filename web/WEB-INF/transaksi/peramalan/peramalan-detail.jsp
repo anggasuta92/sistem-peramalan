@@ -48,7 +48,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <select name="param_bulan" id="param_bulan" class="form-control">
-                                    <option value="0"> pilih bulan... </option>
+                                    <option value="0">semua</option>
                                     <% for(int bulan = 1; bulan < TransaksiService.periodeBulan.length; bulan++){ %>
                                     <option value="<%= bulan %>"> <%= TransaksiService.periodeBulan[bulan] %> </option>
                                     <% } %>
@@ -59,7 +59,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <select name="param_tahun" id="param_tahun" class="form-control">
-                                    <option value="0"> pilih tahun... </option>
+                                    <option value="0">semua</option>
                                     <% for(int tahun = 0; tahun < TransaksiService.periodeTahun().length; tahun++){ %>
                                     <option value="<%= TransaksiService.periodeTahun()[tahun] %>"> <%= TransaksiService.periodeTahun()[tahun] %> </option>
                                     <% } %>
@@ -70,7 +70,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <select name="param_alpha" id="param_alpha" class="form-control">
-                                    <option value="0"> pilih alpha... </option>
+                                    <option value="0">semua</option>
                                     <% for(int x = 1; x < 10; x++){ %>
                                     <% double alpha = x/10.0; %>
                                     <option value="<%= alpha %>"> <%= alpha %> </option>
@@ -130,7 +130,10 @@
 <script>
     function printPDF(id){  
        var alpha = (document.getElementById('param_alpha')!==null ? document.getElementById('param_alpha').value : 0);
-       window.open("<%= JSPHandler.generateUrl(request, "peramalan", "export-detail-pdf", "") %>&id="+id+"&alpha="+alpha,"_blank");
+       var disarankan = (document.getElementById('disarankan').checked ? 1:0);
+       var bulan = document.getElementById('param_bulan').value;
+       var tahun = document.getElementById('param_tahun').value;
+       window.open("<%= JSPHandler.generateUrl(request, "peramalan", "export-detail-pdf", "") %>&id="+id+"&bl="+bulan+"&th="+tahun+"&saran="+disarankan+"&alpha="+alpha,"_blank");
     } 
     
     function genPeriodeName(tahun, bulan){
@@ -193,7 +196,7 @@
                         html += '<tr>'+
                                     '<td align="center">'+(startNumber+i)+'</td>'+
                                     '<td align="center">'+ genPeriodeName(data[i].tahun, data[i].bulan) +'</td>'+
-                                    '<td align="center">'+ data[i].barang.kode +'/' + data[i].barang.nama + '</td>'+
+                                    '<td align="left"> '+ data[i].barang.kode +'/' + data[i].barang.nama + '</td>'+
                                     '<td align="right">'+ data[i].alpha + '</td>'+
                                     '<td align="right">'+ data[i].peramalan + '</td>'+
                                     '<td align="left">'+ (data[i].disarankan==1 ? " <strong><i> *Disarankan</i></strong>" : "") + '</td>'+
@@ -226,7 +229,8 @@
         var tahun = document.getElementById('param_tahun').value;
         var alpha = (document.getElementById('param_alpha')!==null ? document.getElementById('param_alpha').value : 0);
         var id = '<%= peramalan.getPeramalanId() %>';
-        loadData(<%= PaginationServices.NEXT %>, currentPage, param, bulan, tahun, id, alpha);
+        var disarankan = (document.getElementById('disarankan').checked == true ? 1 : 0);
+        loadData(<%= PaginationServices.NEXT %>,currentPage,param,bulan,tahun, id, alpha, disarankan);
     }
     
     function loadLast(){
@@ -235,7 +239,8 @@
         var tahun = document.getElementById('param_tahun').value;
         var id = '<%= peramalan.getPeramalanId() %>';
         var alpha = (document.getElementById('param_alpha')!==null ? document.getElementById('param_alpha').value : 0);
-        loadData(<%= PaginationServices.LAST %>, currentPage, param, bulan, tahun, id,alpha);
+        var disarankan = (document.getElementById('disarankan').checked == true ? 1 : 0);
+        loadData(<%= PaginationServices.LAST %>,currentPage,param,bulan,tahun, id, alpha, disarankan);
     }
     
     function loadPrev(){
@@ -244,7 +249,8 @@
         var tahun = document.getElementById('param_tahun').value;
         var id = '<%= peramalan.getPeramalanId() %>';
         var alpha = (document.getElementById('param_alpha')!==null ? document.getElementById('param_alpha').value : 0);
-        loadData(<%= PaginationServices.PREV %>, currentPage, param, bulan, tahun, id, alpha);
+        var disarankan = (document.getElementById('disarankan').checked == true ? 1 : 0);
+        loadData(<%= PaginationServices.PREV %>,currentPage,param,bulan,tahun, id, alpha, disarankan);
     }
     
     function loadFirst(){
@@ -253,7 +259,8 @@
         var tahun = document.getElementById('param_tahun').value;
         var id = '<%= peramalan.getPeramalanId() %>';
         var alpha = (document.getElementById('param_alpha')!==null ? document.getElementById('param_alpha').value : 0);
-        loadData(<%= PaginationServices.FIRST %>, currentPage, param, bulan, tahun, id, alpha);
+        var disarankan = (document.getElementById('disarankan').checked == true ? 1 : 0);
+        loadData(<%= PaginationServices.FIRST %>,currentPage,param,bulan,tahun, id, alpha, disarankan);
     }
     
     function analisa(id, tahun, bulan, alpha, barangId){

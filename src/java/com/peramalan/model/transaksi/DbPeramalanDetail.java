@@ -300,7 +300,7 @@ public class DbPeramalanDetail {
         }
         
         if(tahun!=0){
-            where += " and bulan='"+ tahun +"' ";
+            where += " and tahun='"+ tahun +"' ";
         }
         
         if(alpha!=0){

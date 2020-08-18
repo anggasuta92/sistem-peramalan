@@ -22,102 +22,7 @@ import java.util.Vector;
  *
  * @author Angga Suta
  */
-public class PeramalanServices {
-    
-    public static double tentukanBobot(int tahun, int bulan, long barangId){
-        double result = 0;
-        
-        /* list penjualan */
-        String wherePenjualan = "("+ DbPenjualan.COL_TAHUN +"*12)+"+ DbPenjualan.COL_BULAN +" <= ("+ ((tahun*12)+bulan) +") and " + DbPenjualan.COL_BARANG_ID + "='"+ barangId +"'";
-        Vector listPenjualan = DbPenjualan.list(wherePenjualan, "", 0, 0);
-        
-        /* penentuan bobot terbaik antara 0 sampai 1 */
-        double prevSmoothSingle = 0;
-        double prevSmoothDouble = 0;
-        double prevNilaiA = 0;
-        double prevNilaiB = 0;
-        Vector listTmpPeramalan = new Vector();
-
-        int tahunHitungMAPE = 0;
-        int bulanHitungMAPE = 0;
-        
-        if(listPenjualan!=null && listPenjualan.size()>0){
-            
-            /* cari periode awal untuk hitung MAPE sampai periode akhir penjualan */    
-            for(int a = 1; a<=9; a++){
-                double alpha = a / 10.0;
-
-                /* loop data penjualan */
-                for(int p = 0; p < listPenjualan.size(); p++){
-                    Penjualan penjualan = (Penjualan) listPenjualan.get(p);
-
-                    if(p==0){
-                        prevSmoothSingle = penjualan.getQty();
-                        prevSmoothDouble = penjualan.getQty();
-                    }
-
-                    double smoothSingle = 0;
-                    double smoothDouble = 0;
-                    double nilaiA = 0;
-                    double nilaiB = 0;
-                    double peramalan = 0;
-
-                    if(p>0){
-                        /* hitung pemulusan I */
-                        smoothSingle = (alpha * penjualan.getQty()) + ((1 - alpha) * prevSmoothSingle);
-                        smoothSingle = NumberServices.decimalRounded(smoothSingle, 2);
-
-                        /* hitung pemulusan II */
-                        smoothDouble = (alpha * smoothSingle) + ((1-alpha) * prevSmoothDouble);
-                        smoothDouble = NumberServices.decimalRounded(smoothDouble, 2);
-
-                        /* hitung nilai A */
-                        nilaiA = (2 * smoothSingle) - smoothDouble;
-                        nilaiA = NumberServices.decimalRounded(nilaiA, 2);
-
-                        /* hitung nilai B */
-                        nilaiB = (alpha/(1-alpha)) * (smoothSingle - smoothDouble);
-                        nilaiB = NumberServices.decimalRounded(nilaiB, 2);
-
-                        /* hitung peramalan */
-                        if(p>1){
-                            peramalan = prevNilaiA + (prevNilaiB * 1);
-                            peramalan = NumberServices.decimalRounded(peramalan, 2);
-                        }                    
-                        prevSmoothSingle = smoothSingle;
-                        prevSmoothDouble = smoothDouble;
-                        prevNilaiA = nilaiA;
-                        prevNilaiB = nilaiB;
-                    }
-
-                    /* simpan ke table temporary */
-                    PeramalanDetail tmp = new PeramalanDetail();
-                    tmp.setPeramalanId(OIDGenerator.generateOID());
-                    tmp.setTahun(penjualan.getTahun());
-                    tmp.setBulan(penjualan.getBulan());
-                    tmp.setBarang(penjualan.getBarang());
-                    tmp.setAlpha(alpha);
-                    tmp.setSmoothingSingle(smoothSingle);
-                    tmp.setSmoothingDouble(smoothDouble);
-                    tmp.setNilaiA(nilaiA);
-                    tmp.setNilaiB(nilaiB);
-                    tmp.setPeramalan(peramalan);
-
-                    listTmpPeramalan.add(tmp);
-                }
-            }
-        }
-        
-        /* select lagi dengan error terendah */
-        if(listTmpPeramalan!=null && listTmpPeramalan.size()>0){
-            for(int i = 0; i < listTmpPeramalan.size(); i++){
-                PeramalanDetail peramalan = (PeramalanDetail) listTmpPeramalan.get(i);
-            }
-        }
-        
-        return result;
-    }
-    
+public class PeramalanServices {    
     public static long hitungPeramalan(int penjualanBulan, int penjualanTahun, int peramalanBulan, int peramalanTahun, long userId){
         long result = 0;
         
@@ -158,9 +63,6 @@ public class PeramalanServices {
             try {
                 peramalan = DbPeramalan.findById(peramalan.getPeramalanId());
                 menentukanBobotTerbaik(peramalan.getPeramalanId());
-//                double alphaTerbaik = tentukanAlphaTerbaik(peramalan.getPeramalanId());
-//                peramalan.setAlphaTerbaik(alphaTerbaik);;
-//                DbPeramalan.update(peramalan);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -239,45 +141,6 @@ public class PeramalanServices {
             } catch (Exception e) {
             }
         }
-    }
-    
-    public static double tentukanAlphaTerbaik(long peramalanId){
-        double result = 0;
-        
-        double prevMape = 100;
-        for(int a = 1; a<=9; a++){
-            double alpha = a / 10.0;
-            
-            /* tampil data */
-            String wherePeramalanDetail = DbPeramalanDetail.COL_PERAMALAN_ID + "='"+ peramalanId +"'"
-                    + " and " + DbPeramalanDetail.COL_TIPE + "='"+ DbPeramalanDetail.DETAIL_TIPE_PENJUALAN +"'"
-                    + " and " + DbPeramalanDetail.COL_ALPHA + "='"+ alpha +"'";
-            Vector<PeramalanDetail> peramalanDetails = new Vector<>();
-            try {
-                peramalanDetails = DbPeramalanDetail.list(wherePeramalanDetail, "(("+ DbPeramalanDetail.COL_TAHUN +" * 12)+"+ DbPeramalanDetail.COL_BULAN +") asc", 0, 0);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            
-            double totalAPE = 0;
-            
-            for(PeramalanDetail peramalanDetail : peramalanDetails){
-                double err = peramalanDetail.getPenjualan() - peramalanDetail.getPeramalan();
-                double percentError = err / peramalanDetail.getPenjualan() * 100;
-                double absPercentError = Math.abs(percentError);
-                totalAPE += absPercentError;
-            }
-            
-            double meanAbsPercentErr = totalAPE / peramalanDetails.size();
-            
-            /* cek angka terkecil */
-            if(meanAbsPercentErr<prevMape){
-                result = alpha;
-                prevMape = meanAbsPercentErr;
-            }
-        }
-        
-        return result;
     }
     
     public static void hitungPeramalanByBarang(int penjualanBulan, int penjualanTahun, 

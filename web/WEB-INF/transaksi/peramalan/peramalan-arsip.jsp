@@ -18,7 +18,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <select name="param_bulan" id="param_bulan" class="form-control">
-                                    <option value="0"> pilih bulan... </option>
+                                    <option value="0"> semua</option>
                                     <% for(int bulan = 1; bulan < TransaksiService.periodeBulan.length; bulan++){ %>
                                     <option value="<%= bulan %>"> <%= TransaksiService.periodeBulan[bulan] %> </option>
                                     <% } %>
@@ -29,7 +29,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <select name="param_tahun" id="param_tahun" class="form-control">
-                                    <option value="0"> pilih tahun... </option>
+                                    <option value="0"> semua</option>
                                     <% for(int tahun = 0; tahun < TransaksiService.periodeTahun().length; tahun++){ %>
                                     <option value="<%= TransaksiService.periodeTahun()[tahun] %>"> <%= TransaksiService.periodeTahun()[tahun] %> </option>
                                     <% } %>

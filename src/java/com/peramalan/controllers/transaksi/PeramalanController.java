@@ -226,6 +226,9 @@ public class PeramalanController extends HttpServlet {
             
             long id = JSPHandler.requestLong(request, "id");
             double alpha = JSPHandler.requestDouble(request, "alpha");
+            int saran = JSPHandler.requestInt(request, "saran");
+            int bulan = JSPHandler.requestInt(request, "bl");
+            int tahun = JSPHandler.requestInt(request, "th");
             
             Peramalan peramalan = new Peramalan();
             try {
@@ -235,7 +238,7 @@ public class PeramalanController extends HttpServlet {
             
             Vector<PeramalanDetail> peramalanDetails = new Vector<PeramalanDetail>();
             try{
-                peramalanDetails = DbPeramalanDetail.listPeramalanDetailJoinBarang("", 0, 0, id, alpha, DbPeramalanDetail.DETAIL_TIPE_PERAMALAN,0, "", 0, 0);
+                peramalanDetails = DbPeramalanDetail.listPeramalanDetailJoinBarang("", tahun, bulan, id, alpha, DbPeramalanDetail.DETAIL_TIPE_PERAMALAN, saran, "", 0, 0);
             }catch(Exception e){}
             
             request.setAttribute("peramalan", peramalan);

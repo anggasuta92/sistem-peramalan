@@ -99,8 +99,17 @@
         var penjualan_bulan = document.getElementById('penjualan_bulan').value;
         var penjualan_tahun = document.getElementById('penjualan_tahun').value;
         
+        
         if(peramalan_bulan!=0 && peramalan_tahun!=null && penjualan_bulan!=null && penjualan_tahun!=null){
-            startHitungPeramalan(peramalan_bulan, peramalan_tahun, penjualan_bulan, penjualan_tahun);
+            
+            var pPenjualan = parseInt(penjualan_bulan) + (parseInt(penjualan_tahun) * 12);
+            var pPeramalan = parseInt(peramalan_bulan) + (parseInt(peramalan_tahun) * 12);
+            
+            if((pPeramalan - pPenjualan)>=2){
+                startHitungPeramalan(peramalan_bulan, peramalan_tahun, penjualan_bulan, penjualan_tahun);
+            }else{
+                swal('Perhatian!','Data penjualan yang dipilih minimal 2 bulan sebelum periode peramalan', 'warning');
+            }
         }else{
             swal('Perhatian!','periode peramalan atau penjualan belum dipilih', 'warning');
         }
