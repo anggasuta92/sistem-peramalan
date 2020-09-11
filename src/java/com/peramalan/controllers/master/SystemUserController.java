@@ -161,7 +161,7 @@ public class SystemUserController extends HttpServlet {
             long oid = 0;
             Pengguna data = new Pengguna();
             try {
-                data = DbPengguna.findById(JSPHandler.requestLong(request, DbPengguna.COL_PENGGUNA_ID));
+                data = DbPengguna.findById(JSPHandler.requestLong(request, "system_user_id"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
